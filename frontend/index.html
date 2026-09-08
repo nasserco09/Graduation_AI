@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>AI Visual Search</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+        }
+
+        button {
+            padding: 10px 16px;
+            margin: 4px;
+            cursor: pointer;
+        }
+
+        button.active {
+            background: #222;
+            color: white;
+        }
+
+        #canvasContainer {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            display: none;
+            width: fit-content;
+            max-width: 100%;
+        }
+
+        #imageCanvas {
+            display: block;
+            max-width: 800px;
+            max-height: 600px;
+            width: auto;
+            height: auto;
+            cursor: crosshair;
+        }
+
+        #toolbar {
+            margin-top: 20px;
+            display: none;
+        }
+
+        #results {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .result {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .result img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+        }
+
+        .score {
+            margin-top: 8px;
+            font-weight: bold;
+        }
+
+        #status {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        #aiHelp {
+            margin-left: 10px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>AI Visual Search</h1>
+<p>Graduation Project Prototype</p>
+
+<div class="section">
+    <button onclick="reindex()">
+        Build / Refresh Catalog
+    </button>
+</div>
+
+<div class="section">
+    <input
+        type="file"
+        id="imageInput"
+        accept="image/*"
+    >
+</div>
+
+
+<div id="toolbar">
+
+    <strong>Select product:</strong>
+
+    <br><br>
+
+    <button
+        id="aiButton"
+        onclick="setMode('ai')"
+    >
+        ✨ AI Select
+    </button>
+
+    <button onclick="acceptAISelection()">
+        ✓ Accept AI Selection
+    </button>
+
+    <button onclick="resetAISelection()">
+        ↺ Reset AI
+    </button>
+
+    <span id="aiHelp"></span>
+
+    <br><br>
+
+    <button
+        id="rectButton"
+        onclick="setMode('rectangle')"
+    >
+        Rectangle
+    </button>
+
+    <button
+        id="polyButton"
+        onclick="setMode('polygon')"
+    >
+        Polygon
+    </button>
+
+    <button
+        id="freeButton"
+        onclick="setMode('free')"
+    >
+        Free Draw
+    </button>
+
+    <button onclick="finishPolygon()">
+        Finish Polygon
+    </button>
+
+    <button onclick="clearSelection()">
+        Clear Manual Selection
+    </button>
+
+    <br><br>
+
+    <button onclick="searchFullImage()">
+        Search Full Image
+    </button>
+
+    <button onclick="searchSelectedArea()">
+        Search Selected Area
+    </button>
+
+</div>
+
+
+<div id="canvasContainer">
+    <canvas id="imageCanvas"></canvas>
+</div>
+
+
+<p id="status"></p>
+
+<div id="results"></div>
+
+
+<script>
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const imageInput =
+    document.getElementById("imageInput");
+
+const canvas =
+    document.getElementById("imageCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const canvasContainer =
+    document.getElementById("canvasContainer");
+
+const toolbar =
+    document.getElementById("toolbar");
+
+const statusText =
+    document.getElementById("status");
+
+const results =
+    document.getElementById("results");
+
+const aiHelp =
+    document.getElementById("aiHelp");
+
+
+/* =========================================================
+   IMAGE STATE
+========================================================= */
+
+let originalImage =
+    new Image();
+
+let originalFile =
+    null;
+
+let mode =
+    null;
+
+
+/* =========================================================
+   MANUAL SELECTION STATE
+========================================================= */
+
+let drawing =
+    false;
+
+let startPoint =
+    null;
+
+let rectangle =
+    null;
+
+let polygonPoints =
+    [];
+
+let polygonFinished =
+    false;
+
+let freePoints =
+    [];
+
+
+/* =========================================================
+   AI SELECTION STATE
+========================================================= */
+
+let aiOverlay =
+    null;
+
+let aiCutout =
+    null;
+
+let aiPoints =
+    [];
+
+let aiLabels =
+    [];
+
+let aiAccepted =
+    false;
+
+let aiBusy =
+    false;
+
+
+/* =========================================================
+   LOAD IMAGE
+========================================================= */
+
+imageInput.addEventListener(
+    "change",
+    function () {
+
+        const file =
+            this.files[0];
+
+        if (!file)
+            return;
+
+        originalFile =
+            file;
+
+        resetEverythingForNewImage();
+
+        const url =
+            URL.createObjectURL(file);
+
+        originalImage.onload =
+            function () {
+
+                canvas.width =
+                    originalImage.naturalWidth;
+
+                canvas.height =
+                    originalImage.naturalHeight;
+
+                canvasContainer.style.display =
+                    "block";
+
+                toolbar.style.display =
+                    "block";
+
+                drawScene();
+
+                statusText.innerText =
+                    "Image loaded. Choose a selection method.";
+            };
+
+        originalImage.src =
+            url;
+    }
+);
+
+
+/* =========================================================
+   RESET WHEN NEW IMAGE IS LOADED
+========================================================= */
+
+function resetEverythingForNewImage() {
+
+    mode =
+        null;
+
+    drawing =
+        false;
+
+    startPoint =
+        null;
+
+    rectangle =
+        null;
+
+    polygonPoints =
+        [];
+
+    polygonFinished =
+        false;
+
+    freePoints =
+        [];
+
+    aiOverlay =
+        null;
+
+    aiCutout =
+        null;
+
+    aiPoints =
+        [];
+
+    aiLabels =
+        [];
+
+    aiAccepted =
+        false;
+
+    aiBusy =
+        false;
+
+    aiHelp.innerText =
+        "";
+
+    document
+        .querySelectorAll("#toolbar button")
+        .forEach(
+            button =>
+                button.classList.remove("active")
+        );
+
+    results.innerHTML =
+        "";
+}
+
+
+/* =========================================================
+   SELECTION MODE
+========================================================= */
+
+function setMode(newMode) {
+
+    mode =
+        newMode;
+
+    document
+        .querySelectorAll("#toolbar button")
+        .forEach(
+            button =>
+                button.classList.remove("active")
+        );
+
+
+    if (mode === "ai") {
+
+        document
+            .getElementById("aiButton")
+            .classList.add("active");
+
+        aiHelp.innerText =
+            "🟢 Left click = include   🔴 Right click = exclude";
+    }
+
+
+    else if (mode === "rectangle") {
+
+        document
+            .getElementById("rectButton")
+            .classList.add("active");
+
+        aiHelp.innerText =
+            "";
+    }
+
+
+    else if (mode === "polygon") {
+
+        document
+            .getElementById("polyButton")
+            .classList.add("active");
+
+        aiHelp.innerText =
+            "";
+    }
+
+
+    else if (mode === "free") {
+
+        document
+            .getElementById("freeButton")
+            .classList.add("active");
+
+        aiHelp.innerText =
+            "";
+    }
+
+    drawScene();
+}
+
+
+/* =========================================================
+   CANVAS COORDINATES
+========================================================= */
+
+function getPoint(event) {
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+    return {
+
+        x:
+            (event.clientX - rect.left)
+            * canvas.width
+            / rect.width,
+
+        y:
+            (event.clientY - rect.top)
+            * canvas.height
+            / rect.height
+
+    };
+}
+
+
+/* =========================================================
+   LEFT CLICK
+========================================================= */
+
+canvas.addEventListener(
+    "mousedown",
+    function (event) {
+
+        const point =
+            getPoint(event);
+
+
+        /* -------------------------
+           AI POSITIVE POINT
+        ------------------------- */
+
+        if (mode === "ai") {
+
+    // Left mouse button only
+    if (event.button !== 0) {
+        return;
+    }
+
+    addAIPoint(
+        point.x,
+        point.y,
+        1
+    );
+
+    return;
+}
+
+
+        /* -------------------------
+           RECTANGLE
+        ------------------------- */
+
+        if (mode === "rectangle") {
+
+            drawing =
+                true;
+
+            startPoint =
+                point;
+
+            rectangle = {
+                x: point.x,
+                y: point.y,
+                width: 0,
+                height: 0
+            };
+
+            return;
+        }
+
+
+        /* -------------------------
+           POLYGON
+        ------------------------- */
+
+        if (mode === "polygon") {
+
+            if (polygonFinished) {
+
+                polygonPoints =
+                    [];
+
+                polygonFinished =
+                    false;
+            }
+
+            polygonPoints.push(
+                point
+            );
+
+            drawScene();
+
+            return;
+        }
+
+
+        /* -------------------------
+           FREE DRAW
+        ------------------------- */
+
+        if (mode === "free") {
+
+            drawing =
+                true;
+
+            freePoints =
+                [point];
+
+            drawScene();
+        }
+    }
+);
+
+
+/* =========================================================
+   RIGHT CLICK = AI NEGATIVE POINT
+========================================================= */
+
+canvas.addEventListener(
+    "contextmenu",
+    function (event) {
+
+        if (mode !== "ai")
+            return;
+
+        event.preventDefault();
+
+        const point =
+            getPoint(event);
+
+        addAIPoint(
+            point.x,
+            point.y,
+            0
+        );
+    }
+);
+
+
+/* =========================================================
+   MOUSE MOVE
+========================================================= */
+
+canvas.addEventListener(
+    "mousemove",
+    function (event) {
+
+        if (!drawing)
+            return;
+
+        const point =
+            getPoint(event);
+
+
+        if (mode === "rectangle") {
+
+            rectangle.width =
+                point.x
+                - startPoint.x;
+
+            rectangle.height =
+                point.y
+                - startPoint.y;
+        }
+
+
+        else if (mode === "free") {
+
+            freePoints.push(
+                point
+            );
+        }
+
+
+        drawScene();
+    }
+);
+
+
+/* =========================================================
+   MOUSE UP
+========================================================= */
+
+canvas.addEventListener(
+    "mouseup",
+    function () {
+
+        drawing =
+            false;
+    }
+);
+
+
+canvas.addEventListener(
+    "mouseleave",
+    function () {
+
+        drawing =
+            false;
+    }
+);
+
+
+/* =========================================================
+   POLYGON
+========================================================= */
+
+function finishPolygon() {
+
+    if (
+        polygonPoints.length >= 3
+    ) {
+
+        polygonFinished =
+            true;
+
+        drawScene();
+    }
+
+    else {
+
+        alert(
+            "Polygon needs at least 3 points."
+        );
+    }
+}
+
+
+/* =========================================================
+   CLEAR MANUAL SELECTION
+========================================================= */
+
+function clearSelection() {
+
+    rectangle =
+        null;
+
+    polygonPoints =
+        [];
+
+    polygonFinished =
+        false;
+
+    freePoints =
+        [];
+
+    drawing =
+        false;
+
+    drawScene();
+
+    statusText.innerText =
+        "Manual selection cleared.";
+}
+
+
+/* =========================================================
+   DRAW EVERYTHING
+========================================================= */
+
+function drawScene() {
+
+    if (!originalImage.src)
+        return;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    ctx.drawImage(
+        originalImage,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /* =====================================================
+       AI MASK
+    ===================================================== */
+
+    if (
+        aiOverlay
+        && mode === "ai"
+    ) {
+
+        ctx.drawImage(
+            aiOverlay,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+    }
+
+
+    /* =====================================================
+       AI POINTS
+    ===================================================== */
+
+    if (mode === "ai") {
+
+        for (
+            let i = 0;
+            i < aiPoints.length;
+            i++
+        ) {
+
+            const point =
+                aiPoints[i];
+
+            const label =
+                aiLabels[i];
+
+
+            ctx.beginPath();
+
+            ctx.arc(
+                point[0],
+                point[1],
+                Math.max(
+                    7,
+                    canvas.width / 130
+                ),
+                0,
+                Math.PI * 2
+            );
+
+
+            ctx.fillStyle =
+                label === 1
+                    ? "lime"
+                    : "red";
+
+            ctx.fill();
+
+
+            ctx.lineWidth =
+                Math.max(
+                    2,
+                    canvas.width / 500
+                );
+
+            ctx.strokeStyle =
+                "white";
+
+            ctx.stroke();
+        }
+    }
+
+
+    /* =====================================================
+       MANUAL STYLE
+    ===================================================== */
+
+    ctx.lineWidth =
+        Math.max(
+            3,
+            canvas.width / 300
+        );
+
+    ctx.strokeStyle =
+        "red";
+
+    ctx.fillStyle =
+        "rgba(255,0,0,0.15)";
+
+
+    /* =====================================================
+       RECTANGLE
+    ===================================================== */
+
+    if (
+        mode === "rectangle"
+        && rectangle
+    ) {
+
+        ctx.strokeRect(
+            rectangle.x,
+            rectangle.y,
+            rectangle.width,
+            rectangle.height
+        );
+
+        ctx.fillRect(
+            rectangle.x,
+            rectangle.y,
+            rectangle.width,
+            rectangle.height
+        );
+    }
+
+
+    /* =====================================================
+       POLYGON
+    ===================================================== */
+
+    if (
+        mode === "polygon"
+        && polygonPoints.length > 0
+    ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            polygonPoints[0].x,
+            polygonPoints[0].y
+        );
+
+
+        for (
+            let i = 1;
+            i < polygonPoints.length;
+            i++
+        ) {
+
+            ctx.lineTo(
+                polygonPoints[i].x,
+                polygonPoints[i].y
+            );
+        }
+
+
+        if (polygonFinished) {
+
+            ctx.closePath();
+
+            ctx.fill();
+        }
+
+
+        ctx.stroke();
+
+
+        polygonPoints.forEach(
+            point => {
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    point.x,
+                    point.y,
+                    Math.max(
+                        5,
+                        canvas.width / 180
+                    ),
+                    0,
+                    Math.PI * 2
+                );
+
+                ctx.fillStyle =
+                    "red";
+
+                ctx.fill();
+            }
+        );
+    }
+
+
+    /* =====================================================
+       FREE DRAW
+    ===================================================== */
+
+    if (
+        mode === "free"
+        && freePoints.length > 1
+    ) {
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            freePoints[0].x,
+            freePoints[0].y
+        );
+
+
+        for (
+            let i = 1;
+            i < freePoints.length;
+            i++
+        ) {
+
+            ctx.lineTo(
+                freePoints[i].x,
+                freePoints[i].y
+            );
+        }
+
+
+        ctx.stroke();
+    }
+}
+
+
+/* =========================================================
+   AI - ADD POINT
+========================================================= */
+
+async function addAIPoint(
+    x,
+    y,
+    label
+) {
+
+    if (!originalFile)
+        return;
+
+
+    if (aiBusy) {
+
+        statusText.innerText =
+            "AI is still processing the previous point...";
+
+        return;
+    }
+
+
+    aiPoints.push([
+        x,
+        y
+    ]);
+
+
+    aiLabels.push(
+        label
+    );
+
+
+    aiAccepted =
+        false;
+
+
+    drawScene();
+
+
+    await updateAISelection();
+}
+
+
+/* =========================================================
+   AI - REQUEST NEW MASK
+========================================================= */
+
+async function updateAISelection() {
+
+    if (
+        !originalFile
+        || aiPoints.length === 0
+    )
+        return;
+
+
+    aiBusy =
+        true;
+
+
+    statusText.innerText =
+        "SAM2 is refining the selection...";
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "image",
+        originalFile
+    );
+
+
+    formData.append(
+        "points",
+        JSON.stringify(aiPoints)
+    );
+
+
+    formData.append(
+        "labels",
+        JSON.stringify(aiLabels)
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/segment",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            statusText.innerText =
+                data.detail;
+
+            return;
+        }
+
+
+        aiOverlay =
+            new Image();
+
+
+        aiOverlay.onload =
+            function () {
+
+                drawScene();
+            };
+
+
+        aiOverlay.src =
+            "data:image/png;base64,"
+            + data.overlay;
+
+
+        aiCutout =
+            "data:image/png;base64,"
+            + data.cutout;
+
+
+        statusText.innerText =
+            "AI selection ready - score: "
+            + (
+                data.score * 100
+            ).toFixed(1)
+            + "%";
+    }
+
+
+    catch (error) {
+
+        statusText.innerText =
+            "AI selection failed: "
+            + error;
+    }
+
+
+    finally {
+
+        aiBusy =
+            false;
+    }
+}
+
+
+/* =========================================================
+   AI - ACCEPT
+========================================================= */
+
+function acceptAISelection() {
+
+    if (!aiCutout) {
+
+        alert(
+            "Create an AI selection first."
+        );
+
+        return;
+    }
+
+
+    aiAccepted =
+        true;
+
+
+    statusText.innerText =
+        "AI selection accepted. Ready to search.";
+}
+
+
+/* =========================================================
+   AI - RESET
+========================================================= */
+
+function resetAISelection() {
+
+    aiPoints =
+        [];
+
+    aiLabels =
+        [];
+
+    aiOverlay =
+        null;
+
+    aiCutout =
+        null;
+
+    aiAccepted =
+        false;
+
+    aiBusy =
+        false;
+
+
+    drawScene();
+
+
+    statusText.innerText =
+        "AI selection reset.";
+}
+
+
+/* =========================================================
+   MANUAL SELECTION BOUNDS
+========================================================= */
+
+function getBounds(points) {
+
+    const xs =
+        points.map(
+            p => p.x
+        );
+
+    const ys =
+        points.map(
+            p => p.y
+        );
+
+
+    return {
+
+        x:
+            Math.min(...xs),
+
+        y:
+            Math.min(...ys),
+
+        width:
+            Math.max(...xs)
+            - Math.min(...xs),
+
+        height:
+            Math.max(...ys)
+            - Math.min(...ys)
+
+    };
+}
+
+
+/* =========================================================
+   CREATE IMAGE FROM MANUAL SELECTION
+========================================================= */
+
+function createSelectedImage() {
+
+    /* =====================================================
+       RECTANGLE
+    ===================================================== */
+
+    if (
+        mode === "rectangle"
+        && rectangle
+    ) {
+
+        let x =
+            rectangle.width < 0
+                ? rectangle.x
+                    + rectangle.width
+                : rectangle.x;
+
+
+        let y =
+            rectangle.height < 0
+                ? rectangle.y
+                    + rectangle.height
+                : rectangle.y;
+
+
+        let width =
+            Math.abs(
+                rectangle.width
+            );
+
+
+        let height =
+            Math.abs(
+                rectangle.height
+            );
+
+
+        if (
+            width < 5
+            || height < 5
+        )
+            return null;
+
+
+        const crop =
+            document.createElement(
+                "canvas"
+            );
+
+
+        crop.width =
+            Math.ceil(width);
+
+        crop.height =
+            Math.ceil(height);
+
+
+        const cropCtx =
+            crop.getContext("2d");
+
+
+        cropCtx.drawImage(
+            originalImage,
+
+            x,
+            y,
+            width,
+            height,
+
+            0,
+            0,
+            crop.width,
+            crop.height
+        );
+
+
+        return crop;
+    }
+
+
+    /* =====================================================
+       POLYGON / FREE DRAW
+    ===================================================== */
+
+    let points =
+        null;
+
+
+    if (
+        mode === "polygon"
+        && polygonFinished
+        && polygonPoints.length >= 3
+    ) {
+
+        points =
+            polygonPoints;
+    }
+
+
+    if (
+        mode === "free"
+        && freePoints.length >= 3
+    ) {
+
+        points =
+            freePoints;
+    }
+
+
+    if (!points)
+        return null;
+
+
+    const bounds =
+        getBounds(points);
+
+
+    const crop =
+        document.createElement(
+            "canvas"
+        );
+
+
+    crop.width =
+        Math.max(
+            1,
+            Math.ceil(
+                bounds.width
+            )
+        );
+
+
+    crop.height =
+        Math.max(
+            1,
+            Math.ceil(
+                bounds.height
+            )
+        );
+
+
+    const cropCtx =
+        crop.getContext("2d");
+
+
+    cropCtx.fillStyle =
+        "white";
+
+
+    cropCtx.fillRect(
+        0,
+        0,
+        crop.width,
+        crop.height
+    );
+
+
+    cropCtx.save();
+
+
+    cropCtx.beginPath();
+
+
+    cropCtx.moveTo(
+        points[0].x
+        - bounds.x,
+
+        points[0].y
+        - bounds.y
+    );
+
+
+    for (
+        let i = 1;
+        i < points.length;
+        i++
+    ) {
+
+        cropCtx.lineTo(
+            points[i].x
+            - bounds.x,
+
+            points[i].y
+            - bounds.y
+        );
+    }
+
+
+    cropCtx.closePath();
+
+    cropCtx.clip();
+
+
+    cropCtx.drawImage(
+        originalImage,
+        -bounds.x,
+        -bounds.y
+    );
+
+
+    cropCtx.restore();
+
+
+    return crop;
+}
+
+
+/* =========================================================
+   SEARCH SELECTED AREA
+========================================================= */
+
+async function searchSelectedArea() {
+
+    /* =====================================================
+       AI SELECTION
+    ===================================================== */
+
+    if (mode === "ai") {
+
+        if (!aiCutout) {
+
+            alert(
+                "Use AI Select first."
+            );
+
+            return;
+        }
+
+
+        if (!aiAccepted) {
+
+            alert(
+                "Accept the AI selection first."
+            );
+
+            return;
+        }
+
+
+        const response =
+            await fetch(
+                aiCutout
+            );
+
+
+        const blob =
+            await response.blob();
+
+
+        await sendSearch(
+            blob,
+            "ai-selected-product.png"
+        );
+
+
+        return;
+    }
+
+
+    /* =====================================================
+       MANUAL SELECTION
+    ===================================================== */
+
+    const selectedCanvas =
+        createSelectedImage();
+
+
+    if (!selectedCanvas) {
+
+        alert(
+            "Select a product area first."
+        );
+
+        return;
+    }
+
+
+    selectedCanvas.toBlob(
+        async function (blob) {
+
+            await sendSearch(
+                blob,
+                "selected-product.jpg"
+            );
+
+        },
+
+        "image/jpeg",
+        0.95
+    );
+}
+
+
+/* =========================================================
+   SEARCH FULL IMAGE
+========================================================= */
+
+async function searchFullImage() {
+
+    if (!originalFile) {
+
+        alert(
+            "Choose an image first."
+        );
+
+        return;
+    }
+
+
+    await sendSearch(
+        originalFile,
+        originalFile.name
+    );
+}
+
+
+/* =========================================================
+   SEND IMAGE TO SEARCH API
+========================================================= */
+
+async function sendSearch(
+    file,
+    fileName
+) {
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "image",
+        file,
+        fileName
+    );
+
+
+    statusText.innerText =
+        "AI is searching...";
+
+
+    results.innerHTML =
+        "";
+
+
+    const response =
+        await fetch(
+            "/api/search?top_k=8",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    if (!response.ok) {
+
+        statusText.innerText =
+            data.detail;
+
+        return;
+    }
+
+
+    statusText.innerText =
+        "Search completed.";
+
+
+    data.results.forEach(
+        item => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "result";
+
+
+            card.innerHTML = `
+
+                <img src="${item.url}">
+
+                <div class="score">
+
+                    Similarity:
+                    ${(item.score * 100).toFixed(2)}%
+
+                </div>
+
+            `;
+
+
+            results.appendChild(
+                card
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   REINDEX CATALOG
+========================================================= */
+
+async function reindex() {
+
+    statusText.innerText =
+        "Building catalog index...";
+
+
+    const response =
+        await fetch(
+            "/api/reindex",
+            {
+                method: "POST"
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    if (response.ok) {
+
+        statusText.innerText =
+            "Indexed "
+            + data.indexed_images
+            + " images.";
+    }
+
+
+    else {
+
+        statusText.innerText =
+            data.detail;
+    }
+}
+
+</script>
+
+</body>
+</html>

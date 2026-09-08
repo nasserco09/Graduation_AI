@@ -1,0 +1,28 @@
+# Python virtual environment
+.venv/
+
+# AI models - stored locally
+models/
+
+# Offline Python packages
+offline_wheels/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# PyCharm
+.idea/
+
+# Generated FAISS data
+data/*.faiss
+data/catalog_paths.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
