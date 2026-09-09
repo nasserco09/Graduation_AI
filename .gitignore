@@ -26,3 +26,8 @@ data/catalog_paths.json
 # OS files
 .DS_Store
 Thumbs.db
+# Local datasets
+datasets/
+*.zip
+# Evaluation embedding cache
+evaluation/cache/

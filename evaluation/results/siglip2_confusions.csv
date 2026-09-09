@@ -1,0 +1,17 @@
+true_class,predicted_class,count
+dress,longsleeve,5
+dress,t-shirt,4
+longsleeve,outwear,3
+t-shirt,longsleeve,3
+longsleeve,pants,2
+shirt,longsleeve,2
+dress,skirt,1
+dress,pants,1
+longsleeve,dress,1
+outwear,longsleeve,1
+outwear,pants,1
+shirt,outwear,1
+shorts,pants,1
+t-shirt,pants,1
+t-shirt,shirt,1
+t-shirt,dress,1

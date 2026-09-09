@@ -1,0 +1,117 @@
+{
+  "precision_at_1": 0.873900293255132,
+  "hit_at_1": 0.873900293255132,
+  "precision_at_5": 0.8598240469208213,
+  "hit_at_5": 0.9736070381231672,
+  "precision_at_10": 0.8501466275659825,
+  "hit_at_10": 0.9824046920821115,
+  "mrr_at_10": 0.9155995438253502,
+  "map_at_10": 0.8052559000139646,
+  "query_count": 341,
+  "per_class": {
+    "dress": {
+      "precision_at_1": 0.71875,
+      "hit_at_1": 0.71875,
+      "precision_at_5": 0.6187499999999999,
+      "hit_at_5": 0.84375,
+      "precision_at_10": 0.60625,
+      "hit_at_10": 0.90625,
+      "query_count": 32
+    },
+    "hat": {
+      "precision_at_1": 1.0,
+      "hit_at_1": 1.0,
+      "precision_at_5": 0.9857142857142858,
+      "hit_at_5": 1.0,
+      "precision_at_10": 0.9857142857142858,
+      "hit_at_10": 1.0,
+      "query_count": 14
+    },
+    "longsleeve": {
+      "precision_at_1": 0.7959183673469388,
+      "hit_at_1": 0.7959183673469388,
+      "precision_at_5": 0.7632653061224489,
+      "hit_at_5": 1.0,
+      "precision_at_10": 0.7122448979591837,
+      "hit_at_10": 1.0,
+      "query_count": 49
+    },
+    "outwear": {
+      "precision_at_1": 0.7916666666666666,
+      "hit_at_1": 0.7916666666666666,
+      "precision_at_5": 0.8250000000000001,
+      "hit_at_5": 1.0,
+      "precision_at_10": 0.8333333333333334,
+      "hit_at_10": 1.0,
+      "query_count": 24
+    },
+    "pants": {
+      "precision_at_1": 0.9183673469387755,
+      "hit_at_1": 0.9183673469387755,
+      "precision_at_5": 0.9510204081632654,
+      "hit_at_5": 0.9795918367346939,
+      "precision_at_10": 0.9448979591836736,
+      "hit_at_10": 0.9795918367346939,
+      "query_count": 49
+    },
+    "shirt": {
+      "precision_at_1": 0.9310344827586207,
+      "hit_at_1": 0.9310344827586207,
+      "precision_at_5": 0.9448275862068967,
+      "hit_at_5": 1.0,
+      "precision_at_10": 0.9413793103448276,
+      "hit_at_10": 1.0,
+      "query_count": 29
+    },
+    "shoes": {
+      "precision_at_1": 1.0,
+      "hit_at_1": 1.0,
+      "precision_at_5": 1.0,
+      "hit_at_5": 1.0,
+      "precision_at_10": 1.0,
+      "hit_at_10": 1.0,
+      "query_count": 26
+    },
+    "shorts": {
+      "precision_at_1": 0.92,
+      "hit_at_1": 0.92,
+      "precision_at_5": 0.8719999999999999,
+      "hit_at_5": 1.0,
+      "precision_at_10": 0.86,
+      "hit_at_10": 1.0,
+      "query_count": 25
+    },
+    "skirt": {
+      "precision_at_1": 0.6666666666666666,
+      "hit_at_1": 0.6666666666666666,
+      "precision_at_5": 0.6666666666666666,
+      "hit_at_5": 0.8333333333333334,
+      "precision_at_10": 0.6166666666666666,
+      "hit_at_10": 0.8333333333333334,
+      "query_count": 12
+    },
+    "t-shirt": {
+      "precision_at_1": 0.9135802469135802,
+      "hit_at_1": 0.9135802469135802,
+      "precision_at_5": 0.8962962962962963,
+      "hit_at_5": 0.9876543209876543,
+      "precision_at_10": 0.9049382716049384,
+      "hit_at_10": 1.0,
+      "query_count": 81
+    }
+  },
+  "top1_failure_count": 43,
+  "model": "dinov2",
+  "embedding_dimension": 384,
+  "gallery_count": 3068,
+  "validation_count": 341,
+  "gallery_embedding_seconds": 0.0,
+  "validation_embedding_seconds": 0.0,
+  "avg_query_embedding_ms": 0.0,
+  "faiss_index_seconds": 0.0012640000059036538,
+  "search_seconds": 0.004854599988902919,
+  "avg_search_ms": 0.014236363603820877,
+  "gallery_cache_used": true,
+  "validation_cache_used": true,
+  "device": "cuda"
+}

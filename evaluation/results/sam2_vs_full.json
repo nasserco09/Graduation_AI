@@ -1,0 +1,21 @@
+{
+  "sample_count": 100,
+  "sam2_success_count": 100,
+  "full_image": {
+    "precision_at_1": 0.48,
+    "precision_at_5": 0.42,
+    "precision_at_10": 0.41,
+    "map_at_10": 0.31331626984126987,
+    "mrr_at_10": 0.5836190476190476
+  },
+  "sam2_selected": {
+    "precision_at_1": 0.8,
+    "precision_at_5": 0.768,
+    "precision_at_10": 0.7430000000000001,
+    "map_at_10": 0.6969630952380952,
+    "mrr_at_10": 0.8283333333333335
+  },
+  "improved_queries": 41,
+  "worsened_queries": 9,
+  "unchanged_queries": 50
+}

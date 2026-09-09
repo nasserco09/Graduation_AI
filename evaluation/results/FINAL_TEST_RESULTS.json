@@ -1,0 +1,38 @@
+{
+  "protocol": {
+    "gallery_split": "train",
+    "final_query_split": "test",
+    "gallery_count": 3068,
+    "test_query_count": 372,
+    "multi_product_query_count": 100,
+    "model": "SigLIP2",
+    "segmentation_model": "SAM2.1 Hiera Base Plus"
+  },
+  "clean_test": {
+    "precision_at_1": 0.9086021505376344,
+    "precision_at_5": 0.8897849462365591,
+    "precision_at_10": 0.870967741935484,
+    "map_at_10": 0.8253777308414405,
+    "mrr_at_10": 0.9448060675883255
+  },
+  "multi_product_full_image": {
+    "precision_at_1": 0.46,
+    "precision_at_5": 0.41800000000000004,
+    "precision_at_10": 0.403,
+    "map_at_10": 0.2949170634920635,
+    "mrr_at_10": 0.594718253968254
+  },
+  "multi_product_sam2": {
+    "precision_at_1": 0.75,
+    "precision_at_5": 0.7479999999999998,
+    "precision_at_10": 0.725,
+    "map_at_10": 0.6802607142857142,
+    "mrr_at_10": 0.7913611111111112
+  },
+  "sam2_effect": {
+    "improved_queries": 39,
+    "worsened_queries": 10,
+    "unchanged_queries": 51,
+    "precision_at_1_delta": 0.29
+  }
+}
