@@ -18,7 +18,7 @@ __pycache__/
 
 # Generated FAISS data
 data/*.faiss
-data/catalog_paths.json
+data/*_paths.json
 
 # Jupyter
 .ipynb_checkpoints/

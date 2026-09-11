@@ -1,1671 +1,706 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
-    <title>AI Visual Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Visual Fashion Search - منصة البحث الذكي عن الأزياء والملابس باستخدام الذكاء الاصطناعي والصور">
+    <meta name="keywords" content="بحث بالصور, ذكاء اصطناعي, أزياء, ملابس, تسوق إلكتروني, fashion search, visual AI">
+    <meta name="author" content="Fashion Search Team">
+    <meta name="theme-color" content="#6366f1">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 20px;
-        }
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Fashion Search | البحث الذكي عن الأزياء بالصور">
+    <meta property="og:description"
+        content="ارفع صورة لأي قطعة ملابس وسيعثر نظامنا الذكي على أفضل القطع المشابهة في ثوانٍ.">
+    <meta property="og:image" content="assets/logo.svg">
 
-        h1 {
-            margin-bottom: 5px;
-        }
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Fashion Search | البحث الذكي عن الأزياء بالصور">
+    <meta property="twitter:description"
+        content="ارفع صورة لأي قطعة ملابس وسيعثر نظامنا الذكي على أفضل القطع المشابهة في ثوانٍ.">
 
-        button {
-            padding: 10px 16px;
-            margin: 4px;
-            cursor: pointer;
-        }
-
-        button.active {
-            background: #222;
-            color: white;
-        }
-
-        #canvasContainer {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            display: none;
-            width: fit-content;
-            max-width: 100%;
-        }
-
-        #imageCanvas {
-            display: block;
-            max-width: 800px;
-            max-height: 600px;
-            width: auto;
-            height: auto;
-            cursor: crosshair;
-        }
-
-        #toolbar {
-            margin-top: 20px;
-            display: none;
-        }
-
-        #results {
-            display: grid;
-            grid-template-columns:
-                repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .result {
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .result img {
-            width: 100%;
-            height: 180px;
-            object-fit: contain;
-        }
-
-        .score {
-            margin-top: 8px;
-            font-weight: bold;
-        }
-
-        #status {
-            font-weight: bold;
-            margin-top: 15px;
-        }
-
-        #aiHelp {
-            margin-left: 10px;
-            font-size: 14px;
-        }
-
-        .section {
-            margin: 20px 0;
-        }
-    </style>
+    <title>Fashion Search | البحث الذكي عن الأزياء بالذكاء الاصطناعي</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="styles/styles.css?v=3">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
 
-<h1>AI Visual Search</h1>
-<p>Graduation Project Prototype</p>
-
-<div class="section">
-    <button onclick="reindex()">
-        Build / Refresh Catalog
-    </button>
-</div>
-
-<div class="section">
-    <input
-        type="file"
-        id="imageInput"
-        accept="image/*"
-    >
-</div>
-
-
-<div id="toolbar">
-
-    <strong>Select product:</strong>
-
-    <br><br>
-
-    <button
-        id="aiButton"
-        onclick="setMode('ai')"
-    >
-        ✨ AI Select
-    </button>
-
-    <button onclick="acceptAISelection()">
-        ✓ Accept AI Selection
-    </button>
-
-    <button onclick="resetAISelection()">
-        ↺ Reset AI
-    </button>
-
-    <span id="aiHelp"></span>
-
-    <br><br>
-
-    <button
-        id="rectButton"
-        onclick="setMode('rectangle')"
-    >
-        Rectangle
-    </button>
-
-    <button
-        id="polyButton"
-        onclick="setMode('polygon')"
-    >
-        Polygon
-    </button>
-
-    <button
-        id="freeButton"
-        onclick="setMode('free')"
-    >
-        Free Draw
-    </button>
-
-    <button onclick="finishPolygon()">
-        Finish Polygon
-    </button>
-
-    <button onclick="clearSelection()">
-        Clear Manual Selection
-    </button>
-
-    <br><br>
-
-    <button onclick="searchFullImage()">
-        Search Full Image
-    </button>
-
-    <button onclick="searchSelectedArea()">
-        Search Selected Area
-    </button>
-
-</div>
-
-
-<div id="canvasContainer">
-    <canvas id="imageCanvas"></canvas>
-</div>
-
-
-<p id="status"></p>
-
-<div id="results"></div>
-
-
-<script>
-
-/* =========================================================
-   DOM
-========================================================= */
-
-const imageInput =
-    document.getElementById("imageInput");
-
-const canvas =
-    document.getElementById("imageCanvas");
-
-const ctx =
-    canvas.getContext("2d");
-
-const canvasContainer =
-    document.getElementById("canvasContainer");
-
-const toolbar =
-    document.getElementById("toolbar");
-
-const statusText =
-    document.getElementById("status");
-
-const results =
-    document.getElementById("results");
-
-const aiHelp =
-    document.getElementById("aiHelp");
-
-
-/* =========================================================
-   IMAGE STATE
-========================================================= */
-
-let originalImage =
-    new Image();
-
-let originalFile =
-    null;
-
-let mode =
-    null;
-
-
-/* =========================================================
-   MANUAL SELECTION STATE
-========================================================= */
-
-let drawing =
-    false;
-
-let startPoint =
-    null;
-
-let rectangle =
-    null;
-
-let polygonPoints =
-    [];
-
-let polygonFinished =
-    false;
-
-let freePoints =
-    [];
-
-
-/* =========================================================
-   AI SELECTION STATE
-========================================================= */
-
-let aiOverlay =
-    null;
-
-let aiCutout =
-    null;
-
-let aiPoints =
-    [];
-
-let aiLabels =
-    [];
-
-let aiAccepted =
-    false;
-
-let aiBusy =
-    false;
-
-
-/* =========================================================
-   LOAD IMAGE
-========================================================= */
-
-imageInput.addEventListener(
-    "change",
-    function () {
-
-        const file =
-            this.files[0];
-
-        if (!file)
-            return;
-
-        originalFile =
-            file;
-
-        resetEverythingForNewImage();
-
-        const url =
-            URL.createObjectURL(file);
-
-        originalImage.onload =
-            function () {
-
-                canvas.width =
-                    originalImage.naturalWidth;
-
-                canvas.height =
-                    originalImage.naturalHeight;
-
-                canvasContainer.style.display =
-                    "block";
-
-                toolbar.style.display =
-                    "block";
-
-                drawScene();
-
-                statusText.innerText =
-                    "Image loaded. Choose a selection method.";
-            };
-
-        originalImage.src =
-            url;
-    }
-);
-
-
-/* =========================================================
-   RESET WHEN NEW IMAGE IS LOADED
-========================================================= */
-
-function resetEverythingForNewImage() {
-
-    mode =
-        null;
-
-    drawing =
-        false;
-
-    startPoint =
-        null;
-
-    rectangle =
-        null;
-
-    polygonPoints =
-        [];
-
-    polygonFinished =
-        false;
-
-    freePoints =
-        [];
-
-    aiOverlay =
-        null;
-
-    aiCutout =
-        null;
-
-    aiPoints =
-        [];
-
-    aiLabels =
-        [];
-
-    aiAccepted =
-        false;
-
-    aiBusy =
-        false;
-
-    aiHelp.innerText =
-        "";
-
-    document
-        .querySelectorAll("#toolbar button")
-        .forEach(
-            button =>
-                button.classList.remove("active")
-        );
-
-    results.innerHTML =
-        "";
-}
-
-
-/* =========================================================
-   SELECTION MODE
-========================================================= */
-
-function setMode(newMode) {
-
-    mode =
-        newMode;
-
-    document
-        .querySelectorAll("#toolbar button")
-        .forEach(
-            button =>
-                button.classList.remove("active")
-        );
-
-
-    if (mode === "ai") {
-
-        document
-            .getElementById("aiButton")
-            .classList.add("active");
-
-        aiHelp.innerText =
-            "🟢 Left click = include   🔴 Right click = exclude";
-    }
-
-
-    else if (mode === "rectangle") {
-
-        document
-            .getElementById("rectButton")
-            .classList.add("active");
-
-        aiHelp.innerText =
-            "";
-    }
-
-
-    else if (mode === "polygon") {
-
-        document
-            .getElementById("polyButton")
-            .classList.add("active");
-
-        aiHelp.innerText =
-            "";
-    }
-
-
-    else if (mode === "free") {
-
-        document
-            .getElementById("freeButton")
-            .classList.add("active");
-
-        aiHelp.innerText =
-            "";
-    }
-
-    drawScene();
-}
-
-
-/* =========================================================
-   CANVAS COORDINATES
-========================================================= */
-
-function getPoint(event) {
-
-    const rect =
-        canvas.getBoundingClientRect();
-
-    return {
-
-        x:
-            (event.clientX - rect.left)
-            * canvas.width
-            / rect.width,
-
-        y:
-            (event.clientY - rect.top)
-            * canvas.height
-            / rect.height
-
-    };
-}
-
-
-/* =========================================================
-   LEFT CLICK
-========================================================= */
-
-canvas.addEventListener(
-    "mousedown",
-    function (event) {
-
-        const point =
-            getPoint(event);
-
-
-        /* -------------------------
-           AI POSITIVE POINT
-        ------------------------- */
-
-        if (mode === "ai") {
-
-    // Left mouse button only
-    if (event.button !== 0) {
-        return;
-    }
-
-    addAIPoint(
-        point.x,
-        point.y,
-        1
-    );
-
-    return;
-}
-
-
-        /* -------------------------
-           RECTANGLE
-        ------------------------- */
-
-        if (mode === "rectangle") {
-
-            drawing =
-                true;
-
-            startPoint =
-                point;
-
-            rectangle = {
-                x: point.x,
-                y: point.y,
-                width: 0,
-                height: 0
-            };
-
-            return;
-        }
-
-
-        /* -------------------------
-           POLYGON
-        ------------------------- */
-
-        if (mode === "polygon") {
-
-            if (polygonFinished) {
-
-                polygonPoints =
-                    [];
-
-                polygonFinished =
-                    false;
-            }
-
-            polygonPoints.push(
-                point
-            );
-
-            drawScene();
-
-            return;
-        }
-
-
-        /* -------------------------
-           FREE DRAW
-        ------------------------- */
-
-        if (mode === "free") {
-
-            drawing =
-                true;
-
-            freePoints =
-                [point];
-
-            drawScene();
-        }
-    }
-);
-
-
-/* =========================================================
-   RIGHT CLICK = AI NEGATIVE POINT
-========================================================= */
-
-canvas.addEventListener(
-    "contextmenu",
-    function (event) {
-
-        if (mode !== "ai")
-            return;
-
-        event.preventDefault();
-
-        const point =
-            getPoint(event);
-
-        addAIPoint(
-            point.x,
-            point.y,
-            0
-        );
-    }
-);
-
-
-/* =========================================================
-   MOUSE MOVE
-========================================================= */
-
-canvas.addEventListener(
-    "mousemove",
-    function (event) {
-
-        if (!drawing)
-            return;
-
-        const point =
-            getPoint(event);
-
-
-        if (mode === "rectangle") {
-
-            rectangle.width =
-                point.x
-                - startPoint.x;
-
-            rectangle.height =
-                point.y
-                - startPoint.y;
-        }
-
-
-        else if (mode === "free") {
-
-            freePoints.push(
-                point
-            );
-        }
-
-
-        drawScene();
-    }
-);
-
-
-/* =========================================================
-   MOUSE UP
-========================================================= */
-
-canvas.addEventListener(
-    "mouseup",
-    function () {
-
-        drawing =
-            false;
-    }
-);
-
-
-canvas.addEventListener(
-    "mouseleave",
-    function () {
-
-        drawing =
-            false;
-    }
-);
-
-
-/* =========================================================
-   POLYGON
-========================================================= */
-
-function finishPolygon() {
-
-    if (
-        polygonPoints.length >= 3
-    ) {
-
-        polygonFinished =
-            true;
-
-        drawScene();
-    }
-
-    else {
-
-        alert(
-            "Polygon needs at least 3 points."
-        );
-    }
-}
-
-
-/* =========================================================
-   CLEAR MANUAL SELECTION
-========================================================= */
-
-function clearSelection() {
-
-    rectangle =
-        null;
-
-    polygonPoints =
-        [];
-
-    polygonFinished =
-        false;
-
-    freePoints =
-        [];
-
-    drawing =
-        false;
-
-    drawScene();
-
-    statusText.innerText =
-        "Manual selection cleared.";
-}
-
-
-/* =========================================================
-   DRAW EVERYTHING
-========================================================= */
-
-function drawScene() {
-
-    if (!originalImage.src)
-        return;
-
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    ctx.drawImage(
-        originalImage,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    /* =====================================================
-       AI MASK
-    ===================================================== */
-
-    if (
-        aiOverlay
-        && mode === "ai"
-    ) {
-
-        ctx.drawImage(
-            aiOverlay,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-    }
-
-
-    /* =====================================================
-       AI POINTS
-    ===================================================== */
-
-    if (mode === "ai") {
-
-        for (
-            let i = 0;
-            i < aiPoints.length;
-            i++
-        ) {
-
-            const point =
-                aiPoints[i];
-
-            const label =
-                aiLabels[i];
-
-
-            ctx.beginPath();
-
-            ctx.arc(
-                point[0],
-                point[1],
-                Math.max(
-                    7,
-                    canvas.width / 130
-                ),
-                0,
-                Math.PI * 2
-            );
-
-
-            ctx.fillStyle =
-                label === 1
-                    ? "lime"
-                    : "red";
-
-            ctx.fill();
-
-
-            ctx.lineWidth =
-                Math.max(
-                    2,
-                    canvas.width / 500
-                );
-
-            ctx.strokeStyle =
-                "white";
-
-            ctx.stroke();
-        }
-    }
-
-
-    /* =====================================================
-       MANUAL STYLE
-    ===================================================== */
-
-    ctx.lineWidth =
-        Math.max(
-            3,
-            canvas.width / 300
-        );
-
-    ctx.strokeStyle =
-        "red";
-
-    ctx.fillStyle =
-        "rgba(255,0,0,0.15)";
-
-
-    /* =====================================================
-       RECTANGLE
-    ===================================================== */
-
-    if (
-        mode === "rectangle"
-        && rectangle
-    ) {
-
-        ctx.strokeRect(
-            rectangle.x,
-            rectangle.y,
-            rectangle.width,
-            rectangle.height
-        );
-
-        ctx.fillRect(
-            rectangle.x,
-            rectangle.y,
-            rectangle.width,
-            rectangle.height
-        );
-    }
-
-
-    /* =====================================================
-       POLYGON
-    ===================================================== */
-
-    if (
-        mode === "polygon"
-        && polygonPoints.length > 0
-    ) {
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            polygonPoints[0].x,
-            polygonPoints[0].y
-        );
-
-
-        for (
-            let i = 1;
-            i < polygonPoints.length;
-            i++
-        ) {
-
-            ctx.lineTo(
-                polygonPoints[i].x,
-                polygonPoints[i].y
-            );
-        }
-
-
-        if (polygonFinished) {
-
-            ctx.closePath();
-
-            ctx.fill();
-        }
-
-
-        ctx.stroke();
-
-
-        polygonPoints.forEach(
-            point => {
-
-                ctx.beginPath();
-
-                ctx.arc(
-                    point.x,
-                    point.y,
-                    Math.max(
-                        5,
-                        canvas.width / 180
-                    ),
-                    0,
-                    Math.PI * 2
-                );
-
-                ctx.fillStyle =
-                    "red";
-
-                ctx.fill();
-            }
-        );
-    }
-
-
-    /* =====================================================
-       FREE DRAW
-    ===================================================== */
-
-    if (
-        mode === "free"
-        && freePoints.length > 1
-    ) {
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            freePoints[0].x,
-            freePoints[0].y
-        );
-
-
-        for (
-            let i = 1;
-            i < freePoints.length;
-            i++
-        ) {
-
-            ctx.lineTo(
-                freePoints[i].x,
-                freePoints[i].y
-            );
-        }
-
-
-        ctx.stroke();
-    }
-}
-
-
-/* =========================================================
-   AI - ADD POINT
-========================================================= */
-
-async function addAIPoint(
-    x,
-    y,
-    label
-) {
-
-    if (!originalFile)
-        return;
-
-
-    if (aiBusy) {
-
-        statusText.innerText =
-            "AI is still processing the previous point...";
-
-        return;
-    }
-
-
-    aiPoints.push([
-        x,
-        y
-    ]);
-
-
-    aiLabels.push(
-        label
-    );
-
-
-    aiAccepted =
-        false;
-
-
-    drawScene();
-
-
-    await updateAISelection();
-}
-
-
-/* =========================================================
-   AI - REQUEST NEW MASK
-========================================================= */
-
-async function updateAISelection() {
-
-    if (
-        !originalFile
-        || aiPoints.length === 0
-    )
-        return;
-
-
-    aiBusy =
-        true;
-
-
-    statusText.innerText =
-        "SAM2 is refining the selection...";
-
-
-    const formData =
-        new FormData();
-
-
-    formData.append(
-        "image",
-        originalFile
-    );
-
-
-    formData.append(
-        "points",
-        JSON.stringify(aiPoints)
-    );
-
-
-    formData.append(
-        "labels",
-        JSON.stringify(aiLabels)
-    );
-
-
-    try {
-
-        const response =
-            await fetch(
-                "/api/segment",
-                {
-                    method: "POST",
-                    body: formData
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            statusText.innerText =
-                data.detail;
-
-            return;
-        }
-
-
-        aiOverlay =
-            new Image();
-
-
-        aiOverlay.onload =
-            function () {
-
-                drawScene();
-            };
-
-
-        aiOverlay.src =
-            "data:image/png;base64,"
-            + data.overlay;
-
-
-        aiCutout =
-            "data:image/png;base64,"
-            + data.cutout;
-
-
-        statusText.innerText =
-            "AI selection ready - score: "
-            + (
-                data.score * 100
-            ).toFixed(1)
-            + "%";
-    }
-
-
-    catch (error) {
-
-        statusText.innerText =
-            "AI selection failed: "
-            + error;
-    }
-
-
-    finally {
-
-        aiBusy =
-            false;
-    }
-}
-
-
-/* =========================================================
-   AI - ACCEPT
-========================================================= */
-
-function acceptAISelection() {
-
-    if (!aiCutout) {
-
-        alert(
-            "Create an AI selection first."
-        );
-
-        return;
-    }
-
-
-    aiAccepted =
-        true;
-
-
-    statusText.innerText =
-        "AI selection accepted. Ready to search.";
-}
-
-
-/* =========================================================
-   AI - RESET
-========================================================= */
-
-function resetAISelection() {
-
-    aiPoints =
-        [];
-
-    aiLabels =
-        [];
-
-    aiOverlay =
-        null;
-
-    aiCutout =
-        null;
-
-    aiAccepted =
-        false;
-
-    aiBusy =
-        false;
-
-
-    drawScene();
-
-
-    statusText.innerText =
-        "AI selection reset.";
-}
-
-
-/* =========================================================
-   MANUAL SELECTION BOUNDS
-========================================================= */
-
-function getBounds(points) {
-
-    const xs =
-        points.map(
-            p => p.x
-        );
-
-    const ys =
-        points.map(
-            p => p.y
-        );
-
-
-    return {
-
-        x:
-            Math.min(...xs),
-
-        y:
-            Math.min(...ys),
-
-        width:
-            Math.max(...xs)
-            - Math.min(...xs),
-
-        height:
-            Math.max(...ys)
-            - Math.min(...ys)
-
-    };
-}
-
-
-/* =========================================================
-   CREATE IMAGE FROM MANUAL SELECTION
-========================================================= */
-
-function createSelectedImage() {
-
-    /* =====================================================
-       RECTANGLE
-    ===================================================== */
-
-    if (
-        mode === "rectangle"
-        && rectangle
-    ) {
-
-        let x =
-            rectangle.width < 0
-                ? rectangle.x
-                    + rectangle.width
-                : rectangle.x;
-
-
-        let y =
-            rectangle.height < 0
-                ? rectangle.y
-                    + rectangle.height
-                : rectangle.y;
-
-
-        let width =
-            Math.abs(
-                rectangle.width
-            );
-
-
-        let height =
-            Math.abs(
-                rectangle.height
-            );
-
-
-        if (
-            width < 5
-            || height < 5
-        )
-            return null;
-
-
-        const crop =
-            document.createElement(
-                "canvas"
-            );
-
-
-        crop.width =
-            Math.ceil(width);
-
-        crop.height =
-            Math.ceil(height);
-
-
-        const cropCtx =
-            crop.getContext("2d");
-
-
-        cropCtx.drawImage(
-            originalImage,
-
-            x,
-            y,
-            width,
-            height,
-
-            0,
-            0,
-            crop.width,
-            crop.height
-        );
-
-
-        return crop;
-    }
-
-
-    /* =====================================================
-       POLYGON / FREE DRAW
-    ===================================================== */
-
-    let points =
-        null;
-
-
-    if (
-        mode === "polygon"
-        && polygonFinished
-        && polygonPoints.length >= 3
-    ) {
-
-        points =
-            polygonPoints;
-    }
-
-
-    if (
-        mode === "free"
-        && freePoints.length >= 3
-    ) {
-
-        points =
-            freePoints;
-    }
-
-
-    if (!points)
-        return null;
-
-
-    const bounds =
-        getBounds(points);
-
-
-    const crop =
-        document.createElement(
-            "canvas"
-        );
-
-
-    crop.width =
-        Math.max(
-            1,
-            Math.ceil(
-                bounds.width
-            )
-        );
-
-
-    crop.height =
-        Math.max(
-            1,
-            Math.ceil(
-                bounds.height
-            )
-        );
-
-
-    const cropCtx =
-        crop.getContext("2d");
-
-
-    cropCtx.fillStyle =
-        "white";
-
-
-    cropCtx.fillRect(
-        0,
-        0,
-        crop.width,
-        crop.height
-    );
-
-
-    cropCtx.save();
-
-
-    cropCtx.beginPath();
-
-
-    cropCtx.moveTo(
-        points[0].x
-        - bounds.x,
-
-        points[0].y
-        - bounds.y
-    );
-
-
-    for (
-        let i = 1;
-        i < points.length;
-        i++
-    ) {
-
-        cropCtx.lineTo(
-            points[i].x
-            - bounds.x,
-
-            points[i].y
-            - bounds.y
-        );
-    }
-
-
-    cropCtx.closePath();
-
-    cropCtx.clip();
-
-
-    cropCtx.drawImage(
-        originalImage,
-        -bounds.x,
-        -bounds.y
-    );
-
-
-    cropCtx.restore();
-
-
-    return crop;
-}
-
-
-/* =========================================================
-   SEARCH SELECTED AREA
-========================================================= */
-
-async function searchSelectedArea() {
-
-    /* =====================================================
-       AI SELECTION
-    ===================================================== */
-
-    if (mode === "ai") {
-
-        if (!aiCutout) {
-
-            alert(
-                "Use AI Select first."
-            );
-
-            return;
-        }
-
-
-        if (!aiAccepted) {
-
-            alert(
-                "Accept the AI selection first."
-            );
-
-            return;
-        }
-
-
-        const response =
-            await fetch(
-                aiCutout
-            );
-
-
-        const blob =
-            await response.blob();
-
-
-        await sendSearch(
-            blob,
-            "ai-selected-product.png"
-        );
-
-
-        return;
-    }
-
-
-    /* =====================================================
-       MANUAL SELECTION
-    ===================================================== */
-
-    const selectedCanvas =
-        createSelectedImage();
-
-
-    if (!selectedCanvas) {
-
-        alert(
-            "Select a product area first."
-        );
-
-        return;
-    }
-
-
-    selectedCanvas.toBlob(
-        async function (blob) {
-
-            await sendSearch(
-                blob,
-                "selected-product.jpg"
-            );
-
-        },
-
-        "image/jpeg",
-        0.95
-    );
-}
-
-
-/* =========================================================
-   SEARCH FULL IMAGE
-========================================================= */
-
-async function searchFullImage() {
-
-    if (!originalFile) {
-
-        alert(
-            "Choose an image first."
-        );
-
-        return;
-    }
-
-
-    await sendSearch(
-        originalFile,
-        originalFile.name
-    );
-}
-
-
-/* =========================================================
-   SEND IMAGE TO SEARCH API
-========================================================= */
-
-async function sendSearch(
-    file,
-    fileName
-) {
-
-    const formData =
-        new FormData();
-
-
-    formData.append(
-        "image",
-        file,
-        fileName
-    );
-
-
-    statusText.innerText =
-        "AI is searching...";
-
-
-    results.innerHTML =
-        "";
-
-
-    const response =
-        await fetch(
-            "/api/search?top_k=8",
-            {
-                method: "POST",
-                body: formData
-            }
-        );
-
-
-    const data =
-        await response.json();
-
-
-    if (!response.ok) {
-
-        statusText.innerText =
-            data.detail;
-
-        return;
-    }
-
-
-    statusText.innerText =
-        "Search completed.";
-
-
-    data.results.forEach(
-        item => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "result";
-
-
-            card.innerHTML = `
-
-                <img src="${item.url}">
-
-                <div class="score">
-
-                    Similarity:
-                    ${(item.score * 100).toFixed(2)}%
-
+    <!-- Animated Background Particles & Mesh -->
+    <div class="bg-particles" aria-hidden="true">
+        <div class="particle p1"></div>
+        <div class="particle p2"></div>
+        <div class="particle p3"></div>
+        <div class="particle p4"></div>
+        <div class="particle p5"></div>
+        <div class="glow-orb glow-1"></div>
+        <div class="glow-orb glow-2"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="header-content">
+            <a href="index.html" class="logo" aria-label="الصفحة الرئيسية - Fashion Search">
+                <div class="logo-icon-wrap">
+                    <svg class="logo-svg-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true">
+                        <!-- Hanger Top Hook -->
+                        <path d="M18 7 C18 5 19.8 4 21 5.2 C22.2 6.4 20.2 8 18 9" stroke="white" stroke-width="2.2"
+                            stroke-linecap="round" />
+                        <!-- Garment / Hanger Base -->
+                        <path
+                            d="M9 16.5 L18 10.5 L27 16.5 C28.2 17.3 27.8 18.5 26.5 18.5 H9.5 C8.2 18.5 7.8 17.3 9 16.5 Z"
+                            fill="white" />
+                        <!-- AI Optic Lens -->
+                        <circle cx="23" cy="23" r="6.5" fill="#0f172a" stroke="white" stroke-width="2" />
+                        <!-- Lens Handle -->
+                        <path d="M28 28 L31.5 31.5" stroke="white" stroke-width="2.4" stroke-linecap="round" />
+                        <!-- AI Sparkle Dot -->
+                        <circle cx="23" cy="23" r="2.2" fill="#ec4899" />
+                    </svg>
+                </div>
+                <div class="logo-text-group">
+                    <div class="logo-name-row">
+                        <span class="logo-name">Fashion Search</span>
+                        <span class="logo-ai-badge"><i class="fas fa-sparkles"></i> AI</span>
+                    </div>
+                    <span class="logo-tagline"><i class="fas fa-microchip"></i> محرك بحث بصري ذكي</span>
+                </div>
+            </a>
+            <nav class="header-nav" aria-label="روابط التنقل الرئيسية">
+                <a href="about.html" class="nav-pill" aria-label="عن الخدمة ومميزاتها">
+                    <i class="fas fa-circle-info"></i>
+                    <span>عن الخدمة</span>
+                </a>
+                <button id="about-btn" class="nav-pill" aria-label="كيفية الاستخدام والمساعدة" type="button">
+                    <i class="fas fa-circle-question"></i>
+                    <span>مساعدة</span>
+                </button>
+                <button id="theme-toggle" class="btn-icon" aria-label="تبديل الوضع المظلم / المضيء" title="تبديل الوضع"
+                    type="button">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+
+        <!-- Hero Section -->
+        <section class="hero-section" aria-label="قسم الترحيب">
+            <div class="hero-badge">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                <span>مدعوم بالذكاء الاصطناعي للأزياء</span>
+                <span class="badge-pulse"></span>
+            </div>
+            <h1 class="hero-title">
+                اعثر على
+                <span class="gradient-text">أزيائك المثالية</span>
+                بصورة واحدة
+            </h1>
+            <p class="hero-description">
+                ارفع صورة لأي قطعة ملابس وسيقوم نموذج الرؤية الحاسوبية بتحليل الألوان والقصات والتفاصيل للعثور على أفضل
+                القطع المشابهة في ثوانٍ معدودة.
+            </p>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-icon-wrap"><i class="fas fa-layer-group"></i></div>
+                    <span class="stat-num">SAM2</span>
+                    <span class="stat-label">تحديد القطعة</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-icon-wrap"><i class="fas fa-gauge-high"></i></div>
+                    <span class="stat-num">SigLIP2</span>
+                    <span class="stat-label">تمثيل بصري</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-icon-wrap"><i class="fas fa-bullseye"></i></div>
+                    <span class="stat-num">90.9%</span>
+                    <span class="stat-label">P@1 — Clean</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="stat-icon-wrap"><i class="fas fa-brain-circuit"></i></div>
+                    <span class="stat-num">FAISS</span>
+                    <span class="stat-label">بحث متجهي</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload Section -->
+        <section class="upload-section" aria-labelledby="upload-title">
+            <h2 id="upload-title" class="visually-hidden">رفع صورة للبحث</h2>
+            <div class="upload-card">
+
+                <!-- Drop Zone -->
+                <div id="drop-zone" class="drop-zone" role="button" tabindex="0"
+                    aria-label="منطقة رفع الصور - اسحب وأفلت أو انقر للاختيار">
+                    <div class="drop-zone-content" id="drop-zone-content">
+                        <div class="drop-icon-wrapper">
+                            <div class="drop-ring drop-ring-1"></div>
+                            <div class="drop-ring drop-ring-2"></div>
+                            <i class="fas fa-cloud-arrow-up drop-icon"></i>
+                        </div>
+                        <p class="drop-text">اسحب الصورة هنا أو انقر للاختيار</p>
+                        <p class="drop-hint">
+                            <i class="fas fa-images"></i>
+                            PNG, JPG, JPEG, WebP — حد أقصى 8MB
+                        </p>
+
+                        <div class="drop-action-buttons">
+                            <button type="button" class="drop-cta-btn" id="browse-files-btn"
+                                aria-label="تصفح ملفات الجهاز">
+                                <i class="fas fa-folder-open"></i>
+                                تصفح الملفات
+                            </button>
+                            <button type="button" class="drop-cta-btn btn-camera-trigger" id="camera-btn"
+                                aria-label="التقاط بالكاميرا">
+                                <i class="fas fa-camera-retro"></i>
+                                تصوير بالكاميرا
+                            </button>
+                        </div>
+
+                        <div class="paste-hint-pill">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span>أو اضغط <kbd>Ctrl</kbd> + <kbd>V</kbd> للصق صورة مباشرة</span>
+                        </div>
+                    </div>
+
+                    <div class="preview-container" id="preview-container" hidden>
+                        <div class="preview-image-wrap" id="preview-image-wrap">
+                            <img id="preview-image" class="preview-image" alt="معاينة الصورة المرفوعة">
+                            <img id="segmentation-mask" class="segmentation-mask" alt="قناع تحديد القطعة بالذكاء الاصطناعي" hidden>
+                            <canvas id="selection-canvas" class="selection-canvas" aria-label="منطقة التحديد اليدوي" hidden></canvas>
+                            <div id="ai-points-layer" class="ai-points-layer" aria-hidden="true"></div>
+                            <div class="preview-badge" id="preview-badge">
+                                <i class="fas fa-circle-check"></i>
+                                <span>تم اختيار الصورة</span>
+                            </div>
+                        </div>
+                        <button id="remove-image" class="btn-remove" aria-label="إزالة الصورة المحددة" type="button"
+                            title="إزالة الصورة">
+                            <i class="fas fa-trash-can"></i>
+                        </button>
+                    </div>
+                    <input type="file" id="file-input" accept="image/png,image/jpeg,image/jpg,image/webp" hidden>
                 </div>
 
-            `;
+                <!-- Product Selection -->
+                <div id="selection-panel" class="selection-panel" hidden>
+                    <div class="selection-panel-header">
+                        <div>
+                            <h3 class="selection-title">
+                                <i class="fas fa-object-group"></i>
+                                اختر طريقة البحث والتحديد
+                            </h3>
+                            <p class="selection-subtitle">ابحث بالصورة كاملة، أو استخدم التحديد الذكي SAM2، أو حدد المنطقة يدويًا.</p>
+                        </div>
+                        <div class="search-mode-toggle" role="radiogroup" aria-label="طريقة البحث في الصورة">
+                            <button id="mode-full-btn" class="search-mode-btn active" type="button" role="radio" aria-checked="true">
+                                <i class="fas fa-image"></i>
+                                الصورة كاملة
+                            </button>
+                            <button id="mode-ai-btn" class="search-mode-btn" type="button" role="radio" aria-checked="false">
+                                <i class="fas fa-wand-magic-sparkles"></i>
+                                تحديد ذكي SAM2
+                            </button>
+                            <button id="mode-rect-btn" class="search-mode-btn" type="button" role="radio" aria-checked="false">
+                                <i class="far fa-square"></i>
+                                مستطيل
+                            </button>
+                            <button id="mode-poly-btn" class="search-mode-btn" type="button" role="radio" aria-checked="false">
+                                <i class="fas fa-draw-polygon"></i>
+                                مضلع
+                            </button>
+                            <button id="mode-free-btn" class="search-mode-btn" type="button" role="radio" aria-checked="false">
+                                <i class="fas fa-pencil"></i>
+                                رسم حر
+                            </button>
+                        </div>
+                    </div>
 
+                    <div id="ai-selection-workspace" class="ai-selection-workspace" hidden>
+                        <div class="ai-instruction">
+                            <i class="fas fa-computer-mouse"></i>
+                            <span>كليك يسار لإضافة نقطة مطلوبة، وكليك يمين لإضافة نقطة استبعاد حمراء. يمكنك إضافة أكثر من نقطة قبل اعتماد التحديد.</span>
+                        </div>
+                        <div id="selection-status" class="selection-status" aria-live="polite">
+                            في انتظار تحديد القطعة...
+                        </div>
+                        <div id="selection-result" class="selection-result" hidden>
+                            <div class="cutout-preview-wrap">
+                                <img id="cutout-preview" class="cutout-preview" alt="القطعة التي حددها SAM2">
+                            </div>
+                            <div class="selection-result-info">
+                                <span class="selection-result-label">نتيجة SAM2</span>
+                                <strong id="selection-confidence">—</strong>
+                                <span>تأكد من أن القناع يغطي القطعة المطلوبة قبل اعتمادها.</span>
+                            </div>
+                        </div>
+                        <div class="selection-actions">
+                            <button id="accept-selection-btn" class="selection-action-btn primary" type="button" disabled>
+                                <i class="fas fa-check"></i>
+                                اعتماد القطعة
+                            </button>
+                            <button id="reset-selection-btn" class="selection-action-btn" type="button" disabled>
+                                <i class="fas fa-rotate-left"></i>
+                                إعادة التحديد
+                            </button>
+                        </div>
+                    </div>
 
-            results.appendChild(
-                card
-            );
-        }
-    );
-}
+                    <div id="manual-selection-workspace" class="ai-selection-workspace" hidden>
+                        <div class="ai-instruction">
+                            <i class="fas fa-crop-simple"></i>
+                            <span id="manual-selection-instruction">حدد المنطقة المطلوبة على الصورة أعلاه.</span>
+                        </div>
+                        <div id="manual-selection-status" class="selection-status" aria-live="polite">
+                            في انتظار التحديد...
+                        </div>
+                        <div class="selection-actions">
+                            <button id="finish-polygon-btn" class="selection-action-btn primary" type="button" hidden disabled>
+                                <i class="fas fa-check"></i>
+                                إنهاء المضلع
+                            </button>
+                            <button id="clear-manual-selection-btn" class="selection-action-btn" type="button" disabled>
+                                <i class="fas fa-eraser"></i>
+                                مسح التحديد
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Quick Try Samples Bar -->
+                <div class="samples-container" id="samples-container">
+                    <div class="samples-title">
+                        <i class="fas fa-wand-magic"></i>
+                        <span>أو جرب البحث السريع بإحدى العينات الجاهزة:</span>
+                    </div>
+                    <div class="samples-grid">
+                        <button type="button" class="sample-chip"
+                            data-img="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80"
+                            data-label="تيشيرت أبيض">
+                            <span class="sample-thumb" aria-hidden="true">👕</span>
+                            <span class="sample-label">تيشيرت كاجوال</span>
+                        </button>
+                        <button type="button" class="sample-chip"
+                            data-img="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&q=80"
+                            data-label="فستان سهرة">
+                            <span class="sample-thumb" aria-hidden="true">👗</span>
+                            <span class="sample-label">فستان صيفي</span>
+                        </button>
+                        <button type="button" class="sample-chip"
+                            data-img="https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=400&q=80"
+                            data-label="بنطلون جينز">
+                            <span class="sample-thumb" aria-hidden="true">👖</span>
+                            <span class="sample-label">جينز كلاسيك</span>
+                        </button>
+                        <button type="button" class="sample-chip"
+                            data-img="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&q=80"
+                            data-label="جاكيت جلدي">
+                            <span class="sample-thumb" aria-hidden="true">🧥</span>
+                            <span class="sample-label">جاكيت جلدي</span>
+                        </button>
+                    </div>
+                </div>
 
-/* =========================================================
-   REINDEX CATALOG
-========================================================= */
+                <!-- Progress Bar -->
+                <div id="progress-container" class="progress-container" hidden>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <span id="progress-text" class="progress-text">
+                        <i class="fas fa-circle-notch fa-spin"></i>
+                        جاري الرفع...
+                    </span>
+                </div>
 
-async function reindex() {
+                <!-- Options Row -->
+                <div class="options-row">
+                    <div class="option-group">
+                        <label for="top-k" class="option-label">
+                            <i class="fas fa-arrow-down-9-1"></i>
+                            عدد النتائج:
+                        </label>
+                        <select id="top-k" class="select-input">
+                            <option value="3">3 نتائج</option>
+                            <option value="5">5 نتائج</option>
+                            <option value="8" selected>8 نتائج</option>
+                            <option value="10">10 نتائج</option>
+                            <option value="20">20 نتيجة</option>
+                        </select>
+                    </div>
 
-    statusText.innerText =
-        "Building catalog index...";
+                    <div class="option-group">
+                        <label class="option-label">
+                            <i class="fas fa-table-cells-large"></i>
+                            طريقة العرض:
+                        </label>
+                        <div class="view-toggle" role="radiogroup" aria-label="طريقة عرض النتائج">
+                            <button id="view-grid" class="view-btn active" data-view="grid" role="radio"
+                                aria-checked="true" title="عرض شبكي" type="button">
+                                <i class="fas fa-table-cells"></i>
+                            </button>
+                            <button id="view-list" class="view-btn" data-view="list" role="radio" aria-checked="false"
+                                title="عرض قائمة" type="button">
+                                <i class="fas fa-list-ul"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Search Button -->
+                <button id="search-btn" class="btn-search-main" disabled type="button">
+                    <span class="btn-search-inner">
+                        <i class="fas fa-magnifying-glass-chart"></i>
+                        <span>ابحث الآن بالذكاء الاصطناعي</span>
+                    </span>
+                    <span class="btn-glow-effect"></span>
+                </button>
 
-    const response =
-        await fetch(
-            "/api/reindex",
-            {
-                method: "POST"
-            }
-        );
+            </div>
+        </section>
 
+        <!-- Results Section -->
+        <section id="results-section" class="results-section" aria-labelledby="results-title" hidden>
+            <div class="results-header">
+                <div class="results-header-info">
+                    <h2 id="results-title" class="results-heading">
+                        <span class="results-heading-icon"><i class="fas fa-sparkles"></i></span>
+                        <span>نتائج البحث البصري</span>
+                        <span id="results-count" class="results-count"></span>
+                    </h2>
+                    <p class="results-subtitle">تم ترتيب القطع تنازلياً حسب أعلى نسبة تطابق وتوافق في المظهر</p>
+                </div>
 
-    const data =
-        await response.json();
+                <!-- Category Quick Filters -->
+                <div class="filter-chips-container" id="filter-chips">
+                    <button type="button" class="filter-chip active" data-category="all">
+                        <i class="fas fa-globe"></i> الكل
+                    </button>
+                    <button type="button" class="filter-chip" data-category="قمصان">
+                        <i class="fas fa-shirt"></i> قمصان وتيشيرتات
+                    </button>
+                    <button type="button" class="filter-chip" data-category="فساتين">
+                        <i class="fas fa-person-dress"></i> فساتين
+                    </button>
+                    <button type="button" class="filter-chip" data-category="بناطيل">
+                        <i class="fas fa-vest"></i> بناطيل وجينز
+                    </button>
+                    <button type="button" class="filter-chip" data-category="جاكيتات">
+                        <i class="fas fa-mitten"></i> جاكيتات ومعاطف
+                    </button>
+                </div>
+            </div>
 
+            <div id="results-grid" class="results-grid" role="list"></div>
+        </section>
 
-    if (response.ok) {
+        <!-- How It Works Section -->
+        <section class="how-it-works-section" aria-label="كيف يعمل النظام">
+            <div class="section-title-wrap">
+                <span class="section-tag"><i class="fas fa-gears"></i> خطوات بسيطة</span>
+                <h2 class="section-heading">كيف تعثر على قطعتك بـ 3 خطوات؟</h2>
+            </div>
+            <div class="steps-cards-grid">
+                <div class="step-card">
+                    <div class="step-card-num">01</div>
+                    <div class="step-card-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                    <h3 class="step-card-title">ارفع أو التقط صورة</h3>
+                    <p class="step-card-desc">اختر صورة لأي تصميم تريده من هاتفك أو التقطها مباشرة بكاميرتك أو الصقها.
+                    </p>
+                </div>
+                <div class="step-card">
+                    <div class="step-card-num">02</div>
+                    <div class="step-card-icon"><i class="fas fa-network-wired"></i></div>
+                    <h3 class="step-card-title">تحليل الذكاء الاصطناعي</h3>
+                    <p class="step-card-desc">تستخرج شبكتنا العصبية العميقة الخصائص البصرية والأنماط ودرجات الألوان.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-card-num">03</div>
+                    <div class="step-card-icon"><i class="fas fa-bag-shopping"></i></div>
+                    <h3 class="step-card-title">تطابقات فورية وشراء</h3>
+                    <p class="step-card-desc">تصفح أدق البدائل المشابهة بنسب تطابق عالية وروابط مباشرة للمنتجات.</p>
+                </div>
+            </div>
+        </section>
 
-        statusText.innerText =
-            "Indexed "
-            + data.indexed_images
-            + " images.";
-    }
+        <!-- Features Showcase Section -->
+        <section class="features-preview-section" aria-label="مميزات التقنية">
+            <div class="section-title-wrap">
+                <span class="section-tag"><i class="fas fa-wand-magic-sparkles"></i> مزايا المحرك</span>
+                <h2 class="section-heading">لماذا يعد هذا البحث البصري استثنائياً؟</h2>
+            </div>
+            <div class="features-preview-grid">
+                <div class="feat-box">
+                    <div class="feat-box-icon"><i class="fas fa-palette"></i></div>
+                    <h4>استشعار دقيق للألوان</h4>
+                    <p>فهم عميق لتدرجات الألوان والتطابق حتى مع اختلاف إضاءة الصورة المدخلة.</p>
+                </div>
+                <div class="feat-box">
+                    <div class="feat-box-icon"><i class="fas fa-scissors"></i></div>
+                    <h4>التعرف على القصات والنقشات</h4>
+                    <p>تمييز دقيق بين أنواع الياقات، الأكمام، الخطوط، والنقوش الهندسية.</p>
+                </div>
+                <div class="feat-box">
+                    <div class="feat-box-icon"><i class="fas fa-bolt"></i></div>
+                    <h4>استجابة فائقة السرعة</h4>
+                    <p>خوارزميات بحث متجهي متقدمة (Vector Search) تعطي النتائج في أجزاء من الثانية.</p>
+                </div>
+                <div class="feat-box">
+                    <div class="feat-box-icon"><i class="fas fa-mobile-screen-button"></i></div>
+                    <h4>تجربة استخدام متجاوبة</h4>
+                    <p>واجهة متطورة وسريعة مصممة للعمل بسلاسة على الهواتف والأجهزة اللوحية والحواسيب.</p>
+                </div>
+            </div>
+        </section>
 
+    </main>
 
-    else {
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo">
+                    <div class="logo-icon-wrap">
+                        <svg class="logo-svg-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            aria-hidden="true">
+                            <path d="M18 7 C18 5 19.8 4 21 5.2 C22.2 6.4 20.2 8 18 9" stroke="white" stroke-width="2.2"
+                                stroke-linecap="round" />
+                            <path
+                                d="M9 16.5 L18 10.5 L27 16.5 C28.2 17.3 27.8 18.5 26.5 18.5 H9.5 C8.2 18.5 7.8 17.3 9 16.5 Z"
+                                fill="white" />
+                            <circle cx="23" cy="23" r="6.5" fill="#0f172a" stroke="white" stroke-width="2" />
+                            <path d="M28 28 L31.5 31.5" stroke="white" stroke-width="2.4" stroke-linecap="round" />
+                            <circle cx="23" cy="23" r="2.2" fill="#ec4899" />
+                        </svg>
+                    </div>
+                    <div class="logo-text-group">
+                        <span class="logo-name">Fashion Search</span>
+                        <span class="logo-tagline">بحث بصري بالذكاء الاصطناعي</span>
+                    </div>
+                </div>
+                <p class="footer-desc">نظام متقدم للبحث البصري عن الأزياء مدعوم بالذكاء الاصطناعي للمتاجر الإلكترونية
+                    وتطبيقات التجارة الحديثة.</p>
+            </div>
+            <div class="footer-links">
+                <h4><i class="fas fa-link"></i> روابط سريعة</h4>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-chevron-left"></i> الرئيسية</a></li>
+                    <li><a href="about.html"><i class="fas fa-chevron-left"></i> عن النظام والمشروع</a></li>
+                    <li><a href="about.html#features"><i class="fas fa-chevron-left"></i> مزايا الخدمة</a></li>
+                    <li><a href="about.html#api"><i class="fas fa-chevron-left"></i> توثيق API</a></li>
+                </ul>
+            </div>
+            <div class="footer-shortcuts">
+                <h4><i class="fas fa-keyboard"></i> اختصارات سريعة</h4>
+                <div class="footer-kbd-list">
+                    <div class="footer-kbd-item"><kbd>Ctrl+V</kbd> <span>لصق صورة</span></div>
+                    <div class="footer-kbd-item"><kbd>Enter</kbd> <span>بدء البحث</span></div>
+                    <div class="footer-kbd-item"><kbd>Esc</kbd> <span>إغلاق النوافذ</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>
+                <i class="fas fa-heart footer-heart"></i>
+                مشروع التخرج — Visual Fashion Search 2025 | صُمم بعناية وتطوير متكامل
+            </p>
+        </div>
+    </footer>
 
-        statusText.innerText =
-            data.detail;
-    }
-}
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="btn-back-to-top" aria-label="الرجوع إلى أعلى الصفحة" title="الرجوع للأعلى"
+        type="button">
+        <i class="fas fa-chevron-up"></i>
+    </button>
 
-</script>
+    <!-- Camera Modal -->
+    <div id="camera-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="camera-modal-title" hidden>
+        <div class="modal-backdrop" id="camera-backdrop"></div>
+        <div class="modal-content modal-camera-content">
+            <button id="camera-close" class="modal-close" aria-label="إغلاق الكاميرا" type="button">
+                <i class="fas fa-xmark"></i>
+            </button>
+            <div class="camera-box">
+                <h3 id="camera-modal-title" class="camera-title">
+                    <i class="fas fa-camera-viewfinder"></i>
+                    التقاط صورة للبحث
+                </h3>
+                <div class="camera-video-container">
+                    <video id="camera-video" autoplay playsinline muted></video>
+                    <canvas id="camera-canvas" hidden></canvas>
+                    <div class="camera-overlay-frame">
+                        <div class="corner c-top-left"></div>
+                        <div class="corner c-top-right"></div>
+                        <div class="corner c-bottom-left"></div>
+                        <div class="corner c-bottom-right"></div>
+                    </div>
+                </div>
+                <div class="camera-controls">
+                    <button id="camera-capture-btn" class="btn-primary btn-snap" type="button">
+                        <i class="fas fa-camera"></i>
+                        <span>التقاط واستخدام</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" hidden aria-live="polite">
+        <div class="loading-box">
+            <div class="loading-rings">
+                <div class="l-ring r1"></div>
+                <div class="l-ring r2"></div>
+                <div class="l-ring r3"></div>
+                <i class="fas fa-tshirt l-icon"></i>
+            </div>
+            <p class="loading-text">جاري تحليل الصورة والبحث في الكتالوج...</p>
+            <p class="loading-subtext">يتم الآن استخراج متجهات الخصائص البصرية للقطعة</p>
+            <div class="loading-dots">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <div class="modal-content">
+            <button id="modal-close" class="modal-close" aria-label="إغلاق نافذة المنتج" type="button">
+                <i class="fas fa-xmark"></i>
+            </button>
+            <div class="modal-body">
+                <div class="modal-image-container">
+                    <img id="modal-image" class="modal-image" alt="صورة المنتج التفصيلية">
+                </div>
+                <div class="modal-details">
+                    <h3 id="modal-title" class="modal-title"></h3>
+                    <div class="modal-info">
+                        <div class="info-item">
+                            <span class="info-label">
+                                <i class="fas fa-barcode"></i>
+                                معرف المنتج
+                            </span>
+                            <span id="modal-product-id" class="info-value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">
+                                <i class="fas fa-chart-simple"></i>
+                                نسبة التطابق البصري
+                            </span>
+                            <span id="modal-similarity" class="info-value similarity-badge"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">
+                                <i class="fas fa-link"></i>
+                                رابط الصورة المباشر
+                            </span>
+                            <span id="modal-image-url" class="info-value url-value"></span>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <a id="modal-product-link" class="btn-primary" href="#" target="_blank" rel="noopener">
+                            <i class="fas fa-arrow-up-right-from-square"></i>
+                            عرض صفحة المنتج والشراء
+                        </a>
+                        <button id="modal-copy-link" class="btn-secondary" type="button">
+                            <i class="fas fa-clone"></i>
+                            نسخ رابط الصورة
+                        </button>
+                        <a id="modal-download" class="btn-secondary" href="#" download>
+                            <i class="fas fa-download"></i>
+                            تحميل الصورة
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About / Help Modal -->
+    <div id="about-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="about-title" hidden>
+        <div class="modal-backdrop" id="about-backdrop"></div>
+        <div class="modal-content modal-about">
+            <button id="about-close" class="modal-close" aria-label="إغلاق نافذة المساعدة" type="button">
+                <i class="fas fa-xmark"></i>
+            </button>
+            <div class="modal-body about-body">
+                <div class="about-hero">
+                    <div class="about-hero-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+                    <h3 id="about-title" class="modal-title">دليل الاستخدام السريع</h3>
+                    <p class="about-desc">Visual Fashion Search يعتمد على التعلم العميق للعثور على قطع الملابس المشابهة
+                        لصورتك بدقة فائقة.</p>
+                </div>
+                <div class="about-steps">
+                    <div class="step">
+                        <div class="step-num">1</div>
+                        <div class="step-body">
+                            <strong>اختر أو التقط صورة</strong>
+                            <span>ارفع صورة لقطعة الملابس أو التقطها بالكاميرا أو الصقها <kbd>Ctrl+V</kbd></span>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">2</div>
+                        <div class="step-body">
+                            <strong>اختر الصورة كاملة أو قطعة محددة</strong>
+                            <span>لصور المنتجات المتعددة اختر "تحديد قطعة بـ AI" ثم انقر على القطعة المطلوبة واعتمد تحديد SAM2.</span>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">3</div>
+                        <div class="step-body">
+                            <strong>حدد عدد النتائج ثم ابدأ البحث</strong>
+                            <span>يستخرج SigLIP2 السمات البصرية ثم يبحث FAISS عن أقرب الصور في الفهرس.</span>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-num">4</div>
+                        <div class="step-body">
+                            <strong>استكشف النتائج</strong>
+                            <span>انقر على أي بطاقة لعرض الصورة ونسبة التشابه البصري بالتفصيل.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="shortcuts-section">
+                    <h4 class="shortcuts-title">
+                        <i class="fas fa-keyboard"></i>
+                        اختصارات لوحة المفاتيح
+                    </h4>
+                    <div class="shortcut-row">
+                        <kbd>Ctrl</kbd> + <kbd>V</kbd><span>لصق صورة من الحافظة مباشرة</span>
+                    </div>
+                    <div class="shortcut-row">
+                        <kbd>Enter</kbd><span>بدء البحث عند تحديد صورة</span>
+                    </div>
+                    <div class="shortcut-row">
+                        <kbd>Esc</kbd><span>إغلاق أي نافذة منبثقة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <script src="js/app.js?v=3" type="module"></script>
 </body>
+
 </html>
