@@ -1,5 +1,7 @@
 from pathlib import Path
+import hashlib
 import json
+import threading
 
 import faiss
 import numpy as np
@@ -9,15 +11,24 @@ import torch.nn.functional as F
 from PIL import Image
 from transformers import AutoModel, AutoProcessor
 
+from backend.category_routing import (
+    CATEGORY_LABELS,
+    normalize_category,
+    predict_category,
+)
+from backend.catalog_config import (
+    CATALOG_DIR,
+    CATALOG_METADATA_FILE,
+    DATA_DIR,
+    ROOT,
+)
+from backend.catalog_metadata import CatalogMetadata, METADATA_SCHEMA_VERSION
+from backend.image_preprocessing import PREPROCESSING_VERSION, preprocess_image
+
 
 # ============================================================
 # PATHS
 # ============================================================
-
-ROOT = Path(__file__).resolve().parent.parent
-
-CATALOG_DIR = ROOT / "catalog"
-DATA_DIR = ROOT / "data"
 
 MODEL_DIR = (
     ROOT
@@ -34,7 +45,6 @@ PATHS_FILE = (
     DATA_DIR
     / "catalog_siglip2_paths.json"
 )
-
 
 # ============================================================
 # SETTINGS
@@ -93,6 +103,10 @@ class SearchEngine:
             exist_ok=True
         )
 
+        self.catalog_metadata = CatalogMetadata(
+            CATALOG_METADATA_FILE
+        )
+
         # ----------------------------------------------------
         # Load processor
         # ----------------------------------------------------
@@ -119,6 +133,8 @@ class SearchEngine:
 
         self.index = None
         self.image_paths = []
+        self.catalog_vectors = None
+        self._index_lock = threading.RLock()
 
         # ----------------------------------------------------
         # Load existing SigLIP2 index if available
@@ -150,6 +166,7 @@ class SearchEngine:
 
                 self.index = None
                 self.image_paths = []
+                self.catalog_vectors = None
 
         else:
 
@@ -177,8 +194,13 @@ class SearchEngine:
                 "No images were provided."
             )
 
+        prepared_images = [
+            preprocess_image(image)[0]
+            for image in images
+        ]
+
         inputs = self.processor(
-            images=images,
+            images=prepared_images,
             return_tensors="pt"
         )
 
@@ -232,11 +254,6 @@ class SearchEngine:
         self,
         image: Image.Image
     ):
-
-        image = image.convert(
-            "RGB"
-        )
-
         vectors = self._encode_images(
             [image]
         )
@@ -281,17 +298,51 @@ class SearchEngine:
 
         return paths
 
+    def validate_catalog_metadata(self):
+        catalog_paths = self._get_catalog_images()
+        relative_paths = [
+            path.relative_to(CATALOG_DIR).as_posix()
+            for path in catalog_paths
+        ]
+        self.catalog_metadata.reload()
+        summary = self.catalog_metadata.validate_catalog_paths(relative_paths)
+        summary["metadata_checksum"] = self.catalog_metadata.checksum()
+        return summary
+
+    def _catalog_checksum(self, paths):
+        digest = hashlib.sha256()
+        for path in paths:
+            relative_path = path.relative_to(CATALOG_DIR).as_posix()
+            digest.update(relative_path.encode("utf-8"))
+            with path.open("rb") as image_file:
+                for chunk in iter(lambda: image_file.read(1024 * 1024), b""):
+                    digest.update(chunk)
+        digest.update(self.catalog_metadata.checksum().encode("ascii"))
+        return digest.hexdigest()
+
     # ========================================================
     # BUILD FAISS INDEX
     # ========================================================
 
-    def build_index(
+    def build_index(self):
+        """Build and persist an index while blocking concurrent searches."""
+        with self._index_lock:
+            return self._build_index_unlocked()
+
+    def _build_index_unlocked(
         self
     ):
 
         catalog_paths = (
             self._get_catalog_images()
         )
+
+        relative_catalog_paths = [
+            path.relative_to(CATALOG_DIR).as_posix()
+            for path in catalog_paths
+        ]
+        self.catalog_metadata.reload()
+        self.catalog_metadata.require_valid_catalog(relative_catalog_paths)
 
         print()
         print("=" * 60)
@@ -335,9 +386,7 @@ class SearchEngine:
                 ) as image:
 
                     images.append(
-                        image
-                        .convert("RGB")
-                        .copy()
+                        image.copy()
                     )
 
             vectors = (
@@ -375,16 +424,16 @@ class SearchEngine:
         # inner product == cosine similarity.
         # ----------------------------------------------------
 
-        self.index = faiss.IndexFlatIP(
+        new_index = faiss.IndexFlatIP(
             dimension
         )
 
-        self.index.add(
+        new_index.add(
             embeddings
         )
 
         # Store paths relative to catalog/
-        self.image_paths = [
+        new_image_paths = [
             path
             .relative_to(
                 CATALOG_DIR
@@ -399,40 +448,44 @@ class SearchEngine:
         # Save FAISS index
         # ----------------------------------------------------
 
-        faiss.write_index(
-            self.index,
-            str(INDEX_FILE)
-        )
+        temporary_index = INDEX_FILE.with_name(INDEX_FILE.name + ".tmp")
+        temporary_paths = PATHS_FILE.with_name(PATHS_FILE.name + ".tmp")
 
         # ----------------------------------------------------
         # Save image mapping
         # ----------------------------------------------------
 
-        with open(
-            PATHS_FILE,
-            "w",
-            encoding="utf-8"
-        ) as file:
+        mapping = {
+            "model": "siglip2_base",
 
-            json.dump(
-                {
-                    "model":
-                        "siglip2_base",
+            "embedding_dimension": dimension,
 
-                    "embedding_dimension":
-                        dimension,
+            "preprocessing_version": PREPROCESSING_VERSION,
 
-                    "image_count":
-                        len(
-                            self.image_paths
-                        ),
+            "metadata_schema_version": METADATA_SCHEMA_VERSION,
 
-                    "paths":
-                        self.image_paths,
-                },
-                file,
-                indent=2
-            )
+            "catalog_checksum": self._catalog_checksum(catalog_paths),
+
+            "image_count": len(new_image_paths),
+
+            "paths": new_image_paths,
+        }
+
+        try:
+            faiss.write_index(new_index, str(temporary_index))
+            with temporary_paths.open("w", encoding="utf-8") as file:
+                json.dump(mapping, file, indent=2)
+                file.flush()
+
+            temporary_index.replace(INDEX_FILE)
+            temporary_paths.replace(PATHS_FILE)
+        finally:
+            temporary_index.unlink(missing_ok=True)
+            temporary_paths.unlink(missing_ok=True)
+
+        self.index = new_index
+        self.image_paths = new_image_paths
+        self.catalog_vectors = embeddings
 
         print()
         print(
@@ -486,9 +539,10 @@ class SearchEngine:
             data,
             list
         ):
-
-            # Compatibility fallback
-            self.image_paths = data
+            raise ValueError(
+                "The saved index uses the legacy mapping format "
+                "and must be rebuilt."
+            )
 
         else:
 
@@ -506,9 +560,50 @@ class SearchEngine:
                     "belong to SigLIP2."
                 )
 
-            self.image_paths = (
-                data["paths"]
+            preprocessing_version = data.get(
+                "preprocessing_version"
             )
+
+            if preprocessing_version != PREPROCESSING_VERSION:
+
+                raise ValueError(
+                    "The saved index uses a different image "
+                    "preprocessing version and must be rebuilt."
+                )
+
+            catalog_paths = self._get_catalog_images()
+            relative_catalog_paths = [
+                path.relative_to(CATALOG_DIR).as_posix()
+                for path in catalog_paths
+            ]
+            self.catalog_metadata.reload()
+            self.catalog_metadata.require_valid_catalog(relative_catalog_paths)
+
+            if data.get("metadata_schema_version") != METADATA_SCHEMA_VERSION:
+                raise ValueError(
+                    "The saved index uses a different catalog metadata "
+                    "schema and must be rebuilt."
+                )
+
+            expected_checksum = self._catalog_checksum(catalog_paths)
+            if data.get("catalog_checksum") != expected_checksum:
+                raise ValueError(
+                    "The catalog changed after the index was built "
+                    "and the index must be rebuilt."
+                )
+
+            saved_paths = data.get("paths")
+            if (
+                not isinstance(saved_paths, list)
+                or not all(isinstance(path, str) for path in saved_paths)
+            ):
+                raise ValueError("The saved index path mapping is invalid.")
+            if data.get("image_count") != len(saved_paths):
+                raise ValueError("The saved index image count is invalid.")
+            if data.get("embedding_dimension") != self.index.d:
+                raise ValueError("The saved index embedding dimension is invalid.")
+
+            self.image_paths = saved_paths
 
         if (
             self.index.ntotal
@@ -521,6 +616,11 @@ class SearchEngine:
                 "FAISS index and image path "
                 "mapping have different sizes."
             )
+
+        self.catalog_vectors = np.asarray(
+            self.index.reconstruct_n(0, self.index.ntotal),
+            dtype="float32",
+        )
 
         print(
             f"Loaded "
@@ -540,16 +640,29 @@ class SearchEngine:
     def search(
         self,
         image: Image.Image,
-        top_k: int = 8
+        top_k: int = 8,
+        category: str = "auto",
+        return_metadata: bool = False,
     ):
 
-        if self.index is None:
+        with self._index_lock:
+            if self.index is None:
+                self._build_index_unlocked()
 
-            raise RuntimeError(
-                "Catalog index has not "
-                "been built yet."
+            return self._search_unlocked(
+                image,
+                top_k=top_k,
+                category=category,
+                return_metadata=return_metadata,
             )
 
+    def _search_unlocked(
+        self,
+        image: Image.Image,
+        top_k: int = 8,
+        category: str = "auto",
+        return_metadata: bool = False,
+    ):
         if not self.image_paths:
 
             raise RuntimeError(
@@ -563,11 +676,45 @@ class SearchEngine:
                 "top_k must be at least 1."
             )
 
+        requested_category = normalize_category(category)
+
         query_vector = (
             self.encode_image(
                 image
             )
         )
+
+        if self.catalog_vectors is None:
+            self.catalog_vectors = np.asarray(
+                self.index.reconstruct_n(0, self.index.ntotal),
+                dtype="float32",
+            )
+        catalog_vectors = self.catalog_vectors
+        prediction = predict_category(
+            query_vector,
+            catalog_vectors,
+            self.image_paths,
+            category_keys=[
+                self.catalog_metadata.get(path)["category_key"]
+                for path in self.image_paths
+            ],
+        )
+
+        if requested_category == "auto":
+            applied_category = prediction["category"]
+        elif requested_category == "all":
+            applied_category = None
+        else:
+            applied_category = requested_category
+
+        available_categories = {
+            self.catalog_metadata.get(path)["category_key"]
+            for path in self.image_paths
+        }
+        if applied_category and applied_category not in available_categories:
+            raise ValueError(
+                "The selected category has no images in the current catalog."
+            )
 
         top_k = min(
             top_k,
@@ -577,7 +724,7 @@ class SearchEngine:
         scores, indices = (
             self.index.search(
                 query_vector,
-                top_k
+                self.index.ntotal
             )
         )
 
@@ -601,6 +748,11 @@ class SearchEngine:
                 score
             )
 
+            item_metadata = self.catalog_metadata.get(image_path)
+            result_category = item_metadata["category_key"]
+            if applied_category and result_category != applied_category:
+                continue
+
             results.append(
                 {
                     "image":
@@ -621,7 +773,38 @@ class SearchEngine:
 
                     "model":
                         "SigLIP2",
+
+                    "category_key":
+                        result_category,
+
+                    "category":
+                        item_metadata["category"],
+
+                    "product_id":
+                        item_metadata["product_id"],
+
+                    "title":
+                        item_metadata["title_ar"],
+
+                    "source_dataset":
+                        item_metadata["source_dataset"],
                 }
             )
 
+            if len(results) >= top_k:
+                break
+
+        routing = {
+            "requested_category": requested_category,
+            "predicted_category": prediction["category"],
+            "predicted_label": prediction["label"],
+            "confidence": prediction["confidence"],
+            "margin": prediction["margin"],
+            "applied_category": applied_category,
+            "applied_label": CATEGORY_LABELS.get(applied_category),
+            "method": "catalog_embedding_centroids",
+        }
+
+        if return_metadata:
+            return results, routing
         return results

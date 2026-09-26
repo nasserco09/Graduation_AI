@@ -10,12 +10,12 @@ const CONFIG = {
     SEARCH_ENDPOINT: '/api/search',
     SEGMENT_ENDPOINT: '/api/segment',
     REINDEX_ENDPOINT: '/api/reindex',
+    FEEDBACK_ENDPOINT: '/api/feedback',
     MAX_FILE_SIZE: 8 * 1024 * 1024,    // 8MB in bytes
     ALLOWED_TYPES: ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'],
     TOAST_DURATION: 4000,               // 4 seconds
     ENABLE_CLIENT_RESIZE: false,        // Keep backend input identical to the tested AI pipeline
-    MAX_IMAGE_WIDTH: 800,
-    USE_MOCK_API: false                 // Real SAM2 + SigLIP2 + FAISS backend
+    MAX_IMAGE_WIDTH: 800
 };
 
 // ===================================
@@ -58,11 +58,18 @@ const DOM = {
     progressContainer: document.getElementById('progress-container'),
     progressFill: document.getElementById('progress-fill'),
     progressText: document.getElementById('progress-text'),
+    queryPreviewPanel: document.getElementById('query-preview-panel'),
+    queryPreviewImage: document.getElementById('query-preview-image'),
+    queryPreviewMode: document.getElementById('query-preview-mode'),
+    queryPreviewSize: document.getElementById('query-preview-size'),
+    queryPreviewVerification: document.getElementById('query-preview-verification'),
+    categoryRoutingStatus: document.getElementById('category-routing-status'),
 
     // Samples
     samplesContainer: document.getElementById('samples-container'),
 
     // Options
+    categoryModeSelect: document.getElementById('category-mode'),
     topKSelect: document.getElementById('top-k'),
     viewGridBtn: document.getElementById('view-grid'),
     viewListBtn: document.getElementById('view-list'),
@@ -74,6 +81,10 @@ const DOM = {
     resultsCount: document.getElementById('results-count'),
     filterChips: document.querySelectorAll('.filter-chip'),
     filterChipsContainer: document.getElementById('filter-chips'),
+    feedbackPanel: document.getElementById('feedback-panel'),
+    feedbackNoMatchBtn: document.getElementById('feedback-no-match-btn'),
+    feedbackWrongCategoryBtn: document.getElementById('feedback-wrong-category-btn'),
+    feedbackStatus: document.getElementById('feedback-status'),
 
     // Loading
     loadingOverlay: document.getElementById('loading-overlay'),
@@ -140,7 +151,10 @@ let state = {
     rectangle: null,
     polygonPoints: [],
     polygonFinished: false,
-    freePoints: []
+    freePoints: [],
+    queryPreviewUrl: null,
+    querySha256: null,
+    currentSearchId: null
 };
 
 // ===================================
@@ -239,6 +253,92 @@ async function dataUrlToBlob(dataUrl) {
     return await response.blob();
 }
 
+function searchModeLabel(mode) {
+    const labels = {
+        full: 'الصورة كاملة',
+        ai: 'تحديد ذكي بواسطة SAM2',
+        rect: 'تحديد مستطيل',
+        poly: 'تحديد مضلع',
+        free: 'رسم حر'
+    };
+    return labels[mode] || labels.full;
+}
+
+async function sha256Hex(blob) {
+    if (!window.crypto?.subtle) return null;
+    const bytes = await blob.arrayBuffer();
+    const hash = await window.crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(hash), byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function clearQueryPreview() {
+    if (state.queryPreviewUrl) URL.revokeObjectURL(state.queryPreviewUrl);
+    state.queryPreviewUrl = null;
+    state.querySha256 = null;
+    if (DOM.queryPreviewPanel) DOM.queryPreviewPanel.hidden = true;
+    if (DOM.queryPreviewImage) DOM.queryPreviewImage.removeAttribute('src');
+    if (DOM.queryPreviewVerification) {
+        DOM.queryPreviewVerification.className = 'query-preview-verification';
+        DOM.queryPreviewVerification.textContent = 'سيتم التحقق منها عند وصول رد الخادم.';
+    }
+    if (DOM.categoryRoutingStatus) {
+        DOM.categoryRoutingStatus.className = 'category-routing-status';
+        DOM.categoryRoutingStatus.textContent = 'سيظهر نوع القطعة المتوقع بعد البحث.';
+    }
+}
+
+async function showQueryPreview(blob, mode) {
+    clearQueryPreview();
+    state.queryPreviewUrl = URL.createObjectURL(blob);
+    try {
+        state.querySha256 = await sha256Hex(blob);
+    } catch {
+        state.querySha256 = null;
+    }
+    if (DOM.queryPreviewImage) DOM.queryPreviewImage.src = state.queryPreviewUrl;
+    if (DOM.queryPreviewMode) DOM.queryPreviewMode.textContent = `طريقة البحث: ${searchModeLabel(mode)}`;
+    if (DOM.queryPreviewSize) DOM.queryPreviewSize.textContent = `حجم الملف: ${(blob.size / 1024).toFixed(1)} كيلوبايت`;
+    if (DOM.queryPreviewPanel) DOM.queryPreviewPanel.hidden = false;
+    return state.querySha256;
+}
+
+function verifyQueryReceipt(query) {
+    if (!DOM.queryPreviewVerification) return;
+    const serverHash = query?.sha256 || null;
+    if (!state.querySha256 || !serverHash) {
+        DOM.queryPreviewVerification.textContent = 'تعذر التحقق من البصمة في هذا المتصفح.';
+        return;
+    }
+    const verified = state.querySha256 === serverHash;
+    DOM.queryPreviewVerification.className = `query-preview-verification ${verified ? 'verified' : 'mismatch'}`;
+    DOM.queryPreviewVerification.textContent = verified
+        ? `تم التحقق: الخادم استلم نفس الصورة تمامًا • ${serverHash.slice(0, 12)}`
+        : 'تحذير: الصورة المستلمة لا تطابق الصورة المعروضة.';
+}
+
+function renderCategoryRouting(query) {
+    if (!DOM.categoryRoutingStatus) return;
+    const routing = query?.category_routing;
+    if (!routing) {
+        DOM.categoryRoutingStatus.textContent = 'لم تصل معلومات تصنيف القطعة من الخادم.';
+        return;
+    }
+
+    const confidence = Math.round(Number(routing.confidence || 0) * 100);
+    if (routing.requested_category === 'auto') {
+        DOM.categoryRoutingStatus.className = 'category-routing-status detected';
+        DOM.categoryRoutingStatus.textContent = routing.applied_label
+            ? `تعرّف النظام على: ${routing.applied_label} • ثقة داخل الكتالوج: ${confidence}% • تم حصر النتائج في هذا النوع.`
+            : 'لم يتمكن النظام من تحديد نوع القطعة، لذلك لم يطبق فلترة.';
+    } else if (routing.requested_category === 'all') {
+        DOM.categoryRoutingStatus.className = 'category-routing-status';
+        DOM.categoryRoutingStatus.textContent = `التوقع الآلي: ${routing.predicted_label || 'غير معروف'} • اخترت عرض جميع الأنواع دون فلترة.`;
+    } else {
+        DOM.categoryRoutingStatus.className = 'category-routing-status manual';
+        DOM.categoryRoutingStatus.textContent = `تم تطبيق تصحيح المستخدم وحصر النتائج في: ${routing.applied_label || routing.applied_category}.`;
+    }
+}
+
 /** Turn FastAPI validation errors into readable text instead of [object Object]. */
 function formatApiErrorDetail(detail) {
     if (!detail) return '';
@@ -289,7 +389,8 @@ function getResultId(url, index) {
 function normalizeSearchResponse(data) {
     const rawResults = Array.isArray(data?.results) ? data.results : [];
     return {
-        query_image_url: DOM.previewImage?.src || null,
+        query_image_url: state.queryPreviewUrl || DOM.previewImage?.src || null,
+        query: data?.query || null,
         results: rawResults.map((item, index) => {
             const imageUrl = item.image_url || item.url || '';
             const similarity = Number(item.similarity ?? item.score ?? 0);
@@ -306,6 +407,22 @@ function normalizeSearchResponse(data) {
             };
         })
     };
+}
+
+function escapeHtml(value) {
+    const element = document.createElement('span');
+    element.textContent = String(value ?? '');
+    return element.innerHTML;
+}
+
+function safeHttpUrl(value) {
+    if (!value) return '';
+    try {
+        const url = new URL(value, window.location.href);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch {
+        return '';
+    }
 }
 
 const MANUAL_MODES = new Set(['rect', 'poly', 'free']);
@@ -373,6 +490,7 @@ function aiPromptSummary() {
 }
 
 function resetAISelection({ keepMode = true } = {}) {
+    clearQueryPreview();
     state.aiMaskDataUrl = null;
     state.aiCutoutDataUrl = null;
     state.aiScore = null;
@@ -406,6 +524,7 @@ function resetAISelection({ keepMode = true } = {}) {
 }
 
 function resetManualSelection() {
+    clearQueryPreview();
     state.drawing = false;
     state.startPoint = null;
     state.rectangle = null;
@@ -426,6 +545,7 @@ function resetManualSelection() {
 function setSearchMode(mode) {
     const allowed = new Set(['full', 'ai', 'rect', 'poly', 'free']);
     state.searchMode = allowed.has(mode) ? mode : 'full';
+    clearQueryPreview();
 
     const buttons = [
         [DOM.modeFullBtn, 'full'],
@@ -561,6 +681,7 @@ function updateManualInstructions() {
 }
 
 function handleManualPointerDown(event) {
+    clearQueryPreview();
     event.stopPropagation();
     event.preventDefault();
     if (!isManualMode() || !DOM.selectionCanvas) return;
@@ -613,6 +734,7 @@ function handleManualPointerUp(event) {
 }
 
 function handleManualCanvasClick(event) {
+    clearQueryPreview();
     event.stopPropagation();
     event.preventDefault();
     if (state.searchMode !== 'poly' || state.polygonFinished) return;
@@ -692,6 +814,7 @@ async function runAISelection(event, label = 1) {
         event.stopPropagation();
     }
     if (!state.selectedFile || state.searchMode !== 'ai' || state.aiBusy || !DOM.previewImage) return;
+    clearQueryPreview();
 
     const rect = DOM.previewImage.getBoundingClientRect();
     if (!rect.width || !rect.height || !DOM.previewImage.naturalWidth || !DOM.previewImage.naturalHeight) return;
@@ -763,7 +886,7 @@ async function runAISelection(event, label = 1) {
         renderAIPoints();
         if (DOM.selectionStatus) {
             DOM.selectionStatus.className = 'selection-status error';
-            DOM.selectionStatus.innerHTML = `<i class="fas fa-triangle-exclamation"></i> ${error.message}`;
+        DOM.selectionStatus.innerHTML = `<i class="fas fa-triangle-exclamation"></i> ${escapeHtml(error.message)}`;
         }
         showToast(`تعذر تحديد القطعة: ${error.message}`, 'error');
     } finally {
@@ -811,7 +934,7 @@ function showToast(message, type = 'success') {
 
     toast.innerHTML = `
         <i class="fas ${icons[type] || 'fa-info-circle'} toast-icon"></i>
-        <span class="toast-message">${message}</span>
+        <span class="toast-message">${escapeHtml(message)}</span>
         <button class="toast-close" aria-label="إغلاق" type="button">
             <i class="fas fa-times"></i>
         </button>
@@ -886,7 +1009,9 @@ function showPreview(file) {
  * Clear selected image
  */
 function clearImage() {
+    clearQueryPreview();
     state.selectedFile = null;
+    state.currentSearchId = null;
     resetAISelection({ keepMode: false });
     resetManualSelection();
     setSearchMode('full');
@@ -894,6 +1019,7 @@ function clearImage() {
     if (DOM.previewImage) DOM.previewImage.src = '';
     if (DOM.previewContainer) DOM.previewContainer.hidden = true;
     if (DOM.dropZoneContent) DOM.dropZoneContent.hidden = false;
+    if (DOM.feedbackPanel) DOM.feedbackPanel.hidden = true;
     updateSearchButtonState();
     if (DOM.fileInput) DOM.fileInput.value = '';
 }
@@ -996,106 +1122,16 @@ function captureCameraPhoto() {
 // ===================================
 
 /**
- * Mock API response for testing
- * @returns {Promise<Object>}
- */
-async function mockApiCall() {
-    await new Promise(resolve => setTimeout(resolve, 1200));
-
-    return {
-        query_image_url: DOM.previewImage?.src || "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80",
-        results: [
-            {
-                product_id: "C001",
-                image_url: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=500&q=80",
-                title: "تيشيرت أبيض كاجوال قطن 100%",
-                category: "قمصان",
-                color: "أبيض",
-                similarity: 0.98,
-                product_url: "https://example.com/clothes/C001"
-            },
-            {
-                product_id: "C002",
-                image_url: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=500&q=80",
-                title: "فستان صيفي مشجر أنيق",
-                category: "فساتين",
-                color: "أحمر / متعدد",
-                similarity: 0.94,
-                product_url: "https://example.com/clothes/C002"
-            },
-            {
-                product_id: "C003",
-                image_url: "https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=500&q=80",
-                title: "بنطلون جينز كلاسيك سليم فيت",
-                category: "بناطيل",
-                color: "أزرق",
-                similarity: 0.89,
-                product_url: "https://example.com/clothes/C003"
-            },
-            {
-                product_id: "C004",
-                image_url: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=500&q=80",
-                title: "جاكيت جلدي كاجوال بتصميم عصري",
-                category: "جاكيتات",
-                color: "أسود",
-                similarity: 0.84,
-                product_url: "https://example.com/clothes/C004"
-            },
-            {
-                product_id: "C005",
-                image_url: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=500&q=80",
-                title: "تيشيرت أسود بيسك مريح",
-                category: "قمصان",
-                color: "أسود",
-                similarity: 0.79,
-                product_url: "https://example.com/clothes/C005"
-            },
-            {
-                product_id: "C006",
-                image_url: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=500&q=80",
-                title: "جاكيت دنيم أزرق شبابي",
-                category: "جاكيتات",
-                color: "أزرق داكن",
-                similarity: 0.74,
-                product_url: null
-            },
-            {
-                product_id: "C007",
-                image_url: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=500&q=80",
-                title: "فستان سهرة كلاسيك ماكسي",
-                category: "فساتين",
-                color: "كحلي",
-                similarity: 0.71,
-                product_url: "https://example.com/clothes/C007"
-            },
-            {
-                product_id: "C008",
-                image_url: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=500&q=80",
-                title: "بنطلون شينو كاجوال بيج",
-                category: "بناطيل",
-                color: "بيج",
-                similarity: 0.67,
-                product_url: "https://example.com/clothes/C008"
-            }
-        ]
-    };
-}
-
-/**
  * Send image to API for search
  * @param {File|Blob} imageFile - Image file to search
  * @param {number} topK - Number of results to return
  * @returns {Promise<Object>}
  */
-async function searchImage(imageFile, topK, fileName = 'query-image.jpg') {
-    if (CONFIG.USE_MOCK_API) {
-        const mockResult = await mockApiCall();
-        mockResult.results = mockResult.results.slice(0, topK);
-        return mockResult;
-    }
-
+async function searchImage(imageFile, topK, fileName = 'query-image.jpg', searchMode = 'full', category = 'auto') {
     const formData = new FormData();
     formData.append('image', imageFile, fileName);
+    formData.append('search_mode', searchMode);
+    formData.append('category', category);
 
     const endpoint = `${CONFIG.SEARCH_ENDPOINT}?top_k=${encodeURIComponent(topK)}`;
     const response = await fetch(endpoint, {
@@ -1105,6 +1141,36 @@ async function searchImage(imageFile, topK, fileName = 'query-image.jpg') {
 
     const data = await readApiJson(response);
     return normalizeSearchResponse(data);
+}
+
+async function submitSearchFeedback(verdict, options = {}) {
+    if (!state.currentSearchId) {
+        showToast('لا يوجد رقم بحث صالح لإرسال التقييم', 'warning');
+        return;
+    }
+
+    const payload = {
+        search_id: state.currentSearchId,
+        verdict,
+        selected_product_id: options.selectedProductId || null,
+        corrected_category: options.correctedCategory || null,
+        notes: options.notes || null
+    };
+
+    const response = await fetch(CONFIG.FEEDBACK_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    await readApiJson(response);
+
+    if (DOM.feedbackStatus) {
+        DOM.feedbackStatus.className = 'feedback-status saved';
+        DOM.feedbackStatus.textContent = verdict === 'correct'
+            ? 'تم حفظ المنتج الصحيح. شكرًا، ستُستخدم المعلومة في قياس الدقة.'
+            : 'تم حفظ الملاحظة لتحليل حالة الفشل.';
+    }
+    showToast('تم حفظ تقييمك للبحث', 'success');
 }
 
 // ===================================
@@ -1118,10 +1184,26 @@ async function searchImage(imageFile, topK, fileName = 'query-image.jpg') {
 function renderResults(data) {
     state.results = Array.isArray(data.results) ? data.results : [];
     state.lastQuery = data.query_image_url || null;
+    state.currentSearchId = data.query?.search_id || null;
+    state.selectedCategory = 'all';
+
+    if (DOM.feedbackPanel) DOM.feedbackPanel.hidden = !state.currentSearchId;
+    if (DOM.feedbackStatus) {
+        DOM.feedbackStatus.className = 'feedback-status';
+        DOM.feedbackStatus.textContent = data.query?.monitoring_warning
+            ? 'اكتمل البحث، لكن تعذر تسجيله للمراقبة.'
+            : 'لا تُحفظ صورة البحث أو بيانات شخصية.';
+    }
 
     const hasCategoryData = state.results.some(item => Boolean(item.category));
     if (DOM.filterChipsContainer) DOM.filterChipsContainer.hidden = !hasCategoryData;
-    if (!hasCategoryData) state.selectedCategory = 'all';
+    if (DOM.filterChips) {
+        const resultCategories = new Set(state.results.map(item => item.category).filter(Boolean));
+        DOM.filterChips.forEach(chip => {
+            const category = chip.dataset.category || 'all';
+            chip.hidden = category !== 'all' && !resultCategories.has(category);
+        });
+    }
 
     applyCategoryFilter(state.selectedCategory);
 
@@ -1131,8 +1213,6 @@ function renderResults(data) {
         DOM.resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Cache to localStorage
-    cacheLastSearch(data);
 }
 
 /**
@@ -1196,27 +1276,36 @@ function createResultCard(item, index) {
     card.tabIndex = 0;
     card.dataset.index = index;
 
-    const title = item.title || `نتيجة مشابهة ${index + 1}`;
+    const title = String(item.title || `نتيجة مشابهة ${index + 1}`);
+    const safeTitle = escapeHtml(title);
+    const safeCategory = escapeHtml(item.category || '');
+    const safeProductId = escapeHtml(item.product_id || '');
+    const safeImageUrl = safeHttpUrl(item.image_url) || 'assets/placeholder.svg';
     const similarityClass = getSimilarityClass(item.similarity);
-    const categoryTag = item.category ? `<span style="font-size:0.75rem; color:var(--text-3);"><i class="fas fa-tag"></i> ${item.category}</span>` : '';
+    const categoryTag = item.category ? `<span style="font-size:0.75rem; color:var(--text-3);"><i class="fas fa-tag"></i> ${safeCategory}</span>` : '';
 
     card.innerHTML = `
         <img
-            src="${item.image_url}"
-            alt="${title}"
+            src="${safeImageUrl}"
+            alt="${safeTitle}"
             class="result-card-image lazy-image"
             loading="lazy"
             onerror="this.src='assets/placeholder.svg'"
         >
         <div class="result-card-body">
-            <h3 class="result-card-title" title="${title}">${title}</h3>
+            <h3 class="result-card-title" title="${safeTitle}">${safeTitle}</h3>
             <div class="card-bottom-row">
                 <span class="similarity-badge ${similarityClass}">
                     <i class="fas fa-percentage"></i>
-                    ${formatSimilarity(item.similarity)} تطابق
+                    ${formatSimilarity(item.similarity)} تشابه
                 </span>
                 ${categoryTag}
             </div>
+            ${item.product_id ? `
+                <button type="button" class="correct-match-btn" data-product-id="${safeProductId}">
+                    <i class="fas fa-circle-check"></i> هذه المطابقة صحيحة
+                </button>
+            ` : ''}
         </div>
     `;
 
@@ -1232,41 +1321,19 @@ function createResultCard(item, index) {
         img.addEventListener('load', () => img.classList.add('loaded'));
     }
 
-    return card;
-}
-
-/**
- * Cache last search to localStorage
- * @param {Object} data - Search data
- */
-function cacheLastSearch(data) {
-    try {
-        localStorage.setItem('lastSearch', JSON.stringify({
-            timestamp: Date.now(),
-            data: data
-        }));
-    } catch (e) {
-        console.warn('Could not cache search results:', e);
-    }
-}
-
-/**
- * Load cached search from localStorage
- * @returns {Object|null}
- */
-function loadCachedSearch() {
-    try {
-        const cached = localStorage.getItem('lastSearch');
-        if (cached) {
-            const { timestamp, data } = JSON.parse(cached);
-            if (Date.now() - timestamp < 3600000) {
-                return data;
+    const correctButton = card.querySelector('.correct-match-btn');
+    if (correctButton) {
+        correctButton.addEventListener('click', async (event) => {
+            event.stopPropagation();
+            try {
+                await submitSearchFeedback('correct', { selectedProductId: item.product_id });
+            } catch (error) {
+                showToast(`تعذر حفظ التقييم: ${error.message}`, 'error');
             }
-        }
-    } catch (e) {
-        console.warn('Could not load cached search:', e);
+        });
     }
-    return null;
+
+    return card;
 }
 
 // ===================================
@@ -1281,13 +1348,13 @@ function openProductModal(product) {
     const title = product.title || 'نتيجة البحث';
 
     if (DOM.modalImage) {
-        DOM.modalImage.src = product.image_url;
+        DOM.modalImage.src = safeHttpUrl(product.image_url) || 'assets/placeholder.svg';
         DOM.modalImage.alt = title;
     }
     if (DOM.modalTitle) DOM.modalTitle.textContent = title;
     if (DOM.modalProductId) DOM.modalProductId.textContent = product.product_id;
     if (DOM.modalSimilarity) {
-        DOM.modalSimilarity.textContent = `${formatSimilarity(product.similarity)} تطابق بصري`;
+        DOM.modalSimilarity.textContent = `${formatSimilarity(product.similarity)} تشابه بصري`;
         DOM.modalSimilarity.className = `info-value similarity-badge ${getSimilarityClass(product.similarity)}`;
     }
     if (DOM.modalImageUrl) DOM.modalImageUrl.textContent = product.image_url;
@@ -1295,8 +1362,9 @@ function openProductModal(product) {
     // Handle product URL
     if (DOM.modalProductLink) {
         if (product.product_url) {
-            DOM.modalProductLink.href = product.product_url;
-            DOM.modalProductLink.style.display = 'flex';
+            const productUrl = safeHttpUrl(product.product_url);
+            DOM.modalProductLink.href = productUrl;
+            DOM.modalProductLink.style.display = productUrl ? 'flex' : 'none';
         } else {
             DOM.modalProductLink.style.display = 'none';
         }
@@ -1304,7 +1372,7 @@ function openProductModal(product) {
 
     // Set download link
     if (DOM.modalDownload) {
-        DOM.modalDownload.href = product.image_url;
+        DOM.modalDownload.href = safeHttpUrl(product.image_url) || 'assets/placeholder.svg';
         DOM.modalDownload.download = `${product.product_id}.jpg`;
     }
 
@@ -1394,6 +1462,9 @@ async function handleSearch() {
     }
 
     const topK = parseInt(DOM.topKSelect?.value || '8');
+    const requestedCategory = DOM.categoryModeSelect?.value || 'auto';
+    state.currentSearchId = null;
+    if (DOM.feedbackPanel) DOM.feedbackPanel.hidden = true;
 
     try {
         if (DOM.loadingOverlay) DOM.loadingOverlay.hidden = false;
@@ -1420,10 +1491,14 @@ async function handleSearch() {
             fileToUpload = await resizeImage(state.selectedFile, CONFIG.MAX_IMAGE_WIDTH);
         }
 
+        await showQueryPreview(fileToUpload, state.searchMode);
+
         updateProgress(60, 'SigLIP2 يستخرج الخصائص البصرية...');
         updateProgress(80, 'FAISS يبحث عن أقرب الصور...');
 
-        const results = await searchImage(fileToUpload, topK, uploadName);
+        const results = await searchImage(fileToUpload, topK, uploadName, state.searchMode, requestedCategory);
+        verifyQueryReceipt(results.query);
+        renderCategoryRouting(results.query);
 
         updateProgress(100, 'تم استخراج أفضل النتائج!');
         renderResults(results);
@@ -1604,6 +1679,32 @@ function setupEventListeners() {
 
     // Search button
     if (DOM.searchBtn) DOM.searchBtn.addEventListener('click', handleSearch);
+
+    if (DOM.feedbackNoMatchBtn) {
+        DOM.feedbackNoMatchBtn.addEventListener('click', async () => {
+            try {
+                await submitSearchFeedback('no_match');
+            } catch (error) {
+                showToast(`تعذر حفظ التقييم: ${error.message}`, 'error');
+            }
+        });
+    }
+
+    if (DOM.feedbackWrongCategoryBtn) {
+        DOM.feedbackWrongCategoryBtn.addEventListener('click', async () => {
+            const correctedCategory = DOM.categoryModeSelect?.value || 'auto';
+            if (correctedCategory === 'auto' || correctedCategory === 'all') {
+                showToast('اختر نوع القطعة الصحيح من القائمة أعلاه ثم اضغط الزر مرة أخرى', 'warning');
+                DOM.categoryModeSelect?.focus();
+                return;
+            }
+            try {
+                await submitSearchFeedback('wrong_category', { correctedCategory });
+            } catch (error) {
+                showToast(`تعذر حفظ التقييم: ${error.message}`, 'error');
+            }
+        });
+    }
 
     // Category filter chips
     if (DOM.filterChips) {

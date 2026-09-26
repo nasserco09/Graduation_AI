@@ -136,8 +136,8 @@
                 <div class="stat-divider"></div>
                 <div class="stat-item">
                     <div class="stat-icon-wrap"><i class="fas fa-brain-circuit"></i></div>
-                    <span class="stat-num">FAISS</span>
-                    <span class="stat-label">بحث متجهي</span>
+                    <span class="stat-num">3068</span>
+                    <span class="stat-label">صورة في الكتالوج</span>
                 </div>
             </div>
         </section>
@@ -293,26 +293,26 @@
                     </div>
                     <div class="samples-grid">
                         <button type="button" class="sample-chip"
-                            data-img="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=400&q=80"
-                            data-label="تيشيرت أبيض">
+                            data-img="/catalog/t-shirt/00003aeb-ace5-43bf-9a0c-dc31a03e9cd2.jpg"
+                            data-label="تيشيرت">
                             <span class="sample-thumb" aria-hidden="true">👕</span>
                             <span class="sample-label">تيشيرت كاجوال</span>
                         </button>
                         <button type="button" class="sample-chip"
-                            data-img="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=400&q=80"
-                            data-label="فستان سهرة">
+                            data-img="/catalog/dress/009b3c31-fb62-45c0-be9a-37a5c238cb88.jpg"
+                            data-label="فستان">
                             <span class="sample-thumb" aria-hidden="true">👗</span>
                             <span class="sample-label">فستان صيفي</span>
                         </button>
                         <button type="button" class="sample-chip"
-                            data-img="https://images.unsplash.com/photo-1542272604-780c96856592?auto=format&fit=crop&w=400&q=80"
-                            data-label="بنطلون جينز">
+                            data-img="/catalog/pants/0098b991-e36e-4ef1-b5ee-4154b21e2a92.jpg"
+                            data-label="بنطال">
                             <span class="sample-thumb" aria-hidden="true">👖</span>
                             <span class="sample-label">جينز كلاسيك</span>
                         </button>
                         <button type="button" class="sample-chip"
-                            data-img="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&q=80"
-                            data-label="جاكيت جلدي">
+                            data-img="/catalog/outwear/00149032-3dd6-426e-9bc0-d53032536a42.jpg"
+                            data-label="جاكيت">
                             <span class="sample-thumb" aria-hidden="true">🧥</span>
                             <span class="sample-label">جاكيت جلدي</span>
                         </button>
@@ -330,8 +330,43 @@
                     </span>
                 </div>
 
+                <!-- Exact Query Preview -->
+                <div id="query-preview-panel" class="query-preview-panel" hidden>
+                    <div class="query-preview-image-wrap">
+                        <img id="query-preview-image" class="query-preview-image" alt="الصورة الفعلية المرسلة إلى البحث">
+                    </div>
+                    <div class="query-preview-details">
+                        <strong>هذه هي الصورة الفعلية المرسلة للبحث</strong>
+                        <span id="query-preview-mode">طريقة البحث: —</span>
+                        <span id="query-preview-size">حجم الملف: —</span>
+                        <span id="query-preview-verification" class="query-preview-verification">سيتم التحقق منها عند وصول رد الخادم.</span>
+                        <span id="category-routing-status" class="category-routing-status">سيظهر نوع القطعة المتوقع بعد البحث.</span>
+                    </div>
+                </div>
+
                 <!-- Options Row -->
                 <div class="options-row">
+                    <div class="option-group">
+                        <label for="category-mode" class="option-label">
+                            <i class="fas fa-tags"></i>
+                            نوع القطعة:
+                        </label>
+                        <select id="category-mode" class="select-input">
+                            <option value="auto" selected>تلقائي بالذكاء الاصطناعي</option>
+                            <option value="all">جميع الأنواع دون فلترة</option>
+                            <option value="shoes">أحذية</option>
+                            <option value="dress">فساتين</option>
+                            <option value="pants">بناطيل</option>
+                            <option value="shirt">قمصان</option>
+                            <option value="t-shirt">تيشيرتات</option>
+                            <option value="longsleeve">ملابس بأكمام طويلة</option>
+                            <option value="outwear">جاكيتات وملابس خارجية</option>
+                            <option value="shorts">سراويل قصيرة</option>
+                            <option value="skirt">تنانير</option>
+                            <option value="hat">قبعات</option>
+                        </select>
+                    </div>
+
                     <div class="option-group">
                         <label for="top-k" class="option-label">
                             <i class="fas fa-arrow-down-9-1"></i>
@@ -385,7 +420,7 @@
                         <span>نتائج البحث البصري</span>
                         <span id="results-count" class="results-count"></span>
                     </h2>
-                    <p class="results-subtitle">تم ترتيب القطع تنازلياً حسب أعلى نسبة تطابق وتوافق في المظهر</p>
+                    <p class="results-subtitle">تم ترتيب القطع تنازلياً حسب درجة التشابه البصري مع صورة الاستعلام</p>
                 </div>
 
                 <!-- Category Quick Filters -->
@@ -394,7 +429,13 @@
                         <i class="fas fa-globe"></i> الكل
                     </button>
                     <button type="button" class="filter-chip" data-category="قمصان">
-                        <i class="fas fa-shirt"></i> قمصان وتيشيرتات
+                        <i class="fas fa-shirt"></i> قمصان
+                    </button>
+                    <button type="button" class="filter-chip" data-category="تيشيرتات">
+                        <i class="fas fa-shirt"></i> تيشيرتات
+                    </button>
+                    <button type="button" class="filter-chip" data-category="ملابس بأكمام طويلة">
+                        <i class="fas fa-shirt"></i> أكمام طويلة
                     </button>
                     <button type="button" class="filter-chip" data-category="فساتين">
                         <i class="fas fa-person-dress"></i> فساتين
@@ -402,10 +443,38 @@
                     <button type="button" class="filter-chip" data-category="بناطيل">
                         <i class="fas fa-vest"></i> بناطيل وجينز
                     </button>
-                    <button type="button" class="filter-chip" data-category="جاكيتات">
+                    <button type="button" class="filter-chip" data-category="جاكيتات وملابس خارجية">
                         <i class="fas fa-mitten"></i> جاكيتات ومعاطف
                     </button>
+                    <button type="button" class="filter-chip" data-category="أحذية">
+                        <i class="fas fa-shoe-prints"></i> أحذية
+                    </button>
+                    <button type="button" class="filter-chip" data-category="سراويل قصيرة">
+                        <i class="fas fa-vest"></i> سراويل قصيرة
+                    </button>
+                    <button type="button" class="filter-chip" data-category="تنانير">
+                        <i class="fas fa-person-dress"></i> تنانير
+                    </button>
+                    <button type="button" class="filter-chip" data-category="قبعات">
+                        <i class="fas fa-hat-cowboy"></i> قبعات
+                    </button>
                 </div>
+            </div>
+
+            <div id="feedback-panel" class="feedback-panel" hidden>
+                <div class="feedback-copy">
+                    <strong><i class="fas fa-comment-dots"></i> ساعدنا في تقييم البحث</strong>
+                    <span>إذا وجدت المنتج نفسه اضغط «هذه المطابقة صحيحة» داخل بطاقته.</span>
+                </div>
+                <div class="feedback-actions">
+                    <button id="feedback-no-match-btn" type="button" class="feedback-btn negative">
+                        <i class="fas fa-circle-xmark"></i> المنتج غير موجود
+                    </button>
+                    <button id="feedback-wrong-category-btn" type="button" class="feedback-btn warning">
+                        <i class="fas fa-tags"></i> الفئة المتوقعة خاطئة
+                    </button>
+                </div>
+                <span id="feedback-status" class="feedback-status">لا تُحفظ صورة البحث أو بيانات شخصية.</span>
             </div>
 
             <div id="results-grid" class="results-grid" role="list"></div>
@@ -434,8 +503,8 @@
                 <div class="step-card">
                     <div class="step-card-num">03</div>
                     <div class="step-card-icon"><i class="fas fa-bag-shopping"></i></div>
-                    <h3 class="step-card-title">تطابقات فورية وشراء</h3>
-                    <p class="step-card-desc">تصفح أدق البدائل المشابهة بنسب تطابق عالية وروابط مباشرة للمنتجات.</p>
+                    <h3 class="step-card-title">نتائج مرتبة بالتشابه</h3>
+                    <p class="step-card-desc">تصفح أقرب قطع الكتالوج بصريًا وقيّم ما إذا ظهرت القطعة الصحيحة.</p>
                 </div>
             </div>
         </section>
@@ -449,18 +518,18 @@
             <div class="features-preview-grid">
                 <div class="feat-box">
                     <div class="feat-box-icon"><i class="fas fa-palette"></i></div>
-                    <h4>استشعار دقيق للألوان</h4>
-                    <p>فهم عميق لتدرجات الألوان والتطابق حتى مع اختلاف إضاءة الصورة المدخلة.</p>
+                    <h4>تمثيل بصري للقطعة</h4>
+                    <p>يحوّل SigLIP2 الصورة إلى خصائص قابلة للمقارنة تشمل الشكل والمظهر العام.</p>
                 </div>
                 <div class="feat-box">
                     <div class="feat-box-icon"><i class="fas fa-scissors"></i></div>
-                    <h4>التعرف على القصات والنقشات</h4>
-                    <p>تمييز دقيق بين أنواع الياقات، الأكمام، الخطوط، والنقوش الهندسية.</p>
+                    <h4>عزل القطعة المطلوبة</h4>
+                    <p>يسمح SAM2 والتحديد اليدوي بإبعاد القطع والخلفية غير المرغوبة عن استعلام البحث.</p>
                 </div>
                 <div class="feat-box">
                     <div class="feat-box-icon"><i class="fas fa-bolt"></i></div>
-                    <h4>استجابة فائقة السرعة</h4>
-                    <p>خوارزميات بحث متجهي متقدمة (Vector Search) تعطي النتائج في أجزاء من الثانية.</p>
+                    <h4>بحث متجهي مفهرس</h4>
+                    <p>يستخدم FAISS فهرسًا مسبقًا لترتيب صور الكتالوج حسب التشابه البصري.</p>
                 </div>
                 <div class="feat-box">
                     <div class="feat-box-icon"><i class="fas fa-mobile-screen-button"></i></div>
@@ -519,7 +588,7 @@
         <div class="footer-bottom">
             <p>
                 <i class="fas fa-heart footer-heart"></i>
-                مشروع التخرج — Visual Fashion Search 2025 | صُمم بعناية وتطوير متكامل
+                مشروع التخرج — Visual Fashion Search 2026 | صُمم بعناية وتطوير متكامل
             </p>
         </div>
     </footer>
@@ -603,7 +672,7 @@
                         <div class="info-item">
                             <span class="info-label">
                                 <i class="fas fa-chart-simple"></i>
-                                نسبة التطابق البصري
+                                درجة التشابه البصري
                             </span>
                             <span id="modal-similarity" class="info-value similarity-badge"></span>
                         </div>
@@ -645,8 +714,8 @@
                 <div class="about-hero">
                     <div class="about-hero-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
                     <h3 id="about-title" class="modal-title">دليل الاستخدام السريع</h3>
-                    <p class="about-desc">Visual Fashion Search يعتمد على التعلم العميق للعثور على قطع الملابس المشابهة
-                        لصورتك بدقة فائقة.</p>
+                    <p class="about-desc">Visual Fashion Search يستخدم نماذج رؤية وبحثًا متجهيًا لترتيب قطع الكتالوج
+                        بحسب التشابه البصري مع صورتك.</p>
                 </div>
                 <div class="about-steps">
                     <div class="step">

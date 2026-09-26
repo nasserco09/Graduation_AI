@@ -1,26 +1,56 @@
-# Frontend ↔ AI Backend Integration
+# Frontend ↔ Backend integration
 
-This frontend is configured for the tested same-origin FastAPI contract:
+The frontend and FastAPI application use same-origin relative URLs. Run the
+application and open `http://127.0.0.1:8000`; do not open `index.html` through
+`file://`.
 
-- `POST /api/segment`
-  - multipart: `image`, `x`, `y`
-  - response: `{ "mask": "<base64 png>", "cutout": "<base64 png>", "score": 0.0-1.0 }`
-- `POST /api/search?top_k=N`
-  - multipart: `image`
-  - response: `{ "results": [{ "url": "...", "score": 0.0-1.0 }] }`
-- `POST /api/reindex` (backend/admin endpoint; not exposed in the public UI)
+## Current API contract
+
+### `POST /api/segment`
+
+Multipart fields:
+
+- `image`: JPEG, PNG, WebP, or BMP, at most 8 MB and 25 million pixels.
+- `points`: JSON array such as `[[120, 80], [30, 40]]`.
+- `labels`: JSON array containing `1` for inclusion and `0` for exclusion.
+- A maximum of 50 points is accepted.
+
+The response includes `overlay`, `cutout`, `score`, `bbox`, and point counts.
+Both image values are base64 data URLs.
+
+### `POST /api/search?top_k=N`
+
+Multipart fields:
+
+- `image`: the full image or the already-selected crop/cutout.
+- `search_mode`: `full`, `ai`, `rect`, `poly`, or `free`.
+- `category`: `auto`, `all`, or one of the keys returned by
+  `GET /api/categories`.
+
+`top_k` is a query parameter from 1 to 50. The response contains `results`
+and a `query` object with the search ID, measured latency, category-routing
+decision, SHA-256 verification value, and preprocessing metadata.
+
+### Feedback and diagnostics
+
+- `POST /api/feedback`: save `correct`, `no_match`, or `wrong_category`
+  feedback for a returned `search_id`.
+- `GET /api/health`: model devices, index readiness, and version information.
+- `GET /api/categories`: supported category keys and Arabic labels.
+- `GET /api/catalog/validation`: catalog-metadata consistency check.
+- `GET /api/monitoring/summary`: aggregate search and feedback measurements.
+- `GET /api/monitoring/failures`: failed cases without query image/hash data.
+- `POST /api/reindex`: rebuild the catalog index; this is an administrative
+  endpoint and is intentionally not exposed in the public UI.
 
 ## Search flow
 
-1. Upload/capture/paste an image.
-2. Choose **Full image** or **AI product selection**.
-3. In AI mode, click the target product. SAM2 returns a mask and cutout.
-4. Review and accept the selected cutout.
-5. The accepted cutout (or the original full image) is sent to `/api/search`.
-6. Backend results are normalized to the existing result-card UI.
+1. Upload, capture, paste, or choose a local catalog sample.
+2. Search the full image, use SAM2 points, or make a manual selection.
+3. Review the exact query preview before searching.
+4. Choose automatic, unrestricted, or explicit category routing.
+5. Send the prepared image to `/api/search`.
+6. Review ordered results and optionally record correctness feedback.
 
-## Serving
-
-The API paths are relative (`/api/...`) by design. Serve this frontend from the same origin as the FastAPI application (recommended), or configure a reverse proxy so `/api/*` reaches FastAPI.
-
-Do not open `index.html` directly with `file://` when testing API integration.
+The similarity percentage is a display of cosine similarity. It is not a
+probability and does not guarantee that the returned item is the same product.

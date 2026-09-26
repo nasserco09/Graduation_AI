@@ -1,10 +1,7 @@
-from io import BytesIO
 from pathlib import Path
+import hashlib
 import json
-from pathlib import Path
-
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+import time
 
 from fastapi import (
     FastAPI,
@@ -16,9 +13,15 @@ from fastapi import (
 
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from PIL import Image
+from pydantic import BaseModel
 
+from backend.category_routing import CATEGORY_LABELS
+from backend.catalog_config import CATALOG_DIR, CATALOG_SOURCE
+from backend.catalog_metadata import METADATA_SCHEMA_VERSION
+from backend.image_preprocessing import PREPROCESSING_VERSION, preprocess_image
+from backend.request_validation import MAX_IMAGE_BYTES, validate_image_bytes
 from backend.search_engine import SearchEngine
+from backend.search_observability import SearchObservability
 from backend.segmenter import Segmenter
 
 
@@ -29,7 +32,8 @@ from backend.segmenter import Segmenter
 ROOT = Path(__file__).resolve().parent.parent
 
 FRONTEND = ROOT / "frontend"
-CATALOG = ROOT / "catalog"
+CATALOG = CATALOG_DIR
+DATA = ROOT / "data"
 
 
 # =========================================================
@@ -48,6 +52,18 @@ app = FastAPI(
 engine = SearchEngine()
 
 segmenter = Segmenter()
+
+observability = SearchObservability(
+    DATA / "search_observability.db"
+)
+
+
+class FeedbackPayload(BaseModel):
+    search_id: str
+    verdict: str
+    selected_product_id: str | None = None
+    corrected_category: str | None = None
+    notes: str | None = None
 
 
 # =========================================================
@@ -86,9 +102,62 @@ def health():
         "status": "ok",
         "search_device": engine.device,
         "segmentation_device": segmenter.device,
+        "index_ready": engine.index is not None,
+        "preprocessing_version": PREPROCESSING_VERSION,
+        "catalog_metadata_version": METADATA_SCHEMA_VERSION,
+        "catalog_source": CATALOG_SOURCE,
         "indexed_images": len(
             engine.image_paths
         )
+    }
+
+
+@app.get("/api/categories")
+def categories():
+    return {
+        "categories": [
+            {"key": key, "label": label}
+            for key, label in CATEGORY_LABELS.items()
+        ]
+    }
+
+
+@app.get("/api/catalog/validation")
+def catalog_validation():
+    try:
+        return engine.validate_catalog_metadata()
+    except Exception as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        )
+
+
+@app.post("/api/feedback")
+def save_feedback(payload: FeedbackPayload):
+    try:
+        return observability.record_feedback(
+            search_id=payload.search_id,
+            verdict=payload.verdict,
+            selected_product_id=payload.selected_product_id,
+            corrected_category=payload.corrected_category,
+            notes=payload.notes,
+        )
+    except KeyError as error:
+        raise HTTPException(status_code=404, detail=str(error))
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+
+@app.get("/api/monitoring/summary")
+def monitoring_summary():
+    return observability.summary()
+
+
+@app.get("/api/monitoring/failures")
+def monitoring_failures(limit: int = 100):
+    return {
+        "failures": observability.failure_cases(limit=limit)
     }
 
 
@@ -129,11 +198,8 @@ async def segment_product(
 
     try:
 
-        content = await image.read()
-
-        pil_image = Image.open(
-            BytesIO(content)
-        ).convert("RGB")
+        content = await image.read(MAX_IMAGE_BYTES + 1)
+        pil_image = validate_image_bytes(content, image.content_type)
 
 
         parsed_points = json.loads(
@@ -171,6 +237,9 @@ async def segment_product(
                 "At least one AI selection point is required."
             )
 
+        if len(parsed_points) > 50:
+            raise ValueError("No more than 50 AI selection points are allowed.")
+
 
         if len(parsed_points) != len(
             parsed_labels
@@ -206,21 +275,35 @@ async def segment_product(
 @app.post("/api/search")
 async def search(
     image: UploadFile = File(...),
+    search_mode: str = Form("full"),
+    category: str = Form("auto"),
     top_k: int = 8
 ):
 
     try:
 
-        content = await image.read()
+        request_started = time.perf_counter()
 
-        pil_image = Image.open(
-            BytesIO(content)
-        ).convert("RGB")
+        if not 1 <= top_k <= 50:
+            raise ValueError("top_k must be between 1 and 50.")
+
+        content = await image.read(MAX_IMAGE_BYTES + 1)
+        query_sha256 = hashlib.sha256(content).hexdigest()
+
+        allowed_modes = {"full", "ai", "rect", "poly", "free"}
+        if search_mode not in allowed_modes:
+            raise ValueError("Unsupported search mode.")
+
+        pil_image = validate_image_bytes(content, image.content_type)
+
+        prepared_image, preprocessing = preprocess_image(pil_image)
 
 
-        results = engine.search(
-            pil_image,
-            top_k
+        results, category_routing = engine.search(
+            prepared_image,
+            top_k,
+            category=category,
+            return_metadata=True,
         )
 
 
@@ -231,9 +314,41 @@ async def search(
                 + result["image"]
             )
 
+        latency_ms = round(
+            (time.perf_counter() - request_started) * 1000,
+            3,
+        )
+        search_id = None
+        logging_warning = None
+        try:
+            search_id = observability.record_search(
+                query_sha256=query_sha256,
+                search_mode=search_mode,
+                routing=category_routing,
+                top_k=top_k,
+                results=results,
+                latency_ms=latency_ms,
+                model_name="SigLIP2",
+                preprocessing_version=PREPROCESSING_VERSION,
+            )
+        except Exception as logging_error:
+            logging_warning = f"Search completed but monitoring failed: {logging_error}"
+
 
         return {
-            "results": results
+            "results": results,
+            "query": {
+                "sha256": query_sha256,
+                "search_id": search_id,
+                "latency_ms": latency_ms,
+                "monitoring_warning": logging_warning,
+                "file_name": image.filename,
+                "content_type": image.content_type,
+                "byte_size": len(content),
+                "search_mode": search_mode,
+                "category_routing": category_routing,
+                "preprocessing": preprocessing.as_dict(),
+            }
         }
 
 

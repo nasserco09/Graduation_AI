@@ -47,6 +47,11 @@ class Segmenter:
             f"SAM2 model: {MODEL_PATH}"
         )
 
+        if not MODEL_PATH.exists():
+            raise FileNotFoundError(
+                f"SAM2 model not found:\n{MODEL_PATH}"
+            )
+
 
         # -------------------------------------------------
         # PROCESSOR

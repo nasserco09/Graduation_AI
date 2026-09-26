@@ -19,6 +19,9 @@ __pycache__/
 # Generated FAISS data
 data/*.faiss
 data/*_paths.json
+data/*.db
+data/*.db-shm
+data/*.db-wal
 
 # Jupyter
 .ipynb_checkpoints/
@@ -26,8 +29,11 @@ data/*_paths.json
 # OS files
 .DS_Store
 Thumbs.db
-# Local datasets
-datasets/
+# Local datasets (keep the exact-product collection guide)
+datasets/*
+!datasets/exact_product/
+datasets/exact_product/*
+!datasets/exact_product/README_AR.md
 *.zip
 # Evaluation embedding cache
 evaluation/cache/

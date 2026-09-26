@@ -1,0 +1,25 @@
+{
+  "baseline_id": "verified-baseline-2026-09",
+  "retrieval_relevance": "same_class",
+  "clean_test": {
+    "queries": 372,
+    "p_at_1": 0.908602,
+    "p_at_5": 0.889785,
+    "p_at_10": 0.870968,
+    "map_at_10": 0.825378,
+    "mrr_at_10": 0.944806
+  },
+  "multi_product_synthetic": {
+    "queries": 100,
+    "full_image_p_at_1": 0.46,
+    "sam2_p_at_1": 0.75,
+    "p_at_1_gain_percentage_points": 29,
+    "improved": 39,
+    "worsened": 10,
+    "unchanged": 51
+  },
+  "notes": [
+    "Metrics measure class-level retrieval, not exact product identity.",
+    "The application catalog contains 30 images and is separate from the evaluation gallery."
+  ]
+}
