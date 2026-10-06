@@ -21,6 +21,7 @@ from backend.catalog_config import CATALOG_DIR, CATALOG_SOURCE
 from backend.catalog_metadata import METADATA_SCHEMA_VERSION
 from backend.image_preprocessing import PREPROCESSING_VERSION, preprocess_image
 from backend.request_validation import MAX_IMAGE_BYTES, validate_image_bytes
+from backend.demo_catalog_api import create_demo_catalog_router
 from backend.product_grouping import ReviewedProductGroups
 from backend.search_engine import SearchEngine
 from backend.search_observability import SearchObservability
@@ -58,6 +59,8 @@ reviewed_groups = (
     ReviewedProductGroups.load(reviewed_group_file, engine.catalog_metadata.items, CATALOG)
     if reviewed_group_file else ReviewedProductGroups()
 )
+
+app.include_router(create_demo_catalog_router(engine, DATA / "demo_store" / "catalog.db"))
 
 segmenter = Segmenter()
 
@@ -375,3 +378,8 @@ async def search(
             status_code=400,
             detail=str(error)
         )
+
+
+@app.get('/demo-catalog.html')
+def demo_catalog_page():
+    return FileResponse(FRONTEND / 'demo-catalog.html')

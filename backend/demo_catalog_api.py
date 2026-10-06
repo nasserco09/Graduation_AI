@@ -1,0 +1,51 @@
+"""Local-only product entry prototype, isolated from the presentation catalog."""
+from fastapi import APIRouter, File, Form, HTTPException, UploadFile
+from fastapi.responses import Response
+from starlette.concurrency import run_in_threadpool
+from backend.demo_catalog import DemoCatalog
+from backend.image_preprocessing import PREPROCESSING_VERSION, preprocess_image
+from backend.request_validation import MAX_IMAGE_BYTES, validate_image_bytes
+
+
+def create_demo_catalog_router(engine, database):
+    store = DemoCatalog(database, engine.index.d, 'SigLIP2:' + PREPROCESSING_VERSION)
+    router = APIRouter(prefix='/api/demo-catalog', tags=['Local demo catalog'])
+
+    def encode(image):
+        prepared, _ = preprocess_image(image)
+        with engine._index_lock:
+            return engine.encode_image(prepared)
+
+    @router.get('/products')
+    def list_products():
+        return {'products':store.list_products(), 'scope':'isolated_local_demo_catalog'}
+
+    @router.post('/products', status_code=201)
+    async def add_product(name: str = Form(...), images: list[UploadFile] = File(...)):
+        try:
+            if not name.strip() or len(name.strip())>120:raise ValueError('Product name must contain 1 to 120 characters')
+            if not 1 <= len(images) <= 5:raise ValueError('Upload 1 to 5 images for one product')
+            photos = []
+            for image in images:
+                photos.append(validate_image_bytes(await image.read(MAX_IMAGE_BYTES+1),image.content_type))
+            return await run_in_threadpool(store.add,name,photos,encode)
+        except ValueError as error:
+            raise HTTPException(400,detail=str(error)) from error
+
+    @router.get('/images/{image_id}')
+    def get_image(image_id: str):
+        try:return Response(store.image_bytes(image_id),media_type='image/jpeg')
+        except KeyError:raise HTTPException(404,detail='Demo catalog image not found')
+
+    @router.post('/search')
+    async def search(image: UploadFile = File(...), top_k: int = 8):
+        try:
+            if not 1<=top_k<=50:raise ValueError('top_k must be between 1 and 50')
+            photo=validate_image_bytes(await image.read(MAX_IMAGE_BYTES+1),image.content_type)
+            vector=await run_in_threadpool(encode,photo)
+            results=await run_in_threadpool(store.search,vector,top_k)
+            return {'results':results,'scope':'isolated_local_demo_catalog'}
+        except ValueError as error:
+            raise HTTPException(400,detail=str(error)) from error
+
+    return router

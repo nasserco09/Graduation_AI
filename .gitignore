@@ -48,3 +48,6 @@ CATALOG*_PATCH_AR.txt
 
 # Presentation image copies stay on the user's presentation machine.
 demo/images/
+
+# Independent local product-entry prototype.
+data/demo_store/
