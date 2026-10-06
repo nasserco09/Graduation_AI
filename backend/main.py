@@ -2,6 +2,7 @@ from pathlib import Path
 import hashlib
 import json
 import time
+import os
 
 from fastapi import (
     FastAPI,
@@ -20,6 +21,7 @@ from backend.catalog_config import CATALOG_DIR, CATALOG_SOURCE
 from backend.catalog_metadata import METADATA_SCHEMA_VERSION
 from backend.image_preprocessing import PREPROCESSING_VERSION, preprocess_image
 from backend.request_validation import MAX_IMAGE_BYTES, validate_image_bytes
+from backend.product_grouping import ReviewedProductGroups
 from backend.search_engine import SearchEngine
 from backend.search_observability import SearchObservability
 from backend.segmenter import Segmenter
@@ -50,6 +52,12 @@ app = FastAPI(
 # =========================================================
 
 engine = SearchEngine()
+
+reviewed_group_file = os.getenv("GRADUATION_AI_REVIEWED_GROUPS")
+reviewed_groups = (
+    ReviewedProductGroups.load(reviewed_group_file, engine.catalog_metadata.items, CATALOG)
+    if reviewed_group_file else ReviewedProductGroups()
+)
 
 segmenter = Segmenter()
 
@@ -100,6 +108,7 @@ def health():
 
     return {
         "status": "ok",
+        "reviewed_product_groups": len(reviewed_groups.groups),
         "search_device": engine.device,
         "segmentation_device": segmenter.device,
         "index_ready": engine.index is not None,
@@ -277,7 +286,8 @@ async def search(
     image: UploadFile = File(...),
     search_mode: str = Form("full"),
     category: str = Form("auto"),
-    top_k: int = 8
+    top_k: int = 8,
+    group_products: bool = False
 ):
 
     try:
@@ -286,6 +296,9 @@ async def search(
 
         if not 1 <= top_k <= 50:
             raise ValueError("top_k must be between 1 and 50.")
+
+        if group_products and not reviewed_groups.groups:
+            raise ValueError("Reviewed product grouping is not configured.")
 
         content = await image.read(MAX_IMAGE_BYTES + 1)
         query_sha256 = hashlib.sha256(content).hexdigest()
@@ -301,11 +314,14 @@ async def search(
 
         results, category_routing = engine.search(
             prepared_image,
-            top_k,
+            len(engine.image_paths) if group_products else top_k,
             category=category,
             return_metadata=True,
         )
 
+
+        if group_products:
+            results = reviewed_groups.select(results, top_k)
 
         for result in results:
 
@@ -324,7 +340,7 @@ async def search(
             search_id = observability.record_search(
                 query_sha256=query_sha256,
                 search_mode=search_mode,
-                routing=category_routing,
+                routing=dict(category_routing, reviewed_grouping_applied=group_products),
                 top_k=top_k,
                 results=results,
                 latency_ms=latency_ms,
@@ -347,6 +363,7 @@ async def search(
                 "byte_size": len(content),
                 "search_mode": search_mode,
                 "category_routing": category_routing,
+                "reviewed_grouping_applied": group_products,
                 "preprocessing": preprocessing.as_dict(),
             }
         }

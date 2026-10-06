@@ -123,3 +123,33 @@
 ```powershell
 ./.venv/Scripts/python.exe -m evaluation.probe_known_positives --manifest evaluation/cache/relevance_review/coverage_vest_manifest.json --confirmation evaluation/cache/relevance_review/coverage_vest_confirmation.json --output evaluation/cache/relevance_review/vest_probe.json
 ```
+
+
+## تجميع صور المنتج بمراجعة بشرية
+
+راجع المستخدم 20 زوجًا: 12 نفس المنتج بصريًا و8 منتجات مختلفة، وأكد الزوج
+75/135 في متابعة مستقلة. ملف `data/reviewed_product_groups.json` يسجل فقط
+الأزواج المؤكدة مع معرفات الصور ومساراتها وبصمات SHA256. هذه هوية بصرية
+بالمراجعة، وليست إثبات SKU من بائع. باقي صور الكتالوج تبقى منفصلة.
+
+التجميع اختياري في API نسخة التطوير، ولا يتغير البحث الافتراضي. للتجربة:
+
+```powershell
+$env:GRADUATION_AI_REVIEWED_GROUPS = (Resolve-Path data/reviewed_product_groups.json).Path
+./.venv/Scripts/python.exe -u tools/launch_demo.py --port 8001 --no-browser
+```
+
+أرسل `group_products=true` كمعامل query إلى `/api/search`. يتطلب ملفًا
+مهيأ؛ الطلب دون تهيئة يُرفض ولا يوهم بتطبيق التجميع. يتحقق التحميل من
+هوية كل صورة وبصمتها والفئة وعدم تداخل المجموعات. البحث يجمع جميع نتائج
+الفئة قبل اختيار top_k لكي يملأ العدد بعد استبعاد الصور الإضافية للمجموعة.
+يحافظ على أعلى نتيجة ودرجتها وproduct_id للصورة؛ يضيف reviewed_group_id
+وgroup_images لجميع صور المجموعة. لا يحذف صورًا أو يغيّر FAISS أو الأوزان.
+يسجل تطبيق التجميع في query وفي سجل routing للمراقبة. الواجهة الأصلية
+لا تطلب الخيار حتى الآن؛ صفحة المقارنة المحلية تعرض نتيجتي API الفعليتين.
+
+التحقق: 86 unittest نجحت، منها 9 للتجميع وحفظ أعلى نتيجة وملء النتائج
+واستقلال الصور غير المجمعة ورفض تغير الصور والتداخل وتعارض الفئات.
+في تجربة السترة: 75 بقي أولًا بنفس الدرجة؛ صورة 135 جُمعت معه، و65 و102
+بقيا منفصلين حسب مراجعة المستخدم، ودخل 155 في المركز الثامن. بصمة الفهرس
+بقيت كما هي. هذه تجربة تنويع نتائج، وليست دليل زيادة دقة النموذج.
