@@ -549,6 +549,13 @@ function setSearchMode(mode) {
     const allowed = new Set(['full', 'ai', 'rect', 'poly', 'free']);
     state.searchMode = allowed.has(mode) ? mode : 'full';
     clearQueryPreview();
+    if (DOM.previewBadge) {
+        DOM.previewBadge.classList.toggle('ai-badge', state.searchMode === 'ai' && state.aiAccepted);
+        const badgeText = DOM.previewBadge.querySelector('span');
+        if (badgeText) badgeText.textContent = state.searchMode === 'ai'
+            ? (state.aiAccepted ? 'تم اعتماد القطعة' : 'التحديد الذكي')
+            : (isManualMode() ? 'التحديد اليدوي' : 'الصورة كاملة');
+    }
 
     const buttons = [
         [DOM.modeFullBtn, 'full'],
@@ -1783,7 +1790,12 @@ function setupEventListeners() {
         }
 
         if (e.key === 'Enter' && (!DOM.productModal || DOM.productModal.hidden) && (!DOM.aboutModal || DOM.aboutModal.hidden) && (!DOM.cameraModal || DOM.cameraModal.hidden)) {
-            if (DOM.searchBtn && !DOM.searchBtn.disabled && document.activeElement !== DOM.topKSelect) {
+            // Preserve native Enter behavior on controls (including nested icons).
+            // Otherwise a mode button can reset the selection while search starts.
+            if (e.defaultPrevented || e.repeat || e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) return;
+            if (e.target?.closest?.('button, input, select, textarea, a, [role="button"], [role="radio"], [contenteditable]:not([contenteditable="false"])')) return;
+            if (DOM.searchBtn && !DOM.searchBtn.disabled) {
+                e.preventDefault();
                 handleSearch();
             }
         }

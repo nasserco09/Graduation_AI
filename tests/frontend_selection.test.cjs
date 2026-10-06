@@ -35,6 +35,58 @@ function success(request) {
     request.resolve({ok:true,json:async()=>({overlay:'MASK',cutout:'CUTOUT',score:0.9})});
 }
 
+function keyboardApp() {
+    const a = app();
+    a.run(`
+        for (const key of Object.keys(DOM)) DOM[key] = null;
+        DOM.searchBtn = {disabled:false, addEventListener(){}};
+        var searchCalls = 0;
+        var keyHandler;
+        var prevented = false;
+        handleSearch = () => {searchCalls++;};
+        document.addEventListener = (type, callback) => {if(type === 'keydown') keyHandler = callback;};
+        var window = {addEventListener(){}};
+        setupEventListeners();
+    `);
+    return a;
+}
+
+test('Enter on an interactive control does not also trigger global search', () => {
+    const a = keyboardApp();
+    a.run(`keyHandler({key:'Enter',target:{closest:()=>({})},preventDefault(){prevented=true;}})`);
+    assert.equal(a.run('searchCalls'), 0);
+});
+
+test('Enter on the page starts one search and prevents default activation', () => {
+    const a = keyboardApp();
+    a.run(`keyHandler({key:'Enter',target:{closest:()=>null},preventDefault(){prevented=true;}})`);
+    assert.equal(a.run('searchCalls'), 1);
+    assert.equal(a.run('prevented'), true);
+});
+
+test('holding Enter does not repeat searches', () => {
+    const a = keyboardApp();
+    a.run(`keyHandler({key:'Enter',repeat:true,target:{closest:()=>null},preventDefault(){}})`);
+    assert.equal(a.run('searchCalls'), 0);
+});
+
+test('Enter respects disabled search and an open modal', () => {
+    const a = keyboardApp();
+    a.run(`DOM.searchBtn.disabled=true;
+        keyHandler({key:'Enter',target:{closest:()=>null},preventDefault(){}});
+        DOM.searchBtn.disabled=false;DOM.aboutModal={hidden:false};
+        keyHandler({key:'Enter',target:{closest:()=>null},preventDefault(){}});`);
+    assert.equal(a.run('searchCalls'), 0);
+});
+
+test('switching from accepted SAM2 to manual mode changes the preview badge', () => {
+    const a = app();
+    a.run(`var badgeText={textContent:'تم اعتماد القطعة'};
+        DOM.previewBadge={classList:{toggle(){}},querySelector:()=>badgeText};
+        state.aiAccepted=true;setSearchMode('rect');`);
+    assert.equal(a.run('badgeText.textContent'), 'التحديد اليدوي');
+});
+
 test('failed refinement preserves the previous accepted selection', async () => {
     const a = app();
     a.run(`state.aiPoints=[{x:20,y:20,label:1}];state.aiMaskDataUrl='old-mask';

@@ -225,6 +225,10 @@ late SAM2 responses after reset, stale failures during a new request, and
 retaining the previous selection after failed refinement. They do not verify
 browser gestures or canvas rendering.
 
+The suite also covers native Enter behavior on controls, repeated keys, open
+dialogs, and the preview badge when switching selection modes. Interactive
+browser checks and their limits are recorded in `docs/BROWSER_QA_AR.md`.
+
 Then start the application and verify `/api/health`. A stale index is rejected
 automatically; use `POST /api/reindex` or perform the first search to rebuild it.
 
