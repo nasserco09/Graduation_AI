@@ -1563,3 +1563,15 @@ kbd {
     .search-mode-btn { flex: 1; justify-content: center; }
     .selection-result { align-items: flex-start; }
 }
+
+
+/* Reviewed product image grouping. */
+#product-grouping-option[hidden], .group-image-buttons[hidden] { display: none; }
+.group-image-count { font-size: .75rem; color: var(--text-3); }
+.group-image-buttons { display: flex; flex-wrap: wrap; gap: .5rem; padding: .75rem; }
+.group-image-buttons button { cursor: pointer; padding: .5rem .75rem; border-radius: .5rem; border: 1px solid var(--text-3); background: var(--bg-card); color: var(--text-1); font: inherit; }
+.group-image-buttons button[aria-pressed="true"] { outline: 2px solid var(--primary); }
+
+.modal-image-container { flex-direction: column; }
+.group-image-buttons { justify-content: center; width: 100%; }
+.group-image-buttons button { white-space: nowrap; }

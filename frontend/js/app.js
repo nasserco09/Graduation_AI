@@ -22,6 +22,9 @@ const CONFIG = {
 // DOM Selectors
 // ===================================
 const DOM = {
+    groupingOption: document.getElementById('product-grouping-option'),
+    groupProducts: document.getElementById('group-products'),
+    modalGroupImages: document.getElementById('modal-group-images'),
     // Upload elements
     dropZone: document.getElementById('drop-zone'),
     dropZoneContent: document.getElementById('drop-zone-content'),
@@ -1152,7 +1155,8 @@ async function searchImage(imageFile, topK, fileName = 'query-image.jpg', search
     formData.append('search_mode', searchMode);
     formData.append('category', category);
 
-    const endpoint = `${CONFIG.SEARCH_ENDPOINT}?top_k=${encodeURIComponent(topK)}`;
+    const groupingEnabled = Boolean(DOM.groupProducts && !DOM.groupProducts.disabled && DOM.groupProducts.checked);
+    const endpoint = `${CONFIG.SEARCH_ENDPOINT}?top_k=${encodeURIComponent(topK)}${groupingEnabled ? '&group_products=true' : ''}`;
     const response = await fetch(endpoint, {
         method: 'POST',
         body: formData
@@ -1319,6 +1323,7 @@ function createResultCard(item, index) {
                     ${formatSimilarity(item.similarity)} تشابه
                 </span>
                 ${categoryTag}
+                ${Array.isArray(item.group_images) && item.group_images.length > 1 ? `<span class="group-image-count">${item.group_images.length} صور للمنتج</span>` : ''}
             </div>
             ${item.product_id ? `
                 <button type="button" class="correct-match-btn" data-product-id="${safeProductId}">
@@ -1365,6 +1370,9 @@ function createResultCard(item, index) {
  */
 function openProductModal(product) {
     const title = product.title || 'نتيجة البحث';
+    const grouped = Array.isArray(product.group_images) && product.group_images.length > 1;
+    if (DOM.modalProductId?.previousElementSibling) DOM.modalProductId.previousElementSibling.textContent = grouped ? 'معرّف الصورة' : 'معرّف المنتج';
+    if (DOM.modalSimilarity?.previousElementSibling) DOM.modalSimilarity.previousElementSibling.textContent = grouped ? 'أفضل تشابه للمنتج' : 'درجة التشابه البصري';
 
     if (DOM.modalImage) {
         DOM.modalImage.src = safeHttpUrl(product.image_url) || 'assets/placeholder.svg';
@@ -1398,6 +1406,32 @@ function openProductModal(product) {
     // Store current image URL for copy
     if (DOM.modalCopyLink) {
         DOM.modalCopyLink.dataset.url = product.image_url;
+    }
+
+    if (DOM.modalGroupImages) {
+        DOM.modalGroupImages.replaceChildren();
+        const images = Array.isArray(product.group_images) ? product.group_images : [];
+        DOM.modalGroupImages.hidden = images.length < 2;
+        images.forEach((image, index) => {
+            const url = safeHttpUrl(image.url);
+            if (!url) return;
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = `صورة ${index + 1}`;
+            button.setAttribute('aria-pressed', String(url === safeHttpUrl(product.image_url)));
+            button.addEventListener('click', () => {
+                if (DOM.modalImage) DOM.modalImage.src = url;
+                if (DOM.modalImageUrl) DOM.modalImageUrl.textContent = url;
+                if (DOM.modalProductId) DOM.modalProductId.textContent = image.product_id;
+                if (DOM.modalDownload) {
+                    DOM.modalDownload.href = url;
+                    DOM.modalDownload.download = `${image.product_id}.jpg`;
+                }
+                if (DOM.modalCopyLink) DOM.modalCopyLink.dataset.url = url;
+                for (const sibling of DOM.modalGroupImages.children) sibling.setAttribute('aria-pressed', String(sibling === button));
+            });
+            DOM.modalGroupImages.appendChild(button);
+        });
     }
 
     // Show modal
@@ -1806,8 +1840,25 @@ function setupEventListeners() {
 // Initialization
 // ===================================
 
+async function loadGroupingCapability() {
+    if (!DOM.groupProducts || !DOM.groupingOption) return;
+    try {
+        const response = await fetch('/api/health');
+        const health = await readApiJson(response);
+        const available = Number(health.reviewed_product_groups) > 0;
+        DOM.groupingOption.hidden = !available;
+        DOM.groupProducts.disabled = !available;
+        DOM.groupProducts.checked = available;
+    } catch {
+        DOM.groupingOption.hidden = true;
+        DOM.groupProducts.disabled = true;
+        DOM.groupProducts.checked = false;
+    }
+}
+
 function init() {
     loadThemePreference();
+    loadGroupingCapability();
     setupEventListeners();
     setSearchMode('full');
     updateSearchButtonState();

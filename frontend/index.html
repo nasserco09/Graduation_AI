@@ -377,6 +377,14 @@
                         </select>
                     </div>
 
+                    <div id="product-grouping-option" class="option-group" hidden>
+                        <label class="option-label" for="group-products">
+                            <input id="group-products" type="checkbox" disabled>
+                            عرض المنتج مرة واحدة
+                        </label>
+                        <small>يجمع صور المنتجات التي تأكدنا أنها لنفس القطعة.</small>
+                    </div>
+
                     <div class="option-group">
                         <label class="option-label">
                             <i class="fas fa-table-cells-large"></i>
@@ -654,6 +662,7 @@
             <div class="modal-body">
                 <div class="modal-image-container">
                     <img id="modal-image" class="modal-image" alt="صورة المنتج التفصيلية">
+                    <div id="modal-group-images" class="group-image-buttons" hidden></div>
                 </div>
                 <div class="modal-details">
                     <h3 id="modal-title" class="modal-title"></h3>

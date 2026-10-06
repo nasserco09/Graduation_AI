@@ -13,7 +13,7 @@ function app() {
                    querySelectorAll: () => [], addEventListener() {}},
         console: {log() {}, error() {}}, URL, Set,
         FormData: class {append() {}},
-        fetch: () => new Promise((resolve, reject) => pending.push({resolve, reject})),
+        fetch: (url, options) => new Promise((resolve, reject) => pending.push({resolve, reject, url, options})),
     });
     vm.runInContext(fs.readFileSync(path.join(__dirname, '../frontend/js/app.js'), 'utf8'), context);
     vm.runInContext(`
@@ -163,4 +163,38 @@ test('failed refinement retains an unaccepted selection for later acceptance', a
     assert.equal(a.run('DOM.searchBtn.disabled'), true);
     a.run('acceptAISelection()');
     assert.equal(a.run('DOM.searchBtn.disabled'), false);
+});
+
+
+test('configured grouping is requested and group images survive response normalization', async () => {
+    const a = app();
+    a.run("DOM.groupProducts = {disabled:false, checked:true};");
+    const promise = a.run("searchImage({},8)");
+    assert.equal(a.pending[0].url, '/api/search?top_k=8&group_products=true');
+    a.pending[0].resolve({ok:true,json:async()=>({results:[{product_id:'a',url:'/catalog/a.jpg',score:.9,group_images:[{url:'/catalog/a.jpg'},{url:'/catalog/b.jpg'}]}]})});
+    const data = await promise;
+    assert.equal(data.results[0].group_images.length,2);
+});
+
+test('unchecked or unavailable grouping keeps the original search request', async () => {
+    for (const values of [{disabled:false,checked:false},{disabled:true,checked:true}]) {
+        const a = app();
+        a.run(`DOM.groupProducts = ${JSON.stringify(values)};`);
+        const promise = a.run('searchImage({},8)');
+        assert.equal(a.pending[0].url,'/api/search?top_k=8');
+        a.pending[0].resolve({ok:true,json:async()=>({results:[]})});
+        await promise;
+    }
+});
+
+test('grouping control is offered only when server reports reviewed groups', async () => {
+    for (const count of [0,12]) {
+        const a = app();
+        a.run('DOM.groupProducts={disabled:true,checked:false}; DOM.groupingOption={hidden:true};');
+        const promise = a.run('loadGroupingCapability()');
+        a.pending[0].resolve({ok:true,json:async()=>({reviewed_product_groups:count})});
+        await promise;
+        assert.equal(a.run('DOM.groupProducts.checked'),count>0);
+        assert.equal(a.run('DOM.groupingOption.hidden'),count===0);
+    }
 });
