@@ -211,7 +211,8 @@ class SigLIP2Adapter(BaseAdapter):
     def encode_paths(
         self,
         paths,
-        batch_size=8
+        batch_size=8,
+        image_transform=None,
     ):
 
         vectors = []
@@ -230,6 +231,12 @@ class SigLIP2Adapter(BaseAdapter):
                 open_image(path)
                 for path in batch_paths
             ]
+
+            if image_transform is not None:
+                images = [
+                    image_transform(image)
+                    for image in images
+                ]
 
             inputs = self.processor(
                 images=images,

@@ -87,8 +87,11 @@ class Segmenter:
     def segment(
         self,
         image: Image.Image,
-        points: list,
-        labels: list
+        points: list | None = None,
+        labels: list | None = None,
+        *,
+        include_binary_mask: bool = False,
+        box: list | None = None
     ):
 
         # -------------------------------------------------
@@ -102,10 +105,13 @@ class Segmenter:
         # VALIDATION
         # -------------------------------------------------
 
-        if not points:
+        points = points or []
+        labels = labels or []
+
+        if not points and box is None:
 
             raise ValueError(
-                "At least one selection point is required."
+                "At least one selection point or bounding box is required."
             )
 
 
@@ -176,6 +182,24 @@ class Segmenter:
             )
 
 
+        cleaned_box = None
+        if box is not None:
+            if not isinstance(box, list) or len(box) != 4:
+                raise ValueError(
+                    "Bounding box must contain [x1, y1, x2, y2]."
+                )
+            x1, y1, x2, y2 = (float(value) for value in box)
+            x1 = max(0.0, min(x1, float(image.width - 1)))
+            y1 = max(0.0, min(y1, float(image.height - 1)))
+            x2 = max(0.0, min(x2, float(image.width - 1)))
+            y2 = max(0.0, min(y2, float(image.height - 1)))
+            if x2 <= x1 or y2 <= y1:
+                raise ValueError(
+                    "Bounding box bottom-right must follow top-left."
+                )
+            cleaned_box = [x1, y1, x2, y2]
+
+
         # -------------------------------------------------
         # SAM2 INPUT FORMAT
         #
@@ -185,30 +209,25 @@ class Segmenter:
         #           └── [x, y]
         # -------------------------------------------------
 
-        input_points = [
-            [
-                cleaned_points
-            ]
-        ]
-
-
-        input_labels = [
-            [
-                cleaned_labels
-            ]
-        ]
+        input_points = [[cleaned_points]] if cleaned_points else None
+        input_labels = [[cleaned_labels]] if cleaned_labels else None
 
 
         # -------------------------------------------------
         # PROCESS INPUT
         # -------------------------------------------------
 
-        inputs = self.processor(
-            images=image,
-            input_points=input_points,
-            input_labels=input_labels,
-            return_tensors="pt"
-        )
+        processor_kwargs = {
+            "images": image,
+            "return_tensors": "pt",
+        }
+        if input_points is not None:
+            processor_kwargs["input_points"] = input_points
+            processor_kwargs["input_labels"] = input_labels
+        if cleaned_box is not None:
+            processor_kwargs["input_boxes"] = [[cleaned_box]]
+
+        inputs = self.processor(**processor_kwargs)
 
 
         # Keep original size before moving tensors to GPU
@@ -412,7 +431,7 @@ class Segmenter:
         # RESULT
         # -------------------------------------------------
 
-        return {
+        result = {
 
             "overlay":
                 self._image_to_base64(
@@ -442,12 +461,39 @@ class Segmenter:
             "score":
                 best_score,
 
+            "mask_area_ratio":
+                round(
+                    float(len(xs))
+                    / float(image.width * image.height),
+                    6
+                ),
+
+            "bbox_area_ratio":
+                round(
+                    float((x2 - x1) * (y2 - y1))
+                    / float(image.width * image.height),
+                    6
+                ),
+
             "positive_points":
                 cleaned_labels.count(1),
 
             "negative_points":
                 cleaned_labels.count(0)
         }
+
+        # Catalog-isolation experiments sometimes need to combine two
+        # disconnected objects (for example, the left and right shoe).  Keep
+        # the binary mask opt-in so the normal API response does not grow and
+        # the frontend continues using the existing green overlay.
+        if include_binary_mask:
+            binary_mask = Image.fromarray(
+                (mask.astype(np.uint8) * 255),
+                mode="L"
+            )
+            result["binary_mask"] = self._image_to_base64(binary_mask)
+
+        return result
 
 
     # =====================================================

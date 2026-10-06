@@ -1,0 +1,284 @@
+{
+  "schema_version": "1.0",
+  "created_at_utc": "2026-09-26T21:52:30.995102+00:00",
+  "experiment": "original_vs_safe_crop_vs_validation_tuned_hybrid",
+  "evidence_scope": "category_level_retrieval_not_exact_product_identity",
+  "protocol": {
+    "gallery_count": 3068,
+    "validation_split_usage": "hybrid_weight_selection_only",
+    "test_split_usage": "final_comparison_only",
+    "hybrid_safe_weight": 0.1,
+    "hybrid_original_weight": 0.9,
+    "hybrid_weight_candidates": [
+      {
+        "safe_weight": 0.0,
+        "original_weight": 1.0,
+        "precision_at_1": 0.920821,
+        "map_at_10": 0.849331
+      },
+      {
+        "safe_weight": 0.1,
+        "original_weight": 0.9,
+        "precision_at_1": 0.929619,
+        "map_at_10": 0.8512
+      },
+      {
+        "safe_weight": 0.2,
+        "original_weight": 0.8,
+        "precision_at_1": 0.929619,
+        "map_at_10": 0.8505
+      },
+      {
+        "safe_weight": 0.3,
+        "original_weight": 0.7,
+        "precision_at_1": 0.929619,
+        "map_at_10": 0.84904
+      },
+      {
+        "safe_weight": 0.4,
+        "original_weight": 0.6,
+        "precision_at_1": 0.929619,
+        "map_at_10": 0.850237
+      },
+      {
+        "safe_weight": 0.5,
+        "original_weight": 0.5,
+        "precision_at_1": 0.923754,
+        "map_at_10": 0.848206
+      },
+      {
+        "safe_weight": 0.6,
+        "original_weight": 0.4,
+        "precision_at_1": 0.923754,
+        "map_at_10": 0.845927
+      },
+      {
+        "safe_weight": 0.7,
+        "original_weight": 0.3,
+        "precision_at_1": 0.917889,
+        "map_at_10": 0.842862
+      },
+      {
+        "safe_weight": 0.8,
+        "original_weight": 0.2,
+        "precision_at_1": 0.920821,
+        "map_at_10": 0.839976
+      },
+      {
+        "safe_weight": 0.9,
+        "original_weight": 0.1,
+        "precision_at_1": 0.914956,
+        "map_at_10": 0.83722
+      },
+      {
+        "safe_weight": 1.0,
+        "original_weight": 0.0,
+        "precision_at_1": 0.906158,
+        "map_at_10": 0.83388
+      }
+    ],
+    "bootstrap_samples": 10000,
+    "random_seed": 42,
+    "preprocessing_version": "visual-search-rgb-square-v1",
+    "crop_version": "content-preserving-crop-full-v1"
+  },
+  "cache_reused": {
+    "gallery_original": false,
+    "gallery_safe_crop": false,
+    "validation_queries": false,
+    "clean_test_queries": false,
+    "multi_product_full": false,
+    "multi_product_selected": false
+  },
+  "suites": {
+    "clean_test": {
+      "query_count": 372,
+      "original": {
+        "precision_at_1": 0.922043,
+        "precision_at_5": 0.896774,
+        "precision_at_10": 0.877419,
+        "map_at_10": 0.83484,
+        "mrr_at_10": 0.951504,
+        "hit_at_1": 0.922043,
+        "hit_at_5": 0.991935,
+        "hit_at_10": 0.997312,
+        "query_count": 372
+      },
+      "safe_crop": {
+        "precision_at_1": 0.927419,
+        "precision_at_5": 0.891935,
+        "precision_at_10": 0.874462,
+        "map_at_10": 0.834085,
+        "mrr_at_10": 0.953084,
+        "hit_at_1": 0.927419,
+        "hit_at_5": 0.986559,
+        "hit_at_10": 0.997312,
+        "query_count": 372
+      },
+      "hybrid": {
+        "precision_at_1": 0.919355,
+        "precision_at_5": 0.893548,
+        "precision_at_10": 0.87957,
+        "map_at_10": 0.837495,
+        "mrr_at_10": 0.949222,
+        "hit_at_1": 0.919355,
+        "hit_at_5": 0.989247,
+        "hit_at_10": 0.997312,
+        "query_count": 372
+      },
+      "safe_crop_vs_original": {
+        "delta_top1": 0.005376,
+        "bootstrap_95_ci": [
+          -0.021505,
+          0.032258
+        ],
+        "improved_queries": 14,
+        "worsened_queries": 12,
+        "unchanged_queries": 346,
+        "mcnemar_exact_p": 0.845019
+      },
+      "hybrid_vs_original": {
+        "delta_top1": -0.002688,
+        "bootstrap_95_ci": [
+          -0.016129,
+          0.008065
+        ],
+        "improved_queries": 2,
+        "worsened_queries": 3,
+        "unchanged_queries": 367,
+        "mcnemar_exact_p": 1.0
+      },
+      "query_details_csv": "evaluation\\results\\safe_crop_catalog_ab_clean_test_queries.csv"
+    },
+    "multi_product_full": {
+      "query_count": 100,
+      "original": {
+        "precision_at_1": 0.48,
+        "precision_at_5": 0.428,
+        "precision_at_10": 0.397,
+        "map_at_10": 0.310067,
+        "mrr_at_10": 0.595913,
+        "hit_at_1": 0.48,
+        "hit_at_5": 0.72,
+        "hit_at_10": 0.81,
+        "query_count": 100
+      },
+      "safe_crop": {
+        "precision_at_1": 0.43,
+        "precision_at_5": 0.432,
+        "precision_at_10": 0.407,
+        "map_at_10": 0.31264,
+        "mrr_at_10": 0.561885,
+        "hit_at_1": 0.43,
+        "hit_at_5": 0.74,
+        "hit_at_10": 0.79,
+        "query_count": 100
+      },
+      "hybrid": {
+        "precision_at_1": 0.49,
+        "precision_at_5": 0.42,
+        "precision_at_10": 0.396,
+        "map_at_10": 0.311904,
+        "mrr_at_10": 0.595079,
+        "hit_at_1": 0.49,
+        "hit_at_5": 0.71,
+        "hit_at_10": 0.8,
+        "query_count": 100
+      },
+      "safe_crop_vs_original": {
+        "delta_top1": -0.05,
+        "bootstrap_95_ci": [
+          -0.11025,
+          0.01
+        ],
+        "improved_queries": 3,
+        "worsened_queries": 8,
+        "unchanged_queries": 89,
+        "mcnemar_exact_p": 0.226562
+      },
+      "hybrid_vs_original": {
+        "delta_top1": 0.01,
+        "bootstrap_95_ci": [
+          0.0,
+          0.03
+        ],
+        "improved_queries": 1,
+        "worsened_queries": 0,
+        "unchanged_queries": 99,
+        "mcnemar_exact_p": 1.0
+      },
+      "query_details_csv": "evaluation\\results\\safe_crop_catalog_ab_multi_product_full_queries.csv"
+    },
+    "multi_product_selected": {
+      "query_count": 100,
+      "original": {
+        "precision_at_1": 0.76,
+        "precision_at_5": 0.76,
+        "precision_at_10": 0.742,
+        "map_at_10": 0.70039,
+        "mrr_at_10": 0.811778,
+        "hit_at_1": 0.76,
+        "hit_at_5": 0.88,
+        "hit_at_10": 0.91,
+        "query_count": 100
+      },
+      "safe_crop": {
+        "precision_at_1": 0.78,
+        "precision_at_5": 0.764,
+        "precision_at_10": 0.737,
+        "map_at_10": 0.683454,
+        "mrr_at_10": 0.833095,
+        "hit_at_1": 0.78,
+        "hit_at_5": 0.92,
+        "hit_at_10": 0.93,
+        "query_count": 100
+      },
+      "hybrid": {
+        "precision_at_1": 0.76,
+        "precision_at_5": 0.766,
+        "precision_at_10": 0.747,
+        "map_at_10": 0.704485,
+        "mrr_at_10": 0.813944,
+        "hit_at_1": 0.76,
+        "hit_at_5": 0.88,
+        "hit_at_10": 0.91,
+        "query_count": 100
+      },
+      "safe_crop_vs_original": {
+        "delta_top1": 0.02,
+        "bootstrap_95_ci": [
+          -0.03,
+          0.08
+        ],
+        "improved_queries": 5,
+        "worsened_queries": 3,
+        "unchanged_queries": 92,
+        "mcnemar_exact_p": 0.726562
+      },
+      "hybrid_vs_original": {
+        "delta_top1": 0.0,
+        "bootstrap_95_ci": [
+          -0.03,
+          0.03
+        ],
+        "improved_queries": 1,
+        "worsened_queries": 1,
+        "unchanged_queries": 98,
+        "mcnemar_exact_p": 1.0
+      },
+      "query_details_csv": "evaluation\\results\\safe_crop_catalog_ab_multi_product_selected_queries.csv"
+    }
+  },
+  "decision": {
+    "primary_suite": "multi_product_selected",
+    "statistically_supported_hybrid_gain": false,
+    "production_switch_authorized": false,
+    "recommended_next_action": "keep_original_and_review_paired_failures_before_any_switch",
+    "reason": "The paired held-out evidence does not yet prove a hybrid improvement."
+  },
+  "experimental_index": {
+    "active_index_changed": false,
+    "faiss": "data\\experiments\\safe_crop_catalog_v1\\catalog_safe_crop_siglip2.faiss",
+    "mapping": "data\\experiments\\safe_crop_catalog_v1\\catalog_safe_crop_siglip2_paths.json"
+  }
+}

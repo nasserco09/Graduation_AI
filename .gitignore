@@ -37,3 +37,11 @@ datasets/exact_product/*
 *.zip
 # Evaluation embedding cache
 evaluation/cache/
+
+# Reproducible catalog experiments: keep code and small reports in Git.
+data/catalog_isolation_preview/
+data/catalog_safe_crop_preview/
+data/catalog_safe_crops_v1/
+data/experiments/
+# Local notes from earlier experiment iterations.
+CATALOG*_PATCH_AR.txt
