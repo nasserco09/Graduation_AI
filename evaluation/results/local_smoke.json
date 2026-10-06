@@ -1,0 +1,292 @@
+{
+  "schema_version": "1.0",
+  "created_at_utc": "2026-10-06T15:35:11.944555+00:00",
+  "scope": "http_integration_not_browser_interaction",
+  "url": "http://127.0.0.1:8000",
+  "fixture": "C:\\Users\\nyousef\\PycharmProjects\\Graduation_AI\\evaluation\\cache\\sam2_ab\\composites\\000_dress.jpg",
+  "fixture_sha256": "fef8dcf25b347fa37848a9dc847918e304b30c55203f4b187da361178f49d123",
+  "passed": true,
+  "checks": [
+    {
+      "name": "health",
+      "passed": true,
+      "response": {
+        "status": "ok",
+        "search_device": "cuda",
+        "segmentation_device": "cuda",
+        "index_ready": true,
+        "preprocessing_version": "visual-search-rgb-square-v1",
+        "catalog_metadata_version": "1.0",
+        "catalog_source": "clothing_small_train",
+        "indexed_images": 3068
+      }
+    },
+    {
+      "name": "catalog_metadata",
+      "passed": true
+    },
+    {
+      "name": "asset:/",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "name": "asset:/about.html",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "name": "asset:/js/app.js",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "name": "asset:/styles/styles.css",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "name": "asset:/styles/about.css",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "name": "asset:/assets/logo.svg",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "name": "asset:/docs",
+      "passed": true,
+      "status": 200
+    },
+    {
+      "name": "full_image",
+      "passed": true,
+      "status": 200,
+      "elapsed_ms": 110.799,
+      "top1_category": "outwear",
+      "routing": {
+        "requested_category": "auto",
+        "predicted_category": "outwear",
+        "predicted_label": "جاكيتات وملابس خارجية",
+        "confidence": 0.175333,
+        "margin": 0.0374,
+        "applied_category": "outwear",
+        "applied_label": "جاكيتات وملابس خارجية",
+        "method": "catalog_embedding_centroids"
+      },
+      "search_id": "b0a0284a-55f1-4993-b2ef-21e0ff884c19"
+    },
+    {
+      "name": "full_image:result_image",
+      "passed": true
+    },
+    {
+      "name": "sam2_positive",
+      "passed": true,
+      "status": 200,
+      "score": 0.977796733379364,
+      "bbox": {
+        "x": 662,
+        "y": 45,
+        "width": 173,
+        "height": 416
+      }
+    },
+    {
+      "name": "sam2_positive:cutout",
+      "passed": true
+    },
+    {
+      "name": "sam2_positive:search",
+      "passed": true,
+      "status": 200,
+      "elapsed_ms": 92.377,
+      "top1_category": "dress",
+      "routing": {
+        "requested_category": "auto",
+        "predicted_category": "dress",
+        "predicted_label": "فساتين",
+        "confidence": 0.323573,
+        "margin": 0.218314,
+        "applied_category": "dress",
+        "applied_label": "فساتين",
+        "method": "catalog_embedding_centroids"
+      },
+      "search_id": "96227891-c328-4cd5-8a77-3d68c2ca8bba"
+    },
+    {
+      "name": "sam2_positive:search:result_image",
+      "passed": true
+    },
+    {
+      "name": "sam2_refined",
+      "passed": true,
+      "status": 200,
+      "score": 0.9718689322471619,
+      "bbox": {
+        "x": 662,
+        "y": 45,
+        "width": 174,
+        "height": 417
+      }
+    },
+    {
+      "name": "sam2_refined:cutout",
+      "passed": true
+    },
+    {
+      "name": "sam2_refined:search",
+      "passed": true,
+      "status": 200,
+      "elapsed_ms": 92.184,
+      "top1_category": "dress",
+      "routing": {
+        "requested_category": "auto",
+        "predicted_category": "dress",
+        "predicted_label": "فساتين",
+        "confidence": 0.330106,
+        "margin": 0.225799,
+        "applied_category": "dress",
+        "applied_label": "فساتين",
+        "method": "catalog_embedding_centroids"
+      },
+      "search_id": "d390403e-6290-4d64-828c-037a04e0849e"
+    },
+    {
+      "name": "sam2_refined:search:result_image",
+      "passed": true
+    },
+    {
+      "name": "prepared_manual_rect",
+      "passed": true,
+      "status": 200,
+      "elapsed_ms": 117.285,
+      "top1_category": "dress",
+      "routing": {
+        "requested_category": "auto",
+        "predicted_category": "dress",
+        "predicted_label": "فساتين",
+        "confidence": 0.3604,
+        "margin": 0.259731,
+        "applied_category": "dress",
+        "applied_label": "فساتين",
+        "method": "catalog_embedding_centroids"
+      },
+      "search_id": "2aed1d7d-d592-4afc-9d9f-56fad382b159"
+    },
+    {
+      "name": "prepared_manual_rect:result_image",
+      "passed": true
+    },
+    {
+      "name": "prepared_manual_poly",
+      "passed": true,
+      "status": 200,
+      "elapsed_ms": 160.395,
+      "top1_category": "dress",
+      "routing": {
+        "requested_category": "auto",
+        "predicted_category": "dress",
+        "predicted_label": "فساتين",
+        "confidence": 0.3604,
+        "margin": 0.259731,
+        "applied_category": "dress",
+        "applied_label": "فساتين",
+        "method": "catalog_embedding_centroids"
+      },
+      "search_id": "d90e3101-9e44-4742-a040-547f6600aef8"
+    },
+    {
+      "name": "prepared_manual_poly:result_image",
+      "passed": true
+    },
+    {
+      "name": "prepared_manual_free",
+      "passed": true,
+      "status": 200,
+      "elapsed_ms": 102.75,
+      "top1_category": "dress",
+      "routing": {
+        "requested_category": "auto",
+        "predicted_category": "dress",
+        "predicted_label": "فساتين",
+        "confidence": 0.3604,
+        "margin": 0.259731,
+        "applied_category": "dress",
+        "applied_label": "فساتين",
+        "method": "catalog_embedding_centroids"
+      },
+      "search_id": "ad33f141-1285-4d5c-8d17-47e81ae69536"
+    },
+    {
+      "name": "prepared_manual_free:result_image",
+      "passed": true
+    },
+    {
+      "name": "unrestricted",
+      "passed": true,
+      "status": 200,
+      "elapsed_ms": 105.467,
+      "top1_category": "dress",
+      "routing": {
+        "requested_category": "all",
+        "predicted_category": "outwear",
+        "predicted_label": "جاكيتات وملابس خارجية",
+        "confidence": 0.175333,
+        "margin": 0.0374,
+        "applied_category": null,
+        "applied_label": null,
+        "method": "catalog_embedding_centroids"
+      },
+      "search_id": "74fb9b03-dee2-48c9-83c3-37f05bef55a4"
+    },
+    {
+      "name": "unrestricted:result_image",
+      "passed": true
+    },
+    {
+      "name": "category_override",
+      "passed": true,
+      "status": 200,
+      "elapsed_ms": 112.968,
+      "top1_category": "dress",
+      "routing": {
+        "requested_category": "dress",
+        "predicted_category": "outwear",
+        "predicted_label": "جاكيتات وملابس خارجية",
+        "confidence": 0.175333,
+        "margin": 0.0374,
+        "applied_category": "dress",
+        "applied_label": "فساتين",
+        "method": "catalog_embedding_centroids"
+      },
+      "search_id": "8a4b23d8-b046-4e95-b1e7-3bfe0c08da67"
+    },
+    {
+      "name": "category_override:result_image",
+      "passed": true
+    },
+    {
+      "name": "invalid_image",
+      "passed": true,
+      "status": 400
+    },
+    {
+      "name": "empty_points",
+      "passed": true,
+      "status": 400
+    },
+    {
+      "name": "invalid_top_k",
+      "passed": true,
+      "status": 400
+    }
+  ],
+  "limitations": [
+    "Prepared manual crops validate API modes, not rectangle/polygon/lasso gestures.",
+    "Does not establish aggregate retrieval accuracy or exact product identity.",
+    "Successful searches append normal local telemetry."
+  ]
+}

@@ -20,6 +20,7 @@
   },
   "notes": [
     "Metrics measure class-level retrieval, not exact product identity.",
-    "The application catalog contains 30 images and is separate from the evaluation gallery."
+    "The evaluation gallery is the 3,068-image train split; validation and test images remain excluded from the gallery.",
+    "The application uses the same 3,068-image train catalog when that dataset is installed, with a separate 30-image demo fallback."
   ]
 }

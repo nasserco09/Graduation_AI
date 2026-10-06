@@ -95,7 +95,7 @@ confirm that the server received the same bytes the user previewed.
 
 ---
 
-## Verified Evaluation Baseline
+## Historical Evaluation Baseline
 
 The checked-in baseline is stored in `data/baseline_metrics.json`. It records
 the existing class-level evaluation separately from exact-product matching:
@@ -105,8 +105,19 @@ the existing class-level evaluation separately from exact-product matching:
 - Multi-product test set: full-image top-1 = 0.46 and SAM2 top-1 = 0.75,
   an improvement of 29 percentage points.
 
-These figures are a baseline for regression checks; they do not prove exact
-catalog-item identity matching.
+These saved test results agree with `evaluation/results/FINAL_TEST_RESULTS.json`.
+The separate `sam2_vs_full.json` result (48% to 80%) uses validation composites,
+not the held-out test composites (46% to 75%). They are different experiments.
+Historical scripts use existence-based caches and do not explicitly apply the
+current square preprocessing contract, so these numbers must not be described
+as a fresh measurement of the current application. They do not prove exact
+catalog-item identity matching. See `docs/EVALUATION_EVIDENCE_AR.md`.
+
+Fresh category-routing checks on 6 October 2026 used the current original index
+and application query encoder: unrestricted versus automatic Top-1 was
+92.08% versus 94.72% on validation (341), and 92.20% versus 96.24% on test (372).
+This covers clean images and category relevance only; no routing threshold was
+tuned and production behavior was not changed.
 
 ---
 
@@ -205,7 +216,39 @@ Run the dependency-light unit suite from the project root:
 
 ```powershell
 python -m unittest discover -s tests -v
+node --test tests/frontend_selection.test.cjs
 ```
+
+The JavaScript tests require Node.js only for development and execute the actual
+frontend source with a minimal DOM and controlled API responses. They cover
+late SAM2 responses after reset, stale failures during a new request, and
+retaining the previous selection after failed refinement. They do not verify
+browser gestures or canvas rendering.
 
 Then start the application and verify `/api/health`. A stale index is rejected
 automatically; use `POST /api/reindex` or perform the first search to rebuild it.
+
+For repeatable evidence and integration checks:
+
+```powershell
+.\.venv\Scripts\python.exe -m evaluation.audit_evidence
+.\.venv\Scripts\python.exe -m evaluation.compare_category_routing
+.\.venv\Scripts\python.exe -m tools.smoke_local_app
+```
+
+The evidence audit checks saved results and byte-level split overlap without
+inference. The routing comparison freshly encodes validation/test queries
+against the existing index. The HTTP smoke check requires a running server and
+the local composite fixture; successful searches append normal local telemetry.
+It does not verify browser gestures. See `docs/DEFENSE_READINESS_AR.md` for the
+remaining browser checks and the discussion preparation checklist.
+
+## Experimental safe-crop catalog
+
+The full-catalog safe-crop experiment is isolated from the production catalog
+and index. It uses per-image SHA-256 records for resumability, builds a separate
+FAISS index, selects any hybrid weight on validation only, and reports a paired
+held-out comparison with bootstrap confidence intervals and an exact McNemar
+test. See `docs/SAFE_CROP_CATALOG_EXPERIMENT_AR.md` for the commands and the
+decision limits. The experiment does not authorize a production switch without
+exact-product or real-user evidence.

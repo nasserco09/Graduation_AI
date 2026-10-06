@@ -1,0 +1,420 @@
+{
+  "schema_version": "1.0",
+  "audited_at_utc": "2026-10-06T15:36:06.709669+00:00",
+  "scope": "saved_artifact_consistency_and_current_byte_level_split_audit_not_fresh_inference",
+  "passed": true,
+  "checks": [
+    {
+      "name": "baseline_clean_p_at_1",
+      "passed": true,
+      "actual": 0.908602,
+      "expected": 0.9086021505376344
+    },
+    {
+      "name": "baseline_clean_p_at_5",
+      "passed": true,
+      "actual": 0.889785,
+      "expected": 0.8897849462365591
+    },
+    {
+      "name": "baseline_clean_p_at_10",
+      "passed": true,
+      "actual": 0.870968,
+      "expected": 0.870967741935484
+    },
+    {
+      "name": "baseline_clean_map_at_10",
+      "passed": true,
+      "actual": 0.825378,
+      "expected": 0.8253777308414405
+    },
+    {
+      "name": "baseline_clean_mrr_at_10",
+      "passed": true,
+      "actual": 0.944806,
+      "expected": 0.9448060675883255
+    },
+    {
+      "name": "baseline_full_top1",
+      "passed": true,
+      "actual": 0.46,
+      "expected": 0.46
+    },
+    {
+      "name": "baseline_sam2_top1",
+      "passed": true,
+      "actual": 0.75,
+      "expected": 0.75
+    },
+    {
+      "name": "baseline_multi_count",
+      "passed": true,
+      "actual": 100,
+      "expected": 100
+    },
+    {
+      "name": "baseline_improved",
+      "passed": true,
+      "actual": 39,
+      "expected": 39
+    },
+    {
+      "name": "baseline_worsened",
+      "passed": true,
+      "actual": 10,
+      "expected": 10
+    },
+    {
+      "name": "baseline_unchanged",
+      "passed": true,
+      "actual": 51,
+      "expected": 51
+    },
+    {
+      "name": "validation_count",
+      "passed": true,
+      "actual": 100,
+      "expected": 100
+    },
+    {
+      "name": "validation_full_top1",
+      "passed": true,
+      "actual": 0.48,
+      "expected": 0.48
+    },
+    {
+      "name": "validation_sam2_top1",
+      "passed": true,
+      "actual": 0.8,
+      "expected": 0.8
+    },
+    {
+      "name": "validation_improved",
+      "passed": true,
+      "actual": 41,
+      "expected": 41
+    },
+    {
+      "name": "validation_worsened",
+      "passed": true,
+      "actual": 9,
+      "expected": 9
+    },
+    {
+      "name": "validation_unchanged",
+      "passed": true,
+      "actual": 50,
+      "expected": 50
+    },
+    {
+      "name": "clean_test_safe_crop_count",
+      "passed": true,
+      "actual": 372,
+      "expected": 372
+    },
+    {
+      "name": "clean_test_safe_crop_original",
+      "passed": true,
+      "actual": 0.9220430107526881,
+      "expected": 0.922043
+    },
+    {
+      "name": "clean_test_safe_crop_top1",
+      "passed": true,
+      "actual": 0.9274193548387096,
+      "expected": 0.927419
+    },
+    {
+      "name": "clean_test_safe_crop_improved",
+      "passed": true,
+      "actual": 14,
+      "expected": 14
+    },
+    {
+      "name": "clean_test_safe_crop_worsened",
+      "passed": true,
+      "actual": 12,
+      "expected": 12
+    },
+    {
+      "name": "clean_test_safe_crop_unchanged",
+      "passed": true,
+      "actual": 346,
+      "expected": 346
+    },
+    {
+      "name": "clean_test_hybrid_count",
+      "passed": true,
+      "actual": 372,
+      "expected": 372
+    },
+    {
+      "name": "clean_test_hybrid_original",
+      "passed": true,
+      "actual": 0.9220430107526881,
+      "expected": 0.922043
+    },
+    {
+      "name": "clean_test_hybrid_top1",
+      "passed": true,
+      "actual": 0.9193548387096774,
+      "expected": 0.919355
+    },
+    {
+      "name": "clean_test_hybrid_improved",
+      "passed": true,
+      "actual": 2,
+      "expected": 2
+    },
+    {
+      "name": "clean_test_hybrid_worsened",
+      "passed": true,
+      "actual": 3,
+      "expected": 3
+    },
+    {
+      "name": "clean_test_hybrid_unchanged",
+      "passed": true,
+      "actual": 367,
+      "expected": 367
+    },
+    {
+      "name": "multi_product_full_safe_crop_count",
+      "passed": true,
+      "actual": 100,
+      "expected": 100
+    },
+    {
+      "name": "multi_product_full_safe_crop_original",
+      "passed": true,
+      "actual": 0.48,
+      "expected": 0.48
+    },
+    {
+      "name": "multi_product_full_safe_crop_top1",
+      "passed": true,
+      "actual": 0.43,
+      "expected": 0.43
+    },
+    {
+      "name": "multi_product_full_safe_crop_improved",
+      "passed": true,
+      "actual": 3,
+      "expected": 3
+    },
+    {
+      "name": "multi_product_full_safe_crop_worsened",
+      "passed": true,
+      "actual": 8,
+      "expected": 8
+    },
+    {
+      "name": "multi_product_full_safe_crop_unchanged",
+      "passed": true,
+      "actual": 89,
+      "expected": 89
+    },
+    {
+      "name": "multi_product_full_hybrid_count",
+      "passed": true,
+      "actual": 100,
+      "expected": 100
+    },
+    {
+      "name": "multi_product_full_hybrid_original",
+      "passed": true,
+      "actual": 0.48,
+      "expected": 0.48
+    },
+    {
+      "name": "multi_product_full_hybrid_top1",
+      "passed": true,
+      "actual": 0.49,
+      "expected": 0.49
+    },
+    {
+      "name": "multi_product_full_hybrid_improved",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "name": "multi_product_full_hybrid_worsened",
+      "passed": true,
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "name": "multi_product_full_hybrid_unchanged",
+      "passed": true,
+      "actual": 99,
+      "expected": 99
+    },
+    {
+      "name": "multi_product_selected_safe_crop_count",
+      "passed": true,
+      "actual": 100,
+      "expected": 100
+    },
+    {
+      "name": "multi_product_selected_safe_crop_original",
+      "passed": true,
+      "actual": 0.76,
+      "expected": 0.76
+    },
+    {
+      "name": "multi_product_selected_safe_crop_top1",
+      "passed": true,
+      "actual": 0.78,
+      "expected": 0.78
+    },
+    {
+      "name": "multi_product_selected_safe_crop_improved",
+      "passed": true,
+      "actual": 5,
+      "expected": 5
+    },
+    {
+      "name": "multi_product_selected_safe_crop_worsened",
+      "passed": true,
+      "actual": 3,
+      "expected": 3
+    },
+    {
+      "name": "multi_product_selected_safe_crop_unchanged",
+      "passed": true,
+      "actual": 92,
+      "expected": 92
+    },
+    {
+      "name": "multi_product_selected_hybrid_count",
+      "passed": true,
+      "actual": 100,
+      "expected": 100
+    },
+    {
+      "name": "multi_product_selected_hybrid_original",
+      "passed": true,
+      "actual": 0.76,
+      "expected": 0.76
+    },
+    {
+      "name": "multi_product_selected_hybrid_top1",
+      "passed": true,
+      "actual": 0.76,
+      "expected": 0.76
+    },
+    {
+      "name": "multi_product_selected_hybrid_improved",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "name": "multi_product_selected_hybrid_worsened",
+      "passed": true,
+      "actual": 1,
+      "expected": 1
+    },
+    {
+      "name": "multi_product_selected_hybrid_unchanged",
+      "passed": true,
+      "actual": 98,
+      "expected": 98
+    },
+    {
+      "name": "train_count",
+      "passed": true,
+      "actual": 3068,
+      "expected": 3068
+    },
+    {
+      "name": "test_count",
+      "passed": true,
+      "actual": 372,
+      "expected": 372
+    }
+  ],
+  "issues": [],
+  "dataset_splits": {
+    "train": {
+      "image_count": 3068,
+      "unique_byte_hashes": 3068
+    },
+    "validation": {
+      "image_count": 341,
+      "unique_byte_hashes": 341
+    },
+    "test": {
+      "image_count": 372,
+      "unique_byte_hashes": 372
+    }
+  },
+  "cross_split_overlap": [
+    {
+      "splits": [
+        "train",
+        "validation"
+      ],
+      "shared_byte_hash_count": 0,
+      "examples": []
+    },
+    {
+      "splits": [
+        "train",
+        "test"
+      ],
+      "shared_byte_hash_count": 0,
+      "examples": []
+    },
+    {
+      "splits": [
+        "validation",
+        "test"
+      ],
+      "shared_byte_hash_count": 0,
+      "examples": []
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "data/baseline_metrics.json",
+      "sha256": "83c6f84738487ad88cc25fed959808b4bc9352b4a6bdce2019268335bbda8147"
+    },
+    {
+      "path": "evaluation/results/FINAL_TEST_RESULTS.json",
+      "sha256": "d0dc39a545b455cd38a2ea71b25061e1e1fe2bf6cdbe5c38290561aba2a1dfa4"
+    },
+    {
+      "path": "evaluation/results/sam2_vs_full.json",
+      "sha256": "c9b94afef3752b62be5742fc2dc2d8357106e5b022678545b75cb0790709fe86"
+    },
+    {
+      "path": "evaluation/results/safe_crop_catalog_ab.json",
+      "sha256": "e35ff93c99a5a0a7971c895050145898bf3b48f81606b82e195d4a71f75a07e7"
+    },
+    {
+      "path": "evaluation/results/sam2_vs_full_queries.csv",
+      "sha256": "c112ce9d311c7ccdca2b9ac3887bf75184c41a872bc8b7250a789aa4d79d6056"
+    },
+    {
+      "path": "evaluation/results/safe_crop_catalog_ab_clean_test_queries.csv",
+      "sha256": "74eea40d44f9125cdec4edced69f7903d7d77da56fe9bde5201e8b6ea569c532"
+    },
+    {
+      "path": "evaluation/results/safe_crop_catalog_ab_multi_product_full_queries.csv",
+      "sha256": "aff2b8ba2cc0c005c381c450b27b01cab10c3cc32ce9c44e9700fb654c488317"
+    },
+    {
+      "path": "evaluation/results/safe_crop_catalog_ab_multi_product_selected_queries.csv",
+      "sha256": "0c5d4647e78ed5ed0bbfa524827484b4de1a61912a7deb5c4a232442e31915ee"
+    }
+  ],
+  "limitations": [
+    "Historical final/validation results have no model, code, or input-content fingerprints from their original runs.",
+    "Legacy final_test.py/compare_sam2.py reuse caches by existence and do not explicitly apply application square preprocessing.",
+    "Safe-crop results use application preprocessing; different results must not be presented as one run.",
+    "Byte hashing does not detect resized/re-encoded duplicates or the same product in different photos.",
+    "Metrics measure category relevance, not exact product identity; no new inference was run by this audit."
+  ]
+}

@@ -16,7 +16,8 @@ Multipart fields:
 - A maximum of 50 points is accepted.
 
 The response includes `overlay`, `cutout`, `score`, `bbox`, and point counts.
-Both image values are base64 data URLs.
+Both image values are raw base64 PNG strings. The frontend adds the
+`data:image/png;base64,` prefix when displaying them.
 
 ### `POST /api/search?top_k=N`
 

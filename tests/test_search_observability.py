@@ -1,5 +1,6 @@
 import tempfile
 import unittest
+import sqlite3
 from pathlib import Path
 
 from backend.search_observability import SearchObservability
@@ -27,6 +28,13 @@ class SearchObservabilityTests(unittest.TestCase):
             model_name="SigLIP2",
             preprocessing_version="v1",
         )
+
+    def test_connection_context_releases_database_handle(self):
+        with self.store._connection() as connection:
+            self.assertEqual(connection.execute("SELECT 1").fetchone()[0], 1)
+
+        with self.assertRaises(sqlite3.ProgrammingError):
+            connection.execute("SELECT 1")
 
     def test_search_and_correct_feedback_are_summarized(self):
         search_id = self.record_search()

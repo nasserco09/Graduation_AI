@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from datetime import datetime, timezone
 import json
 from pathlib import Path
@@ -32,8 +33,24 @@ class SearchObservability:
         connection.execute("PRAGMA journal_mode = WAL")
         return connection
 
+    @contextmanager
+    def _connection(self):
+        """Commit or roll back, then always release the SQLite file handle.
+
+        A sqlite3 connection used as a context manager does not close itself.
+        Explicit closing is required so Windows can remove temporary databases
+        immediately after a test finishes.
+        """
+
+        connection = self._connect()
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
+
     def _initialize(self):
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.executescript(
                 """
                 CREATE TABLE IF NOT EXISTS search_events (
@@ -96,7 +113,7 @@ class SearchObservability:
         product_ids = [item.get("product_id") for item in results]
         scores = [round(float(item.get("similarity", 0.0)), 6) for item in results]
 
-        with self._connect() as connection:
+        with self._connection() as connection:
             connection.execute(
                 """
                 INSERT INTO search_events (
@@ -150,7 +167,7 @@ class SearchObservability:
         if clean_notes and len(clean_notes) > 500:
             raise ValueError("Feedback notes cannot exceed 500 characters.")
 
-        with self._connect() as connection:
+        with self._connection() as connection:
             search_row = connection.execute(
                 "SELECT result_product_ids_json FROM search_events WHERE search_id = ?",
                 (search_id,),
@@ -198,7 +215,7 @@ class SearchObservability:
         }
 
     def summary(self) -> dict:
-        with self._connect() as connection:
+        with self._connection() as connection:
             total_searches = connection.execute(
                 "SELECT COUNT(*) AS count FROM search_events"
             ).fetchone()["count"]
@@ -245,7 +262,7 @@ class SearchObservability:
 
     def failure_cases(self, limit: int = 100) -> list[dict]:
         safe_limit = max(1, min(int(limit), 1000))
-        with self._connect() as connection:
+        with self._connection() as connection:
             rows = connection.execute(
                 """
                 SELECT e.*, f.verdict, f.selected_product_id,

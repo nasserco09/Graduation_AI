@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -13,6 +14,7 @@ from PIL import Image
 
 from backend.catalog_config import CATALOG_DIR, CATALOG_METADATA_FILE, ROOT
 from backend.catalog_metadata import CatalogMetadata
+from backend.category_routing import normalize_category
 
 
 DEFAULT_MANIFEST = ROOT / "evaluation" / "exact_product_manifest.json"
@@ -64,7 +66,20 @@ def calculate_exact_product_metrics(records: list[dict]) -> dict:
     }
 
 
-def load_manifest(manifest_path: Path, metadata: CatalogMetadata) -> list[dict]:
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def load_manifest(
+    manifest_path: Path,
+    metadata: CatalogMetadata,
+    *,
+    catalog_dir: Path | None = None,
+) -> list[dict]:
     with manifest_path.open("r", encoding="utf-8") as stream:
         manifest = json.load(stream)
 
@@ -87,6 +102,15 @@ def load_manifest(manifest_path: Path, metadata: CatalogMetadata) -> list[dict]:
             raise ValueError(
                 f"Product {product_id} is assigned to more than one category."
             )
+    catalog_dir = (catalog_dir or CATALOG_DIR).resolve()
+    # A copied catalog file outside the catalog directory is still leakage.
+    catalog_hashes = set()
+    for image_key in metadata.items:
+        path = catalog_dir / image_key
+        if not path.is_file():
+            raise FileNotFoundError(f"Catalog image required for leakage validation is missing: {path}")
+        catalog_hashes.add(file_sha256(path))
+    query_hashes = set()
     validated = []
     for position, query in enumerate(queries, start=1):
         image_value = str(query.get("image", "")).strip()
@@ -106,18 +130,28 @@ def load_manifest(manifest_path: Path, metadata: CatalogMetadata) -> list[dict]:
         image_path = (ROOT / image_value).resolve()
         if not image_path.is_file():
             raise FileNotFoundError(f"Query image not found: {image_path}")
-        if image_path.is_relative_to(CATALOG_DIR.resolve()):
+        if image_path.is_relative_to(catalog_dir):
             raise ValueError(
                 f"Query {position} points to a catalog image. Use a different "
                 "photo of the same product to avoid a trivial identity test."
             )
 
+        image_hash = file_sha256(image_path)
+        if image_hash in catalog_hashes:
+            raise ValueError(
+                f"Query {position} is a byte-identical copy of a catalog image. "
+                "Use a different photo of the same product."
+            )
+        if image_hash in query_hashes:
+            raise ValueError(f"Query {position} duplicates another query image.")
+        query_hashes.add(image_hash)
         validated.append({
             "image": image_path,
             "relative_image": image_value.replace("\\", "/"),
             "product_id": product_id,
             "category": expected_category,
-            "search_category": query.get("search_category", "auto"),
+            "search_category": normalize_category(query.get("search_category", "auto")),
+            "sha256": image_hash,
         })
     return validated
 
@@ -143,6 +177,7 @@ def run(manifest_path: Path, output_path: Path) -> dict:
         elapsed_ms = round((time.perf_counter() - started) * 1000, 3)
         records.append({
             "query_image": query["relative_image"],
+            "query_sha256": query["sha256"],
             "expected_product_id": query["product_id"],
             "expected_category": query["category"],
             "predicted_category": routing["predicted_category"],
