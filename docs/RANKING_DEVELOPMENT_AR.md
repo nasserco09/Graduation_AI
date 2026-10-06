@@ -106,3 +106,20 @@
 هذه الأداة لا تحسب Precision أو Recall عامة من الإيجابيات الجزئية، ولا
 تغيّر فهرس العرض أو بحثه. اختبارات تأكيد الإيجابيات تمنع التنفيذ بقائمة
 فارغة أو مكررة أو أجنبية، أو حزمة مختلفة أو معدلة.
+
+
+مثال ثانٍ لتأكيد التغطية: سترة مبطنة بلا أكمام من validation، وخمسة بدائل
+بمراجعة بصرية لأول 96 قطعة من outwear (الكتالوج يحتوي 184 في هذه الفئة).
+الصفحة والmanifest والتأكيد منفصلة عن مثال البنطلون:
+
+```powershell
+./.venv/Scripts/python.exe -m tools.build_coverage_review --case vest
+```
+
+الصفحة `http://127.0.0.1:8010/coverage_vest.html`، وملف التصدير
+`coverage_vest_confirmation.json`. لا يُشغّل البحث قبل اعتماد المستخدم.
+بعد التأكيد ومع خادم 8001 جاهزًا:
+
+```powershell
+./.venv/Scripts/python.exe -m evaluation.probe_known_positives --manifest evaluation/cache/relevance_review/coverage_vest_manifest.json --confirmation evaluation/cache/relevance_review/coverage_vest_confirmation.json --output evaluation/cache/relevance_review/vest_probe.json
+```
