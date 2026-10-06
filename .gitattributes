@@ -1,0 +1,2 @@
+# Preserve bundled upstream files and their recorded SHA-256 checksums.
+frontend/assets/vendor/** -text

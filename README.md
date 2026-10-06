@@ -202,6 +202,13 @@ From the project root on Windows PowerShell:
 python -m uvicorn app:app --host 127.0.0.1 --port 8000
 ```
 
+For a presentation on the current Windows machine, double-click `Start_Demo.cmd`.
+It uses the existing `.venv`, opens the browser after readiness, and reuses a
+ready local server. Keep its window open; press Ctrl+C there to stop a server
+started by the launcher. The UI fonts and icons are bundled for offline use.
+See [the local presentation guide](docs/LOCAL_PRESENTATION_AR.md) for demo images
+and the walkthrough. This is not a distribution package for another computer.
+
 Open `http://127.0.0.1:8000`. API documentation is available at
 `http://127.0.0.1:8000/docs`.
 

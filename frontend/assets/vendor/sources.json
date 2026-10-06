@@ -1,0 +1,136 @@
+[
+  {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",
+    "path": "frontend/assets/vendor/fontawesome/css/all.min.css",
+    "sha256": "c22cfb6520a7fdbb738632834019acf47c78b1279462c0eb4cb83bae83ecb5a7"
+  },
+  {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-brands-400.ttf",
+    "path": "frontend/assets/vendor/fontawesome/webfonts/fa-brands-400.ttf",
+    "sha256": "5656d596bc597165a42182f67b2b9f17d2ae47a9e3ef1b042b9a729739730705"
+  },
+  {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-brands-400.woff2",
+    "path": "frontend/assets/vendor/fontawesome/webfonts/fa-brands-400.woff2",
+    "sha256": "3a8924cd5203a28628716aedb5cef0943da4c3b44e3ffcee90ab06387b41c490"
+  },
+  {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-regular-400.ttf",
+    "path": "frontend/assets/vendor/fontawesome/webfonts/fa-regular-400.ttf",
+    "sha256": "5d02dc9b858e3c85a794f87e379857f4fedc4e26cf15001714a9a0e0b1d2294d"
+  },
+  {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-regular-400.woff2",
+    "path": "frontend/assets/vendor/fontawesome/webfonts/fa-regular-400.woff2",
+    "sha256": "2bccecf0bc7e96cd5ce4003abeb3ae9ee4a3d19158c4e6edfd2df32d2f0d5721"
+  },
+  {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.ttf",
+    "path": "frontend/assets/vendor/fontawesome/webfonts/fa-solid-900.ttf",
+    "sha256": "fbbf06d7437aa30f3cd44c968380193545a8fc3eadfb7ad897bbb101eefec5a2"
+  },
+  {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-solid-900.woff2",
+    "path": "frontend/assets/vendor/fontawesome/webfonts/fa-solid-900.woff2",
+    "sha256": "9fc85f3a4544ab0d570c7f8f9bbb88db8d92c359b2707580ea8b07c75673eae2"
+  },
+  {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-v4compatibility.ttf",
+    "path": "frontend/assets/vendor/fontawesome/webfonts/fa-v4compatibility.ttf",
+    "sha256": "09663a36fc05e7190af8324b855105c5bb511ad94f94b81b34afee503279eca2"
+  },
+  {
+    "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/webfonts/fa-v4compatibility.woff2",
+    "path": "frontend/assets/vendor/fontawesome/webfonts/fa-v4compatibility.woff2",
+    "sha256": "4d4a2d7fd1c6684845cb174fdd7fc073bd64cb741286fb247f8b76c2b7b852c4"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.5.1/LICENSE.txt",
+    "path": "frontend/assets/vendor/fontawesome/LICENSE.txt",
+    "sha256": "0aa8f86525273b2efa4f40f4272a188e187704252170e979dc06879adf68d43c"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/cairo/v31/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hAc5W1Q.ttf",
+    "path": "frontend/assets/vendor/fonts/b43228f9d116068470ee.ttf",
+    "sha256": "cad8564334938a5867e2b8200e9b882067811bc09e26314f2d3aa95ccfe54015"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/cairo/v31/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hD45W1Q.ttf",
+    "path": "frontend/assets/vendor/fonts/ad12e763a86018e345b9.ttf",
+    "sha256": "ed4acaa1f0bc99766193cb9536d166daa74aa09ea412e9ce7448ffdf75a997da"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/cairo/v31/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hEk5W1Q.ttf",
+    "path": "frontend/assets/vendor/fonts/23cd71a924d2bfda5c7b.ttf",
+    "sha256": "f1ee9aa0c8f71b955ade18df058037eced413e89e07bf9a6cc32834bef445abe"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/cairo/v31/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hGA5W1Q.ttf",
+    "path": "frontend/assets/vendor/fonts/49f51407b81ea8e26270.ttf",
+    "sha256": "accb750bc74f1b44d0f915868596740eac91bfb98f2fde93253185a7e80cd24d"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/cairo/v31/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hNI-W1Q.ttf",
+    "path": "frontend/assets/vendor/fonts/07e3dd8776eb402dd308.ttf",
+    "sha256": "361766f154ae7cab731b8aef8ee4470b64d7c8d1a4c9ad25b91a85b7bd2f1a1d"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/cairo/v31/SLXgc1nY6HkvangtZmpQdkhzfH5lkSs2SgRjCAGMQ1z0hOA-W1Q.ttf",
+    "path": "frontend/assets/vendor/fonts/1c96a76aba559f8433c2.ttf",
+    "sha256": "7ecb9b6a465072bce7b0e2a6d2d0355add8151fa9f8f342b516b57b26a2914c6"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/firacode/v27/uU9eCBsR6Z2vfE9aq3bL0fxyUs4tcw4W_A9sFVc.ttf",
+    "path": "frontend/assets/vendor/fonts/671f202a714544ecb1af.ttf",
+    "sha256": "f50a6f8bc4518eb4a3df9c9726f33d37ef73f7bc6f2ac845cf772c350cfe38cb"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/firacode/v27/uU9eCBsR6Z2vfE9aq3bL0fxyUs4tcw4W_D1sFVc.ttf",
+    "path": "frontend/assets/vendor/fonts/1aa56dfdd1cd5dcdc208.ttf",
+    "sha256": "edc273e94e72c8ee4279c8406f65373d96c518e3fea9cc3f121fed51283e0e70"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZg.ttf",
+    "path": "frontend/assets/vendor/fonts/6f49e1b28bce7339f484.ttf",
+    "sha256": "b37284b5701b6b168dfc770aa1a4ac492106422fd3ba76bc7641e37434e8019c"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuGKYMZg.ttf",
+    "path": "frontend/assets/vendor/fonts/87e867b52640b3b397a9.ttf",
+    "sha256": "e7a1aaf7eda9f2fad4131725fa556265ec75ca7b2d756260173a040363e8d4f7"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuI6fMZg.ttf",
+    "path": "frontend/assets/vendor/fonts/e45972c7e9f24dc39084.ttf",
+    "sha256": "8c883f63b2c4157d997319f2c8bc6995ed4357ef371940d31ca159004a4aae63"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfMZg.ttf",
+    "path": "frontend/assets/vendor/fonts/a699af1dea30b799318e.ttf",
+    "sha256": "1b08e7fc267a5c7e1d614100f604b83e7e8a0be241f0f288faa2b3ac93a683ba"
+  },
+  {
+    "url": "https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap",
+    "path": "frontend/assets/vendor/fonts.css",
+    "sha256": "1d0b726ecc0b5c7ebe95e6f849ffa769f2524d0a5e01fd575f028085fc891e1e",
+    "note": "Font URLs replaced by local relative paths"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/cairo/OFL.txt",
+    "path": "frontend/assets/vendor/fonts/cairo-OFL.txt",
+    "sha256": "aa2b13bf0770c59a7fb7a3b793a7df5162c9cb5ad540ec81b0c0c1385946845d",
+    "note": "License text preserved; trailing whitespace removed."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/inter/OFL.txt",
+    "path": "frontend/assets/vendor/fonts/inter-OFL.txt",
+    "sha256": "5dd548d31a85f756e01d63e00d7faf1e324103ed3e9102fcbbabf2cc2db6dd39",
+    "note": "License text preserved; trailing whitespace removed."
+  },
+  {
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/firacode/OFL.txt",
+    "path": "frontend/assets/vendor/fonts/firacode-OFL.txt",
+    "sha256": "11776fe42290450d306f085e4369e89bcf30cee9abc01f959e7e196f1c87515e",
+    "note": "License text preserved; trailing whitespace removed."
+  }
+]
