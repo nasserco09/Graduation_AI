@@ -145,6 +145,7 @@ let state = {
     aiScore: null,
     aiAccepted: false,
     aiBusy: false,
+    aiRequestVersion: 0,
     aiPoints: [],
     drawing: false,
     startPoint: null,
@@ -490,6 +491,8 @@ function aiPromptSummary() {
 }
 
 function resetAISelection({ keepMode = true } = {}) {
+    // Invalidate pending responses before clearing or replacing the image.
+    state.aiRequestVersion += 1;
     clearQueryPreview();
     state.aiMaskDataUrl = null;
     state.aiCutoutDataUrl = null;
@@ -834,6 +837,8 @@ async function runAISelection(event, label = 1) {
         topPct: (localY / rect.height) * 100
     };
 
+    const requestVersion = ++state.aiRequestVersion;
+    const previousAccepted = state.aiAccepted;
     state.aiPoints.push(newPoint);
     state.aiBusy = true;
     state.aiAccepted = false;
@@ -855,6 +860,7 @@ async function runAISelection(event, label = 1) {
 
         const response = await fetch(CONFIG.SEGMENT_ENDPOINT, { method: 'POST', body: formData });
         const data = await readApiJson(response);
+        if (requestVersion !== state.aiRequestVersion) return;
 
         const maskValue = data.mask || data.overlay;
         if (!maskValue || !data.cutout) {
@@ -880,18 +886,24 @@ async function runAISelection(event, label = 1) {
             DOM.selectionStatus.innerHTML = `<i class="fas fa-circle-check"></i> التحديد جاهز باستخدام ${aiPromptSummary()}. أضف نقاطًا أخرى أو اضغط «اعتماد القطعة».`;
         }
     } catch (error) {
+        if (requestVersion !== state.aiRequestVersion) return;
         console.error('SAM2 segmentation error:', error);
         // Remove only the point that caused the failed request and keep the previous valid prompts.
         state.aiPoints.pop();
+        state.aiAccepted = previousAccepted;
+        const hasPreviousSelection = Boolean(state.aiMaskDataUrl && state.aiCutoutDataUrl);
+        if (DOM.acceptSelectionBtn) DOM.acceptSelectionBtn.disabled = !hasPreviousSelection;
         renderAIPoints();
         if (DOM.selectionStatus) {
             DOM.selectionStatus.className = 'selection-status error';
-        DOM.selectionStatus.innerHTML = `<i class="fas fa-triangle-exclamation"></i> ${escapeHtml(error.message)}`;
+            DOM.selectionStatus.innerHTML = `<i class="fas fa-triangle-exclamation"></i> ${escapeHtml(error.message)}${hasPreviousSelection ? ' — تم الاحتفاظ بالتحديد السابق.' : ''}`;
         }
         showToast(`تعذر تحديد القطعة: ${error.message}`, 'error');
     } finally {
-        state.aiBusy = false;
-        updateSearchButtonState();
+        if (requestVersion === state.aiRequestVersion) {
+            state.aiBusy = false;
+            updateSearchButtonState();
+        }
     }
 }
 
