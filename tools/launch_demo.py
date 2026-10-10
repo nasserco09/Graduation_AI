@@ -69,6 +69,9 @@ def main() -> int:
             raise RuntimeError(f"Port {args.port} is occupied by a service that is not ready. "
                                "Check its window; this launcher will not stop it.")
     # Local models already exist. Avoid model downloads during the presentation.
+    reviewed_groups = ROOT / "data/reviewed_product_groups.json"
+    if reviewed_groups.is_file():
+        os.environ.setdefault("GRADUATION_AI_REVIEWED_GROUPS", str(reviewed_groups))
     os.environ["HF_HUB_OFFLINE"] = "1"
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
     print("Loading local models. Keep this window open; press Ctrl+C to stop.", flush=True)
