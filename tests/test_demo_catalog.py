@@ -1,4 +1,5 @@
 import tempfile
+import sqlite3
 import unittest
 from pathlib import Path
 import numpy as np
@@ -67,3 +68,58 @@ class DemoCatalogTests(unittest.TestCase):
         b=self.store.add('same name',[self.red],self.encode)
         self.assertNotEqual(a['product_id'],b['product_id'])
         self.assertEqual(len(self.store.search([1,0,0])),2)
+
+
+    def test_update_preserves_images_and_embeddings_and_survives_reopening(self):
+        added=self.store.add('old',[self.red],self.encode)
+        with self.store.connect() as db:before=db.execute('SELECT id,photo,vector FROM images').fetchall()
+        updated=self.store.update(added['product_id'],'new','outwear','12000.50','YER',True)
+        self.assertEqual(updated['price'],'12000.50')
+        reopened=DemoCatalog(self.path,3,'test-encoder')
+        result=reopened.search([1,0,0])[0]
+        self.assertEqual(result['name'],'new');self.assertEqual(result['category'],'outwear')
+        self.assertEqual(result['price'],'12000.50')
+        with reopened.connect() as db:self.assertEqual(before,db.execute('SELECT id,photo,vector FROM images').fetchall())
+
+    def test_unavailable_product_stays_in_admin_but_not_search(self):
+        added=self.store.add('unavailable',[self.red],self.encode)
+        self.store.update(added['product_id'],'unavailable',available=False)
+        self.assertFalse(self.store.list_products()[0]['available'])
+        self.assertEqual(self.store.search([1,0,0]),[])
+        self.store.update(added['product_id'],'available',available=True)
+        self.assertEqual(len(self.store.search([1,0,0])),1)
+
+    def test_category_filter_applies_before_top_k(self):
+        self.store.add('dress',[self.red],self.encode,category='dress')
+        pants=self.store.add('pants',[self.blue],self.encode,category='pants')
+        result=self.store.search([1,0,0],1,'pants')
+        self.assertEqual(result[0]['product_id'],pants['product_id'])
+
+    def test_invalid_details_do_not_change_product(self):
+        added=self.store.add('old',[self.red],self.encode)
+        before=self.store.list_products()
+        for params in [{'price':'-1'},{'price':'1.234'},{'price':'NaN'},{'price':'1e3'},{'currency':'BAD'},{'category':'invalid'},{'available':'false'}]:
+            with self.assertRaises(ValueError):self.store.update(added['product_id'],'new',**params)
+        self.assertEqual(before,self.store.list_products())
+
+    def test_optional_and_zero_prices(self):
+        self.assertIsNone(self.store.details('name')['price'])
+        self.assertIsNone(self.store.details('name',price='')['price'])
+        self.assertEqual(self.store.details('name',price='0')['price'],'0.00')
+        self.assertEqual(self.store.details('name',price='12.1')['price'],'12.10')
+        with self.assertRaises(KeyError):self.store.update('missing','name')
+
+    def test_legacy_database_migration_preserves_product_images(self):
+        old=self.path.parent/'legacy.db'
+        with sqlite3.connect(old) as db:
+            db.executescript('CREATE TABLE products(id TEXT PRIMARY KEY,name TEXT NOT NULL); CREATE TABLE images(id TEXT PRIMARY KEY,product_id TEXT NOT NULL,photo BLOB NOT NULL,vector BLOB NOT NULL);')
+            db.execute('INSERT INTO products VALUES (?,?)',('p1','legacy'))
+            db.execute('INSERT INTO images VALUES (?,?,?,?)',('i1','p1',b'old-photo',np.array([1,0,0],dtype=np.float32).tobytes()))
+        db.close()
+        migrated=DemoCatalog(old,3,'test-encoder')
+        product=migrated.list_products()[0]
+        self.assertEqual(product['product_id'],'p1');self.assertEqual(product['category'],'')
+        self.assertIsNone(product['price']);self.assertTrue(product['available'])
+        self.assertEqual(migrated.image_bytes('i1'),b'old-photo')
+        self.assertEqual(migrated.search([1,0,0])[0]['product_id'],'p1')
+        self.assertEqual(len(DemoCatalog(old,3,'test-encoder').list_products()),1)

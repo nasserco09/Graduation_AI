@@ -1,10 +1,19 @@
 """Local-only product entry prototype, isolated from the presentation catalog."""
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import Response
+from pydantic import BaseModel, StrictBool
 from starlette.concurrency import run_in_threadpool
 from backend.demo_catalog import DemoCatalog
 from backend.image_preprocessing import PREPROCESSING_VERSION, preprocess_image
 from backend.request_validation import MAX_IMAGE_BYTES, validate_image_bytes
+
+
+class ProductDetails(BaseModel):
+    name: str
+    category: str = ''
+    price: str | None = None
+    currency: str = 'YER'
+    available: StrictBool = True
 
 
 def create_demo_catalog_router(engine, database):
@@ -21,14 +30,23 @@ def create_demo_catalog_router(engine, database):
         return {'products':store.list_products(), 'scope':'isolated_local_demo_catalog'}
 
     @router.post('/products', status_code=201)
-    async def add_product(name: str = Form(...), images: list[UploadFile] = File(...)):
+    async def add_product(name: str = Form(...), images: list[UploadFile] = File(...), category: str = Form(''), price: str = Form(''), currency: str = Form('YER'), available: bool = Form(True)):
         try:
-            if not name.strip() or len(name.strip())>120:raise ValueError('Product name must contain 1 to 120 characters')
+            store.details(name,category,price,currency,available)
             if not 1 <= len(images) <= 5:raise ValueError('Upload 1 to 5 images for one product')
             photos = []
             for image in images:
                 photos.append(validate_image_bytes(await image.read(MAX_IMAGE_BYTES+1),image.content_type))
-            return await run_in_threadpool(store.add,name,photos,encode)
+            return await run_in_threadpool(store.add,name,photos,encode,category,price,currency,available)
+        except ValueError as error:
+            raise HTTPException(400,detail=str(error)) from error
+
+    @router.put('/products/{product_id}')
+    def update_product(product_id: str, details: ProductDetails):
+        try:
+            return store.update(product_id, **details.model_dump())
+        except KeyError as error:
+            raise HTTPException(404,detail='Demo product not found') from error
         except ValueError as error:
             raise HTTPException(400,detail=str(error)) from error
 
@@ -38,12 +56,12 @@ def create_demo_catalog_router(engine, database):
         except KeyError:raise HTTPException(404,detail='Demo catalog image not found')
 
     @router.post('/search')
-    async def search(image: UploadFile = File(...), top_k: int = 8):
+    async def search(image: UploadFile = File(...), top_k: int = 8, category: str = Form('')):
         try:
             if not 1<=top_k<=50:raise ValueError('top_k must be between 1 and 50')
             photo=validate_image_bytes(await image.read(MAX_IMAGE_BYTES+1),image.content_type)
             vector=await run_in_threadpool(encode,photo)
-            results=await run_in_threadpool(store.search,vector,top_k)
+            results=await run_in_threadpool(store.search,vector,top_k,category)
             return {'results':results,'scope':'isolated_local_demo_catalog'}
         except ValueError as error:
             raise HTTPException(400,detail=str(error)) from error
