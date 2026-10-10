@@ -9,7 +9,7 @@ import socket
 import sys
 import threading
 import time
-from urllib.request import urlopen
+from urllib.request import ProxyHandler, build_opener
 import webbrowser
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -17,7 +17,8 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def health(port: int) -> dict | None:
     try:
-        with urlopen(f"http://127.0.0.1:{port}/api/health", timeout=2) as response:
+        # Loopback readiness must bypass system proxies and their network policy.
+        with build_opener(ProxyHandler({})).open(f"http://127.0.0.1:{port}/api/health", timeout=2) as response:
             data = json.load(response)
         if (data.get("status") == "ok" and data.get("index_ready") is True
                 and data.get("indexed_images") == 3068
