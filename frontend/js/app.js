@@ -72,6 +72,8 @@ const DOM = {
     samplesContainer: document.getElementById('samples-container'),
 
     // Options
+    searchSource: document.getElementById('search-source'),
+    sourceHint: document.getElementById('search-source-hint'),
     categoryModeSelect: document.getElementById('category-mode'),
     topKSelect: document.getElementById('top-k'),
     viewGridBtn: document.getElementById('view-grid'),
@@ -158,6 +160,9 @@ let state = {
     freePoints: [],
     queryPreviewUrl: null,
     querySha256: null,
+    sourceGeneration: 0,
+    originalCategory: 'auto',
+    groupingAvailable: false,
     currentSearchId: null
 };
 
@@ -328,6 +333,13 @@ function renderCategoryRouting(query) {
         return;
     }
 
+    if (query.catalog_source === 'added_products') {
+        DOM.categoryRoutingStatus.className = 'category-routing-status';
+        DOM.categoryRoutingStatus.textContent = routing.applied_label
+            ? `مصدر النتائج: منتجاتي المضافة • الفئة: ${routing.applied_label} • المنتجات المتوفرة فقط.`
+            : 'مصدر النتائج: منتجاتي المضافة • جميع الفئات • المنتجات المتوفرة فقط.';
+        return;
+    }
     const confidence = Math.round(Number(routing.confidence || 0) * 100);
     if (routing.requested_category === 'auto') {
         DOM.categoryRoutingStatus.className = 'category-routing-status detected';
@@ -402,8 +414,10 @@ function normalizeSearchResponse(data) {
                 ...item,
                 product_id: item.product_id || getResultId(imageUrl, index),
                 image_url: imageUrl,
-                title: item.title || `نتيجة مشابهة ${index + 1}`,
-                category: item.category || null,
+                title: item.title || item.name || `نتيجة مشابهة ${index + 1}`,
+                catalog_source: data?.scope === 'isolated_local_demo_catalog' ? 'products' : 'original',
+                group_images: item.group_images || (item.images || []).map(image => ({...image, product_id:item.product_id})),
+                category: item.category_label || item.category || null,
                 color: item.color || null,
                 sizes: item.sizes || [],
                 similarity: Number.isFinite(similarity) ? similarity : 0,
@@ -1149,14 +1163,14 @@ function captureCameraPhoto() {
  * @param {number} topK - Number of results to return
  * @returns {Promise<Object>}
  */
-async function searchImage(imageFile, topK, fileName = 'query-image.jpg', searchMode = 'full', category = 'auto') {
+async function searchImage(imageFile, topK, fileName = 'query-image.jpg', searchMode = 'full', category = 'auto', source = DOM.searchSource?.value || 'original') {
     const formData = new FormData();
     formData.append('image', imageFile, fileName);
     formData.append('search_mode', searchMode);
-    formData.append('category', category);
+    formData.append('category', source === 'products' && ['auto', 'all'].includes(category) ? '' : category);
 
-    const groupingEnabled = Boolean(DOM.groupProducts && !DOM.groupProducts.disabled && DOM.groupProducts.checked);
-    const endpoint = `${CONFIG.SEARCH_ENDPOINT}?top_k=${encodeURIComponent(topK)}${groupingEnabled ? '&group_products=true' : ''}`;
+    const groupingEnabled = source !== 'products' && Boolean(DOM.groupProducts && !DOM.groupProducts.disabled && DOM.groupProducts.checked);
+    const endpoint = `${source === 'products' ? '/api/demo-catalog/search' : CONFIG.SEARCH_ENDPOINT}?top_k=${encodeURIComponent(topK)}${groupingEnabled ? '&group_products=true' : ''}`;
     const response = await fetch(endpoint, {
         method: 'POST',
         body: formData
@@ -1272,7 +1286,7 @@ function applyCategoryFilter(category) {
                 <div style="grid-column: 1/-1; text-align: center; padding: 2.5rem; color: var(--text-2);">
                     <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 0.75rem; color: var(--text-3);"></i>
                     <p style="font-weight: 700;">لا توجد قطع تطابق هذا التصنيف</p>
-                    <p style="font-size: 0.85rem;">اختر تصنيفاً آخر أو انقر على "الكل" لعرض كافة النتائج.</p>
+                    <p style="font-size: 0.85rem;">غيّر نوع القطعة، أو تأكد من إضافة منتجات متوفرة في مصدر البحث الذي اخترته.</p>
                 </div>
             `;
             return;
@@ -1317,6 +1331,7 @@ function createResultCard(item, index) {
         >
         <div class="result-card-body">
             <h3 class="result-card-title" title="${safeTitle}">${safeTitle}</h3>
+            ${item.catalog_source === 'products' && item.price != null ? `<p>${escapeHtml(item.price)} ${escapeHtml(item.currency)}</p>` : ''}
             <div class="card-bottom-row">
                 <span class="similarity-badge ${similarityClass}">
                     <i class="fas fa-percentage"></i>
@@ -1325,7 +1340,7 @@ function createResultCard(item, index) {
                 ${categoryTag}
                 ${Array.isArray(item.group_images) && item.group_images.length > 1 ? `<span class="group-image-count">${item.group_images.length} صور للمنتج</span>` : ''}
             </div>
-            ${item.product_id ? `
+            ${item.product_id && state.currentSearchId ? `
                 <button type="button" class="correct-match-btn" data-product-id="${safeProductId}">
                     <i class="fas fa-circle-check"></i> هذه المطابقة صحيحة
                 </button>
@@ -1371,7 +1386,7 @@ function createResultCard(item, index) {
 function openProductModal(product) {
     const title = product.title || 'نتيجة البحث';
     const grouped = Array.isArray(product.group_images) && product.group_images.length > 1;
-    if (DOM.modalProductId?.previousElementSibling) DOM.modalProductId.previousElementSibling.textContent = grouped ? 'معرّف الصورة' : 'معرّف المنتج';
+    if (DOM.modalProductId?.previousElementSibling) DOM.modalProductId.previousElementSibling.textContent = grouped && product.catalog_source !== 'products' ? 'معرّف الصورة' : 'معرّف المنتج';
     if (DOM.modalSimilarity?.previousElementSibling) DOM.modalSimilarity.previousElementSibling.textContent = grouped ? 'أفضل تشابه للمنتج' : 'درجة التشابه البصري';
 
     if (DOM.modalImage) {
@@ -1514,6 +1529,8 @@ async function handleSearch() {
         return;
     }
 
+    const generation = ++state.sourceGeneration;
+    const source = DOM.searchSource?.value || 'original';
     const topK = parseInt(DOM.topKSelect?.value || '8');
     const requestedCategory = DOM.categoryModeSelect?.value || 'auto';
     state.currentSearchId = null;
@@ -1544,25 +1561,31 @@ async function handleSearch() {
             fileToUpload = await resizeImage(state.selectedFile, CONFIG.MAX_IMAGE_WIDTH);
         }
 
+        if (generation !== state.sourceGeneration) return;
         await showQueryPreview(fileToUpload, state.searchMode);
+        if (generation !== state.sourceGeneration) return;
 
         updateProgress(60, 'SigLIP2 يستخرج الخصائص البصرية...');
         updateProgress(80, 'FAISS يبحث عن أقرب الصور...');
 
-        const results = await searchImage(fileToUpload, topK, uploadName, state.searchMode, requestedCategory);
+        const results = await searchImage(fileToUpload, topK, uploadName, state.searchMode, requestedCategory, source);
+        if (generation !== state.sourceGeneration) return;
         verifyQueryReceipt(results.query);
         renderCategoryRouting(results.query);
 
         updateProgress(100, 'تم استخراج أفضل النتائج!');
         renderResults(results);
-        showToast('تم العثور على أزياء مشابهة بنجاح!', 'success');
+        showToast(results.results.length ? 'تم العثور على نتائج مشابهة.' : 'لا توجد منتجات متوفرة في هذا المصدر والفئة.', results.results.length ? 'success' : 'warning');
 
     } catch (error) {
+        if (generation !== state.sourceGeneration) return;
         console.error('Search error:', error);
         showToast(`حدث خطأ أثناء البحث: ${error.message}`, 'error');
     } finally {
+        if (generation !== state.sourceGeneration) return;
         if (DOM.loadingOverlay) DOM.loadingOverlay.hidden = true;
         setTimeout(() => {
+            if (generation !== state.sourceGeneration) return;
             if (DOM.progressContainer) DOM.progressContainer.hidden = true;
             updateProgress(0);
         }, 500);
@@ -1730,6 +1753,8 @@ function setupEventListeners() {
         setSearchMode(state.searchMode);
     });
 
+    if (DOM.searchSource) DOM.searchSource.addEventListener('change', handleSearchSourceChange);
+
     // Search button
     if (DOM.searchBtn) DOM.searchBtn.addEventListener('click', handleSearch);
 
@@ -1840,6 +1865,35 @@ function setupEventListeners() {
 // Initialization
 // ===================================
 
+function updateSearchSourceOptions() {
+    const products = DOM.searchSource?.value === 'products';
+    if (DOM.sourceHint) DOM.sourceHint.textContent = products
+        ? 'منتجاتك المتوفرة فقط؛ الفئة حسب بيانات المنتج. التحديد متاح بنفس الأدوات.'
+        : 'البحث في الكتالوج الأصلي — 3,068 صورة.';
+    const automatic = DOM.categoryModeSelect?.querySelector('option[value="auto"]');
+    if (automatic) automatic.disabled = products;
+    if (DOM.groupingOption) DOM.groupingOption.hidden = products || !state.groupingAvailable;
+    if (DOM.groupProducts) DOM.groupProducts.disabled = products || !state.groupingAvailable;
+}
+
+function handleSearchSourceChange() {
+    state.sourceGeneration++;
+    state.currentSearchId = null;
+    state.results = [];
+    state.filteredResults = [];
+    if (DOM.searchSource?.value === 'products') {
+        state.originalCategory = DOM.categoryModeSelect?.value || 'auto';
+        if (DOM.categoryModeSelect) DOM.categoryModeSelect.value = 'all';
+    } else if (DOM.categoryModeSelect) DOM.categoryModeSelect.value = state.originalCategory;
+    if (DOM.resultsSection) DOM.resultsSection.hidden = true;
+    if (DOM.feedbackPanel) DOM.feedbackPanel.hidden = true;
+    if (DOM.queryPreviewPanel) DOM.queryPreviewPanel.hidden = true;
+    if (DOM.loadingOverlay) DOM.loadingOverlay.hidden = true;
+    if (DOM.progressContainer) DOM.progressContainer.hidden = true;
+    if (DOM.productModal && !DOM.productModal.hidden) closeProductModal();
+    updateSearchSourceOptions();
+}
+
 async function loadGroupingCapability() {
     if (!DOM.groupProducts || !DOM.groupingOption) return;
     try {
@@ -1849,6 +1903,8 @@ async function loadGroupingCapability() {
         DOM.groupingOption.hidden = !available;
         DOM.groupProducts.disabled = !available;
         DOM.groupProducts.checked = available;
+        state.groupingAvailable = available;
+        updateSearchSourceOptions();
     } catch {
         DOM.groupingOption.hidden = true;
         DOM.groupProducts.disabled = true;
@@ -1857,6 +1913,10 @@ async function loadGroupingCapability() {
 }
 
 function init() {
+    if (DOM.searchSource && new URL(window.location.href).searchParams.get('source') === 'products') {
+        DOM.searchSource.value = 'products';
+        handleSearchSourceChange();
+    }
     loadThemePreference();
     loadGroupingCapability();
     setupEventListeners();

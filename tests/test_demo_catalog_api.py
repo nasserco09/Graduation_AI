@@ -49,3 +49,15 @@ class DemoCatalogAPITests(unittest.TestCase):
         response=self.client.post('/api/demo-catalog/products',data={'name':'bad','price':'NaN'},files={'images':('p.png',self.photo,'image/png')})
         self.assertEqual(response.status_code,400)
         self.assertEqual(len(self.client.get('/api/demo-catalog/products').json()['products']),1)
+
+    def test_search_receipt_identifies_added_catalog_and_uploaded_cutout(self):
+        import hashlib
+        response=self.client.post('/api/demo-catalog/search', data={'category':'outwear'},
+                                  files={'image':('sam2-cutout.png',self.photo,'image/png')})
+        self.assertEqual(response.status_code,200)
+        body=response.json()
+        self.assertEqual(body['query']['sha256'],hashlib.sha256(self.photo).hexdigest())
+        self.assertEqual(body['query']['catalog_source'],'added_products')
+        self.assertEqual(body['query']['category_routing']['requested_category'],'outwear')
+        self.assertTrue(body['results'][0]['category_label'])
+        self.assertNotIn('search_id',body['query'])

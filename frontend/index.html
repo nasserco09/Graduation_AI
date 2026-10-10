@@ -74,9 +74,9 @@
                 </div>
             </a>
             <nav class="header-nav" aria-label="روابط التنقل الرئيسية">
-                <a href="demo-catalog.html" class="nav-pill" aria-label="إدارة الكتالوج التجريبي">
+                <a href="demo-catalog.html" class="nav-pill" aria-label="إدارة المنتجات">
                     <i class="fas fa-store"></i>
-                    <span>كتالوج تجريبي</span>
+                    <span>إدارة المنتجات</span>
                 </a>
                 <a href="about.html" class="nav-pill" aria-label="عن الخدمة ومميزاتها">
                     <i class="fas fa-circle-info"></i>
@@ -346,6 +346,14 @@
 
                 <!-- Options Row -->
                 <div class="options-row">
+                    <div class="option-group">
+                        <label for="search-source" class="option-label">مصدر البحث:</label>
+                        <select id="search-source" class="select-input">
+                            <option value="original" selected>الكتالوج الأصلي — 3,068 صورة</option>
+                            <option value="products">منتجاتي المضافة</option>
+                        </select>
+                        <small id="search-source-hint">البحث في الكتالوج الأصلي.</small>
+                    </div>
                     <div class="option-group">
                         <label for="category-mode" class="option-label">
                             <i class="fas fa-tags"></i>
@@ -778,7 +786,7 @@
     <!-- Toast Notifications -->
     <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
-    <script src="js/app.js?v=3" type="module"></script>
+    <script src="js/app.js?v=4" type="module"></script>
 </body>
 
 </html>

@@ -1,4 +1,6 @@
 """Local-only product entry prototype, isolated from the presentation catalog."""
+import hashlib
+from backend.category_routing import CATEGORY_LABELS
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import Response
 from pydantic import BaseModel, StrictBool
@@ -59,10 +61,17 @@ def create_demo_catalog_router(engine, database):
     async def search(image: UploadFile = File(...), top_k: int = 8, category: str = Form('')):
         try:
             if not 1<=top_k<=50:raise ValueError('top_k must be between 1 and 50')
-            photo=validate_image_bytes(await image.read(MAX_IMAGE_BYTES+1),image.content_type)
+            content = await image.read(MAX_IMAGE_BYTES+1)
+            photo=validate_image_bytes(content,image.content_type)
             vector=await run_in_threadpool(encode,photo)
             results=await run_in_threadpool(store.search,vector,top_k,category)
-            return {'results':results,'scope':'isolated_local_demo_catalog'}
+            for result in results:
+                result['category_label'] = CATEGORY_LABELS.get(result['category'], '')
+            return {'results':results,'scope':'isolated_local_demo_catalog',
+                    'query': {'sha256': hashlib.sha256(content).hexdigest(),
+                              'catalog_source': 'added_products',
+                              'category_routing': {'requested_category': category or 'all',
+                                                   'applied_label': CATEGORY_LABELS.get(category)}}}
         except ValueError as error:
             raise HTTPException(400,detail=str(error)) from error
 
