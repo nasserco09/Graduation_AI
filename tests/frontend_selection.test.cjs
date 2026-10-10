@@ -200,12 +200,12 @@ test('grouping control is offered only when server reports reviewed groups', asy
 });
 
 
-test('added products use their own endpoint with all-category mapping and no reviewed grouping', async () => {
+test('added products preserve auto category and use their endpoint without reviewed grouping', async () => {
     const a = app();
     a.run(`DOM.searchSource={value:'products'}; DOM.groupProducts={disabled:false,checked:true};`);
     const response = a.run("searchImage({},8,'sam2-cutout.png','ai','auto')");
     assert.equal(a.pending[0].url, '/api/demo-catalog/search?top_k=8');
-    assert.equal(a.pending[0].options.body.entries.find(entry=>entry[0]==='category')[1], '');
+    assert.equal(a.pending[0].options.body.entries.find(entry=>entry[0]==='category')[1], 'auto');
     assert.equal(a.pending[0].options.body.entries.find(entry=>entry[0]==='image')[2], 'sam2-cutout.png');
     a.pending[0].resolve({ok:true,json:async()=>({scope:'isolated_local_demo_catalog',results:[{name:'My vest',product_id:'p1',image_url:'/api/demo-catalog/images/a',score:.9,images:[{image_id:'a',url:'/a'},{image_id:'b',url:'/b'}]}]})});
     const data=await response;
@@ -224,7 +224,7 @@ test('switching source invalidates old results, keeps the accepted selection and
         handleSearchSourceChange();`);
     assert.equal(a.run('DOM.resultsSection.hidden'),true);
     assert.equal(a.run('state.currentSearchId'),null);
-    assert.equal(a.run('DOM.categoryModeSelect.value'),'all');
+    assert.equal(a.run('DOM.categoryModeSelect.value'),'auto');
     assert.equal(a.run('DOM.groupProducts.disabled'),true);
     assert.equal(a.run('state.aiCutoutDataUrl'),'CUTOUT');
     assert.equal(a.run('state.aiAccepted'),true);
@@ -248,4 +248,17 @@ test('late search from a previous source cannot render or hide a newer search ov
     // Supersede the second request too; it must settle without rendering.
     a.run(`state.sourceGeneration++;pendingSearch[1]({results:[]});`);await second;
     assert.equal(a.run('rendered'),0);
+});
+
+
+test('auto category remains enabled for added products and fallback reason is visible', () => {
+    const a=app();
+    a.run(`var automatic={disabled:true};
+        DOM.searchSource={value:'products'};DOM.categoryModeSelect={value:'auto',querySelector:()=>automatic};
+        DOM.categoryRoutingStatus={textContent:''};updateSearchSourceOptions();
+        renderCategoryRouting({catalog_source:'added_products',category_routing:{requested_category:'auto',fallback_reason:'uncategorized_products'}});`);
+    assert.equal(a.run('automatic.disabled'),false);
+    assert.match(a.run('DOM.categoryRoutingStatus.textContent'),/بعض المنتجات بلا فئة/);
+    a.run(`renderCategoryRouting({catalog_source:'added_products',category_routing:{requested_category:'auto',applied_label:'فساتين'}});`);
+    assert.match(a.run('DOM.categoryRoutingStatus.textContent'),/الفئة المرجحة تلقائيًا: فساتين/);
 });

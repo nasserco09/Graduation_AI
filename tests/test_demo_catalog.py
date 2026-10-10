@@ -123,3 +123,61 @@ class DemoCatalogTests(unittest.TestCase):
         self.assertEqual(migrated.image_bytes('i1'),b'old-photo')
         self.assertEqual(migrated.search([1,0,0])[0]['product_id'],'p1')
         self.assertEqual(len(DemoCatalog(old,3,'test-encoder').list_products()),1)
+
+
+    def test_auto_uses_only_available_added_categories_with_clear_match(self):
+        dress=self.store.add('dress',[self.red],self.encode,category='dress')
+        self.store.add('pants',[self.blue],self.encode,category='pants')
+        hidden=self.store.add('hidden',[self.red],self.encode,category='hat',available=False)
+        results,routing=self.store.search_with_routing([1,0,0],8,'auto')
+        self.assertEqual(routing['applied_category'],'dress')
+        self.assertEqual(routing['available_categories'],['dress','pants'])
+        self.assertIsNone(routing['fallback_reason'])
+        self.assertEqual([r['product_id'] for r in results],[dress['product_id']])
+
+    def test_auto_ambiguous_and_weak_query_search_all(self):
+        self.store.add('dress',[self.red],self.encode,category='dress')
+        self.store.add('pants',[self.blue],self.encode,category='pants')
+        for query,reason in [([1,0,1],'ambiguous_categories'),([0,1,0],'weak_similarity')]:
+            with self.subTest(reason=reason):
+                results,routing=self.store.search_with_routing(query,8,'auto')
+                self.assertEqual(len(results),2)
+                self.assertIsNone(routing['applied_category'])
+                self.assertEqual(routing['fallback_reason'],reason)
+
+    def test_auto_keeps_uncategorized_products_searchable(self):
+        self.store.add('dress',[self.red],self.encode,category='dress')
+        self.store.add('pants',[self.blue],self.encode,category='pants')
+        self.store.add('unknown',[self.red],self.encode)
+        results,routing=self.store.search_with_routing([1,0,0],8,'auto')
+        self.assertEqual(len(results),3)
+        self.assertEqual(routing['fallback_reason'],'uncategorized_products')
+        self.assertIsNone(routing['applied_category'])
+
+    def test_auto_empty_and_single_category_are_safe(self):
+        results,routing=self.store.search_with_routing([1,0,0],8,'auto')
+        self.assertEqual(results,[])
+        self.assertEqual(routing['fallback_reason'],'empty_catalog')
+        self.store.add('dress',[self.red],self.encode,category='dress')
+        results,routing=self.store.search_with_routing([0,0,1],8,'auto')
+        self.assertEqual(len(results),1)
+        self.assertEqual(routing['fallback_reason'],'insufficient_categories')
+
+    def test_duplicate_views_do_not_add_category_votes(self):
+        self.store.add('dress',[self.red]*5,self.encode,category='dress')
+        self.store.add('pants',[self.blue],self.encode,category='pants')
+        results,routing=self.store.search_with_routing([1,0,1],8,'auto')
+        self.assertEqual(len(results),2)
+        self.assertEqual(routing['fallback_reason'],'ambiguous_categories')
+        self.assertEqual(routing['similarity_margin'],0)
+
+    def test_all_and_manual_category_keep_their_meaning(self):
+        self.store.add('dress',[self.red],self.encode,category='dress')
+        self.store.add('pants',[self.blue],self.encode,category='pants')
+        results,routing=self.store.search_with_routing([1,0,0],8,'all')
+        self.assertEqual(len(results),2)
+        self.assertIsNone(routing['applied_category'])
+        results,routing=self.store.search_with_routing([1,0,0],8,'pants')
+        self.assertEqual(len(results),1)
+        self.assertEqual(routing['applied_category'],'pants')
+        with self.assertRaises(ValueError):self.store.search([1,0,0],8,'bad')

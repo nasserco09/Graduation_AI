@@ -64,14 +64,13 @@ def create_demo_catalog_router(engine, database):
             content = await image.read(MAX_IMAGE_BYTES+1)
             photo=validate_image_bytes(content,image.content_type)
             vector=await run_in_threadpool(encode,photo)
-            results=await run_in_threadpool(store.search,vector,top_k,category)
+            results, routing=await run_in_threadpool(store.search_with_routing,vector,top_k,category)
             for result in results:
                 result['category_label'] = CATEGORY_LABELS.get(result['category'], '')
             return {'results':results,'scope':'isolated_local_demo_catalog',
                     'query': {'sha256': hashlib.sha256(content).hexdigest(),
                               'catalog_source': 'added_products',
-                              'category_routing': {'requested_category': category or 'all',
-                                                   'applied_label': CATEGORY_LABELS.get(category)}}}
+                              'category_routing': routing}}
         except ValueError as error:
             raise HTTPException(400,detail=str(error)) from error
 

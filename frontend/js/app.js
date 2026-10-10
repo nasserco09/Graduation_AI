@@ -335,9 +335,20 @@ function renderCategoryRouting(query) {
 
     if (query.catalog_source === 'added_products') {
         DOM.categoryRoutingStatus.className = 'category-routing-status';
-        DOM.categoryRoutingStatus.textContent = routing.applied_label
-            ? `مصدر النتائج: منتجاتي المضافة • الفئة: ${routing.applied_label} • المنتجات المتوفرة فقط.`
-            : 'مصدر النتائج: منتجاتي المضافة • جميع الفئات • المنتجات المتوفرة فقط.';
+        const reasons = {
+            empty_catalog: 'لا توجد منتجات متوفرة.',
+            uncategorized_products: 'بعض المنتجات بلا فئة؛ بحثنا في جميع المنتجات حتى لا نخفيها.',
+            insufficient_categories: 'الفئات المتوفرة غير كافية للمقارنة؛ بحثنا في جميع المنتجات.',
+            weak_similarity: 'التشابه غير كافٍ لترجيح فئة؛ بحثنا في جميع المنتجات.',
+            ambiguous_categories: 'الفئات متقاربة في التشابه؛ بحثنا في جميع المنتجات.'
+        };
+        DOM.categoryRoutingStatus.textContent = routing.requested_category === 'auto'
+            ? `مصدر النتائج: منتجاتي المضافة • ${routing.applied_label
+                ? `الفئة المرجحة تلقائيًا: ${routing.applied_label}.`
+                : reasons[routing.fallback_reason] || 'بحثنا في جميع المنتجات.'}`
+            : routing.applied_label
+                ? `مصدر النتائج: منتجاتي المضافة • الفئة: ${routing.applied_label} • المنتجات المتوفرة فقط.`
+                : 'مصدر النتائج: منتجاتي المضافة • جميع الفئات • المنتجات المتوفرة فقط.';
         return;
     }
     const confidence = Math.round(Number(routing.confidence || 0) * 100);
@@ -1167,7 +1178,7 @@ async function searchImage(imageFile, topK, fileName = 'query-image.jpg', search
     const formData = new FormData();
     formData.append('image', imageFile, fileName);
     formData.append('search_mode', searchMode);
-    formData.append('category', source === 'products' && ['auto', 'all'].includes(category) ? '' : category);
+    formData.append('category', source === 'products' && category === 'all' ? '' : category);
 
     const groupingEnabled = source !== 'products' && Boolean(DOM.groupProducts && !DOM.groupProducts.disabled && DOM.groupProducts.checked);
     const endpoint = `${source === 'products' ? '/api/demo-catalog/search' : CONFIG.SEARCH_ENDPOINT}?top_k=${encodeURIComponent(topK)}${groupingEnabled ? '&group_products=true' : ''}`;
@@ -1868,10 +1879,10 @@ function setupEventListeners() {
 function updateSearchSourceOptions() {
     const products = DOM.searchSource?.value === 'products';
     if (DOM.sourceHint) DOM.sourceHint.textContent = products
-        ? 'منتجاتك المتوفرة فقط؛ الفئة حسب بيانات المنتج. التحديد متاح بنفس الأدوات.'
+        ? 'منتجاتك المتوفرة فقط؛ التصنيف التلقائي يستخدم فئاتها ويبحث فيها كلها إذا لم يتضح الترجيح.'
         : 'البحث في الكتالوج الأصلي — 3,068 صورة.';
     const automatic = DOM.categoryModeSelect?.querySelector('option[value="auto"]');
-    if (automatic) automatic.disabled = products;
+    if (automatic) automatic.disabled = false;
     if (DOM.groupingOption) DOM.groupingOption.hidden = products || !state.groupingAvailable;
     if (DOM.groupProducts) DOM.groupProducts.disabled = products || !state.groupingAvailable;
 }
@@ -1883,7 +1894,7 @@ function handleSearchSourceChange() {
     state.filteredResults = [];
     if (DOM.searchSource?.value === 'products') {
         state.originalCategory = DOM.categoryModeSelect?.value || 'auto';
-        if (DOM.categoryModeSelect) DOM.categoryModeSelect.value = 'all';
+        if (DOM.categoryModeSelect) DOM.categoryModeSelect.value = 'auto';
     } else if (DOM.categoryModeSelect) DOM.categoryModeSelect.value = state.originalCategory;
     if (DOM.resultsSection) DOM.resultsSection.hidden = true;
     if (DOM.feedbackPanel) DOM.feedbackPanel.hidden = true;

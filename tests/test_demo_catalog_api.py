@@ -61,3 +61,14 @@ class DemoCatalogAPITests(unittest.TestCase):
         self.assertEqual(body['query']['category_routing']['requested_category'],'outwear')
         self.assertTrue(body['results'][0]['category_label'])
         self.assertNotIn('search_id',body['query'])
+
+
+    def test_auto_reports_fallback_and_preserves_all_products(self):
+        self.client.post('/api/demo-catalog/products',data={'name':'unknown'},files={'images':('p.png',self.photo,'image/png')})
+        response=self.client.post('/api/demo-catalog/search',data={'category':'auto'},files={'image':('q.png',self.photo,'image/png')})
+        self.assertEqual(response.status_code,200)
+        body=response.json()
+        self.assertEqual(len(body['results']),2)
+        self.assertEqual(body['query']['category_routing']['requested_category'],'auto')
+        self.assertEqual(body['query']['category_routing']['fallback_reason'],'uncategorized_products')
+        self.assertIsNone(body['query']['category_routing']['applied_category'])

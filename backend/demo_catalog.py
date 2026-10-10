@@ -4,7 +4,7 @@ from io import BytesIO
 import json
 import re
 from decimal import Decimal
-from backend.category_routing import CATEGORY_LABELS
+from backend.category_routing import CATEGORY_LABELS, normalize_category
 from pathlib import Path
 import sqlite3
 import threading
@@ -111,12 +111,24 @@ class DemoCatalog:
         return row[0]
 
     def search(self, raw_vector, top_k=8, category=''):
+        return self.search_with_routing(raw_vector, top_k, category)[0]
+
+    def search_with_routing(self, raw_vector, top_k=8, category=''):
         if not 1 <= top_k <= 50:raise ValueError('top_k must be between 1 and 50')
-        if category and category not in CATEGORY_LABELS:raise ValueError('Unsupported product category')
+        requested = normalize_category(category or 'all')
         query = self.vector(raw_vector)
         with self.lock, self.connect() as db:
-            rows = db.execute('SELECT images.id,products.id,products.name,images.vector,products.category,products.price,products.currency FROM images JOIN products ON products.id=images.product_id WHERE products.available=1 AND (?=\'\' OR products.category=?) ORDER BY images.rowid', (category,category)).fetchall()
-        if not rows:return []
+            rows = db.execute('SELECT images.id,products.id,products.name,images.vector,products.category,products.price,products.currency FROM images JOIN products ON products.id=images.product_id WHERE products.available=1 ORDER BY images.rowid').fetchall()
+        routing = {'requested_category': requested, 'applied_category': None,
+                   'applied_label': None, 'predicted_category': None, 'fallback_reason': None}
+        applied = None if requested in {'auto', 'all'} else requested
+        if requested == 'auto':
+            applied, prediction = self.automatic_category(query, rows)
+            routing.update(prediction)
+        routing.update(applied_category=applied, applied_label=CATEGORY_LABELS.get(applied))
+        if applied:
+            rows = [row for row in rows if row[4] == applied]
+        if not rows:return [], routing
         vectors = np.stack([self.vector(np.frombuffer(row[3], dtype=np.float32)) for row in rows])
         index = faiss.IndexFlatIP(self.dimension)
         index.add(vectors)
@@ -128,4 +140,37 @@ class DemoCatalog:
             seen.add(pid)
             results.append({'product_id':pid,'name':name,'category':item_category,'price':price,'currency':currency,'available':True,'score':float(score),'image_url':self.image_info(iid)['url'],'images':[self.image_info(row[0]) for row in rows if row[1]==pid]})
             if len(results)==top_k:break
-        return results
+        return results, routing
+
+
+    def automatic_category(self, query, rows):
+        """Conservative local routing, using only available added-product embeddings.
+
+        Similarity and margin are heuristic gates, not calibrated probabilities.
+        Unknown product categories keep the entire catalog searchable.
+        """
+        categories = sorted({row[4] for row in rows if row[4]})
+        info = {'available_categories': categories, 'fallback_reason': None,
+                'predicted_category': None, 'best_similarity': None, 'similarity_margin': None}
+        if not rows:
+            info['fallback_reason'] = 'empty_catalog'
+        elif any(not row[4] for row in rows):
+            info['fallback_reason'] = 'uncategorized_products'
+        elif len(categories) < 2:
+            info['fallback_reason'] = 'insufficient_categories'
+        else:
+            # Maximum per category: repeated photos do not add votes or alter the margin.
+            scores = {category: max(float(np.dot(query, self.vector(np.frombuffer(row[3], dtype=np.float32))))
+                                    for row in rows if row[4] == category) for category in categories}
+            ranked = sorted(scores, key=lambda key: (-scores[key], key))
+            best = ranked[0]
+            margin = scores[best] - scores[ranked[1]]
+            info.update(predicted_category=best, best_similarity=round(scores[best], 6),
+                        similarity_margin=round(margin, 6))
+            if scores[best] < 0.55:
+                info['fallback_reason'] = 'weak_similarity'
+            elif margin < 0.08:
+                info['fallback_reason'] = 'ambiguous_categories'
+            else:
+                return best, info
+        return None, info
