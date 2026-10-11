@@ -2,7 +2,9 @@
 
 from io import BytesIO
 
-from PIL import Image, ImageOps, UnidentifiedImageError
+from PIL import Image, UnidentifiedImageError
+
+from backend.image_preprocessing import prepare_rgb_image
 
 
 MAX_IMAGE_BYTES = 8 * 1024 * 1024
@@ -52,7 +54,7 @@ def validate_image_bytes(
 
         with Image.open(BytesIO(content)) as uploaded_image:
             uploaded_image.load()
-            return ImageOps.exif_transpose(uploaded_image).convert("RGB")
+            return prepare_rgb_image(uploaded_image)
     except ValueError:
         raise
     except (UnidentifiedImageError, Image.DecompressionBombError, OSError) as error:

@@ -31,6 +31,16 @@ class PreprocessingInfo:
         }
 
 
+def prepare_rgb_image(image: Image.Image) -> Image.Image:
+    """Apply orientation and composite transparency before discarding alpha."""
+    oriented = ImageOps.exif_transpose(image)
+    if oriented.mode in {"RGBA", "LA"} or "transparency" in oriented.info:
+        rgba = oriented.convert("RGBA")
+        background = Image.new("RGBA", rgba.size, NEUTRAL_BACKGROUND + (255,))
+        return Image.alpha_composite(background, rgba).convert("RGB")
+    return oriented.convert("RGB")
+
+
 def preprocess_image(image: Image.Image) -> tuple[Image.Image, PreprocessingInfo]:
     """Return a deterministic RGB image on a square neutral canvas.
 
@@ -43,14 +53,7 @@ def preprocess_image(image: Image.Image) -> tuple[Image.Image, PreprocessingInfo
         raise ValueError("Image dimensions must be greater than zero.")
 
     input_width, input_height = image.size
-    oriented = ImageOps.exif_transpose(image)
-
-    if oriented.mode in {"RGBA", "LA"} or "transparency" in oriented.info:
-        rgba = oriented.convert("RGBA")
-        background = Image.new("RGBA", rgba.size, NEUTRAL_BACKGROUND + (255,))
-        rgb = Image.alpha_composite(background, rgba).convert("RGB")
-    else:
-        rgb = oriented.convert("RGB")
+    rgb = prepare_rgb_image(image)
 
     side = max(rgb.size)
     canvas = Image.new("RGB", (side, side), NEUTRAL_BACKGROUND)

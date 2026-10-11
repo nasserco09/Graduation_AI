@@ -15,6 +15,7 @@ class DemoCatalogAPITests(unittest.TestCase):
     def setUp(self):
         temp=tempfile.TemporaryDirectory();self.addCleanup(temp.cleanup)
         engine=SimpleNamespace(index=SimpleNamespace(d=3),_index_lock=threading.RLock(),encode_image=lambda image:np.array([[1,0,0]],dtype=np.float32))
+        self.engine = engine
         app=FastAPI();app.include_router(create_demo_catalog_router(engine,Path(temp.name)/'catalog.db'))
         self.client=TestClient(app);self.addCleanup(self.client.close)
         stream=BytesIO();Image.new('RGB',(10,10),'red').save(stream,format='PNG');self.photo=stream.getvalue()
@@ -32,6 +33,25 @@ class DemoCatalogAPITests(unittest.TestCase):
         response=self.client.post('/api/demo-catalog/search',files={'image':('q.png',self.photo,'image/png')})
         self.assertEqual(response.json()['results'],[])
         self.assertEqual(len(self.client.get('/api/demo-catalog/products').json()['products']),1)
+
+    def test_transparent_query_reaches_encoder_on_white_background(self):
+        import hashlib
+        captured = []
+        def capture(image):
+            captured.append(image.copy())
+            return np.array([[1, 0, 0]], dtype=np.float32)
+        self.engine.encode_image = capture
+        source = Image.new('RGBA', (10, 10), (0, 0, 0, 0))
+        source.putpixel((5, 5), (255, 0, 0, 255))
+        stream = BytesIO(); source.save(stream, format='PNG')
+        content = stream.getvalue()
+        response = self.client.post('/api/demo-catalog/search', files={'image': ('cutout.png', content, 'image/png')})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(captured), 1)
+        self.assertEqual(captured[0].mode, 'RGB')
+        self.assertEqual(captured[0].getpixel((0, 0)), (255, 255, 255))
+        self.assertEqual(captured[0].getpixel((5, 5)), (255, 0, 0))
+        self.assertEqual(response.json()['query']['sha256'], hashlib.sha256(content).hexdigest())
 
     def test_invalid_update_and_unknown_product_do_not_change_data(self):
         before=self.client.get('/api/demo-catalog/products').json()

@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-11",
+  "release": "v1.2.0-rc.7",
+  "branch": "feature/frontend-v2",
+  "base_commit": "ba1edf9aa7407a7b2749855cae26b91841f026d6",
+  "checks": {
+    "python_tests_passed": 115,
+    "javascript_tests_passed": 19,
+    "evidence_audit_passed": 55,
+    "http_smoke_passed": 32,
+    "catalog_resources_passed": 41,
+    "transparency_and_preservation_passed": 13
+  },
+  "claims": "Functional checks; not a new retrieval-accuracy study. Some HTTP checks repeat assets across routes.",
+  "artifact_visual_comparison": {
+    "word_pages": {
+      "total": 51,
+      "changed": [
+        "page-31.png",
+        "page-34.png",
+        "page-50.png",
+        "page-51.png"
+      ]
+    },
+    "native_slides": {
+      "total": 19,
+      "changed": [
+        "Slide1.PNG",
+        "Slide15.PNG"
+      ]
+    },
+    "guide_pages": {
+      "total": 10,
+      "changed": [
+        "page-1.png",
+        "page-7.png"
+      ]
+    }
+  },
+  "word_native_citation_controls": 12,
+  "word_native_bibliography_controls": 1,
+  "word_citation_controls_and_other_package_parts_unchanged": true,
+  "ppt_native_charts_preserved": 3,
+  "faiss_sha256": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+  "product_records_preserved": true,
+  "artifacts": [
+    {
+      "file": "AI_Visual_Product_Search_Chapters_1_to_4_Preliminary_v7.docx",
+      "bytes": 736722,
+      "sha256": "6650cf6080dc03be087936f969532ebd84b56f10731fff44b4f0d2f39d403f7c"
+    },
+    {
+      "file": "AI_Visual_Product_Search_Preliminary_Discussion_v5.pptx",
+      "bytes": 160360,
+      "sha256": "fc7b819c5975e91c6426f2c2fb7ad6026ac5d0facd89909c6dcd022e5e857102"
+    },
+    {
+      "file": "Slide_Explanation_Arabic_v2.docx",
+      "bytes": 48294,
+      "sha256": "b38cb56eed3d104a7a7c028f11dbb2c3a7f59117ac36fb5beb776f475d2bb0d0"
+    }
+  ]
+}

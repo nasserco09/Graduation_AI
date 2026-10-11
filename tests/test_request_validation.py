@@ -3,6 +3,7 @@ import unittest
 
 from PIL import Image
 
+from backend.image_preprocessing import preprocess_image
 from backend.request_validation import validate_image_bytes
 
 
@@ -13,6 +14,36 @@ def png_bytes(size=(16, 12)):
 
 
 class RequestValidationTests(unittest.TestCase):
+    def assert_transparent_upload_matches_direct_preprocessing(self, source):
+        output = BytesIO()
+        source.save(output, format="PNG")
+        uploaded = validate_image_bytes(output.getvalue(), "image/png")
+        actual, _ = preprocess_image(uploaded)
+        expected, _ = preprocess_image(source)
+        self.assertEqual(uploaded.mode, "RGB")
+        self.assertEqual(uploaded.size, source.size)
+        self.assertEqual(actual.tobytes(), expected.tobytes())
+        self.assertEqual(actual.getpixel((0, 0)), (255, 255, 255))
+
+    def test_rgba_upload_composites_transparent_and_partial_alpha(self):
+        source = Image.new("RGBA", (3, 3), (0, 0, 0, 0))
+        source.putpixel((1, 1), (255, 0, 0, 128))
+        source.putpixel((2, 2), (0, 0, 255, 255))
+        self.assert_transparent_upload_matches_direct_preprocessing(source)
+
+    def test_grayscale_alpha_upload_uses_white_background(self):
+        source = Image.new("LA", (3, 3), (0, 0))
+        source.putpixel((1, 1), (80, 128))
+        source.putpixel((2, 2), (20, 255))
+        self.assert_transparent_upload_matches_direct_preprocessing(source)
+
+    def test_palette_transparency_upload_uses_white_background(self):
+        source = Image.new("P", (3, 3), 0)
+        source.putpalette([0, 0, 0, 255, 0, 0] + [0] * 762)
+        source.info["transparency"] = 0
+        source.putpixel((1, 1), 1)
+        self.assert_transparent_upload_matches_direct_preprocessing(source)
+
     def test_accepts_supported_image_and_normalizes_to_rgb(self):
         image = validate_image_bytes(png_bytes(), "image/png")
         self.assertEqual(image.mode, "RGB")
