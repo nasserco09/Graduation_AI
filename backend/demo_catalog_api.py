@@ -1,12 +1,14 @@
 """Local-only product entry prototype, isolated from the presentation catalog."""
 import hashlib
 import json
+import sqlite3
 from backend.category_routing import CATEGORY_LABELS
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
-from fastapi.responses import Response
-from pydantic import BaseModel, StrictBool
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, JSONResponse, Response
+from pydantic import BaseModel, Field, StrictBool
 from starlette.concurrency import run_in_threadpool
 from backend.demo_catalog import CatalogConflict, DemoCatalog
+from backend.catalog_backup import BackupError, CatalogBackups, MAX_BACKUP_BYTES
 from backend.image_preprocessing import PREPROCESSING_VERSION, preprocess_image
 from backend.request_validation import MAX_IMAGE_BYTES, validate_image_bytes
 
@@ -19,9 +21,77 @@ class ProductDetails(BaseModel):
     available: StrictBool = True
 
 
+class RestoreRequest(BaseModel):
+    token: str = Field(max_length=128)
+
+
 def create_demo_catalog_router(engine, database):
     store = DemoCatalog(database, engine.index.d, 'SigLIP2:' + PREPROCESSING_VERSION)
+    backups = CatalogBackups(store)
     router = APIRouter(prefix='/api/demo-catalog', tags=['Local demo catalog'])
+
+    def backup_owner(request):
+        actor = getattr(request.state,'admin',None)
+        if not actor:
+            raise HTTPException(401,detail='login_required')
+        return actor['csrf_token']
+
+    def backup_error(error):
+        return JSONResponse({'detail':error.code,'code':error.code},status_code=error.status,
+                            headers={'Cache-Control':'no-store'})
+
+    @router.get('/products/backup')
+    def export_backup(request: Request):
+        backup_owner(request)
+        try:
+            content = backups.export()
+            return Response(content,media_type='application/zip',headers={
+                'Content-Disposition':'attachment; filename="catalog.fashion-catalog.zip"',
+                'Cache-Control':'no-store'})
+        except BackupError as error:
+            return backup_error(error)
+        except (OSError,sqlite3.Error):
+            return backup_error(BackupError('backup_failed',500))
+
+    @router.get('/products/backups')
+    def list_backups(request: Request):
+        backup_owner(request)
+        try:
+            return {'backups':backups.list_recovery()}
+        except (OSError,sqlite3.Error):
+            return backup_error(BackupError('backup_failed',500))
+
+    @router.get('/products/recovery/{backup_id}')
+    def recovery_backup(backup_id: str, request: Request):
+        backup_owner(request)
+        try:
+            return FileResponse(backups.recovery_path(backup_id),media_type='application/zip',
+                                filename='before-restore.fashion-catalog.zip',headers={'Cache-Control':'no-store'})
+        except BackupError as error:
+            return backup_error(error)
+        except OSError:
+            return backup_error(BackupError('backup_failed',500))
+
+    @router.post('/products/restore/preview')
+    async def preview_backup(request: Request, backup: UploadFile = File(...)):
+        owner = backup_owner(request)
+        try:
+            content = await backup.read(MAX_BACKUP_BYTES+1)
+            return await run_in_threadpool(backups.preview,content,owner)
+        except BackupError as error:
+            return backup_error(error)
+        except (OSError,sqlite3.Error):
+            return backup_error(BackupError('backup_failed',500))
+
+    @router.post('/products/restore')
+    async def restore_backup(request: Request, payload: RestoreRequest):
+        owner = backup_owner(request)
+        try:
+            return await run_in_threadpool(backups.restore,payload.token,owner)
+        except BackupError as error:
+            return backup_error(error)
+        except (OSError,sqlite3.Error):
+            return backup_error(BackupError('restore_failed',500))
 
     def encode(image):
         prepared, _ = preprocess_image(image)

@@ -1,0 +1,1397 @@
+{
+  "schema_version": "1.0",
+  "scope": "reviewed_reverse_view_assistant_point_sam2_pilot",
+  "created_at_utc": "2026-10-24T14:30:41.295512+00:00",
+  "protocol_sha256": "5e7857dac1fce2c130a5672dc3c95f52112aef43ecc73b435649395559c3f579",
+  "points_sha256": "82ca3747a06cf76ee4ca6d96f497d5ce99e0f12a544da0502e912af45b4da8f5",
+  "selection_author": "assistant_visual_review",
+  "points_selected_before_reverse_results": true,
+  "points_refined_after_results": false,
+  "query_count": 7,
+  "gallery_count": 3061,
+  "gallery_protocol": "all seven reverse queries and byte/pixel aliases removed globally; centroids recomputed from retained gallery only",
+  "query_encoding": "fresh application SigLIP2 CPU, both full and SAM2 cutouts",
+  "sam2": "live local application /api/segment with sealed points",
+  "routing": "auto for both modes, same gallery",
+  "artifacts": {
+    "data/catalog_siglip2.faiss": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+    "data/catalog_siglip2_paths.json": "6f8c7ed06ea7dc032d2a3e68e53df602690b7c410706b2cc31529a8d4e9dcdb3",
+    "data/reviewed_product_groups.json": "4dabd9042af385110a581cd15959a4103dd50884cb22984eefffd28e6b5607d5",
+    "data/catalog_metadata_train.json": "fcdf2f6c5155737a24f5cc352fce6ed615df621367195fce30dcab2d5de25a69",
+    "models/siglip2_base/config.json": "fe8b5fe6d5734360678fd71c11c21e1ea3364bd8598d34295d9206335973ffd7",
+    "models/siglip2_base/model.safetensors": "612923381c76ec5a9bed335d1c48827e3f2e506ac31b044b63b2031fadee6a0b"
+  },
+  "suites": {
+    "full": {
+      "metrics": {
+        "query_count": 7,
+        "reviewed_identity_top1": 1.0,
+        "reviewed_identity_top5": 1.0,
+        "reviewed_identity_top10": 1.0,
+        "reviewed_identity_mrr_at10": 1.0
+      },
+      "queries": [
+        {
+          "number": 1,
+          "reviewed_group_id": "reviewed-ce066c76164b4d69",
+          "query_image": "outwear/c258578a-6d97-4514-91b5-7d146893756f.jpg",
+          "query_sha256": "c1f6276d87cfdf702a88f5b0bbbfecceec0e5a9cd393c2c9f0652a86ea810a7f",
+          "expected_gallery_images": [
+            "outwear/62bb46a5-44de-48d9-8c95-3b11ef386471.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "outwear",
+          "applied_category": "outwear",
+          "results": [
+            {
+              "identity": "reviewed-ce066c76164b4d69",
+              "image": "outwear/62bb46a5-44de-48d9-8c95-3b11ef386471.jpg",
+              "category": "outwear",
+              "score": 0.97812
+            },
+            {
+              "identity": "8c0ed4ce-1389-4e82-9b1c-4059de402988",
+              "image": "outwear/8c0ed4ce-1389-4e82-9b1c-4059de402988.jpg",
+              "category": "outwear",
+              "score": 0.88684
+            },
+            {
+              "identity": "d7e1beb5-c1eb-41e9-8bf0-242ecf2e04e4",
+              "image": "outwear/d7e1beb5-c1eb-41e9-8bf0-242ecf2e04e4.jpg",
+              "category": "outwear",
+              "score": 0.877615
+            },
+            {
+              "identity": "90ff3bb7-d6b5-4b77-998a-d64543128c00",
+              "image": "outwear/90ff3bb7-d6b5-4b77-998a-d64543128c00.jpg",
+              "category": "outwear",
+              "score": 0.871726
+            },
+            {
+              "identity": "59927935-c092-4dce-97da-b55312183d61",
+              "image": "outwear/59927935-c092-4dce-97da-b55312183d61.jpg",
+              "category": "outwear",
+              "score": 0.870138
+            },
+            {
+              "identity": "d039bfd4-d924-4d83-9d8a-b15595e0080a",
+              "image": "outwear/d039bfd4-d924-4d83-9d8a-b15595e0080a.jpg",
+              "category": "outwear",
+              "score": 0.862349
+            },
+            {
+              "identity": "01e42413-5514-46d0-8e44-8060d5410dee",
+              "image": "outwear/01e42413-5514-46d0-8e44-8060d5410dee.jpg",
+              "category": "outwear",
+              "score": 0.851653
+            },
+            {
+              "identity": "1fe43e89-0e78-4667-881b-3feb27a63ce3",
+              "image": "outwear/1fe43e89-0e78-4667-881b-3feb27a63ce3.jpg",
+              "category": "outwear",
+              "score": 0.847455
+            },
+            {
+              "identity": "356b217e-14c8-4b57-bd4e-9f4a90a50324",
+              "image": "outwear/356b217e-14c8-4b57-bd4e-9f4a90a50324.jpg",
+              "category": "outwear",
+              "score": 0.843389
+            },
+            {
+              "identity": "091f88df-2b5e-4779-941b-bec945e96d9f",
+              "image": "outwear/091f88df-2b5e-4779-941b-bec945e96d9f.jpg",
+              "category": "outwear",
+              "score": 0.836087
+            }
+          ]
+        },
+        {
+          "number": 2,
+          "reviewed_group_id": "reviewed-3f12b72411f58e42",
+          "query_image": "dress/ce27bde3-b523-449c-87b0-35c4317d32d1.jpg",
+          "query_sha256": "aaa5eaecf6b0da0e1ee15984e8abaee59b240d24139d19a3dea3bf9a2b619abc",
+          "expected_gallery_images": [
+            "dress/123cedc9-f0ee-432b-a087-7c4981e60c75.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "dress",
+          "applied_category": "dress",
+          "results": [
+            {
+              "identity": "reviewed-3f12b72411f58e42",
+              "image": "dress/123cedc9-f0ee-432b-a087-7c4981e60c75.jpg",
+              "category": "dress",
+              "score": 0.954632
+            },
+            {
+              "identity": "a1190e56-0e53-41e3-ad16-a63575173747",
+              "image": "dress/a1190e56-0e53-41e3-ad16-a63575173747.jpg",
+              "category": "dress",
+              "score": 0.8418
+            },
+            {
+              "identity": "824014f4-825b-4bf2-835e-e3b8b7d0f387",
+              "image": "dress/824014f4-825b-4bf2-835e-e3b8b7d0f387.jpg",
+              "category": "dress",
+              "score": 0.841561
+            },
+            {
+              "identity": "d405f7e3-be05-4b67-8741-8b3507f2d405",
+              "image": "dress/d405f7e3-be05-4b67-8741-8b3507f2d405.jpg",
+              "category": "dress",
+              "score": 0.822309
+            },
+            {
+              "identity": "6e143162-9472-43c3-8db1-04eeea838ae8",
+              "image": "dress/6e143162-9472-43c3-8db1-04eeea838ae8.jpg",
+              "category": "dress",
+              "score": 0.819086
+            },
+            {
+              "identity": "4b8e5d41-3e12-4d2b-8634-e62e71d613ff",
+              "image": "dress/4b8e5d41-3e12-4d2b-8634-e62e71d613ff.jpg",
+              "category": "dress",
+              "score": 0.815934
+            },
+            {
+              "identity": "37271dcc-d0e5-4f31-81ac-ad4b5974812e",
+              "image": "dress/37271dcc-d0e5-4f31-81ac-ad4b5974812e.jpg",
+              "category": "dress",
+              "score": 0.81323
+            },
+            {
+              "identity": "9d92e0e2-f5ae-45da-9c03-e782de380e88",
+              "image": "dress/9d92e0e2-f5ae-45da-9c03-e782de380e88.jpg",
+              "category": "dress",
+              "score": 0.811085
+            },
+            {
+              "identity": "c9d22645-4b60-4108-bde7-a3716c181f00",
+              "image": "dress/c9d22645-4b60-4108-bde7-a3716c181f00.jpg",
+              "category": "dress",
+              "score": 0.809257
+            },
+            {
+              "identity": "9764558f-a55d-4909-865a-b2967debafef",
+              "image": "dress/9764558f-a55d-4909-865a-b2967debafef.jpg",
+              "category": "dress",
+              "score": 0.808246
+            }
+          ]
+        },
+        {
+          "number": 3,
+          "reviewed_group_id": "reviewed-f432cd7b049b5f96",
+          "query_image": "hat/678edcd0-607e-433d-8433-46e11fb24df3.jpg",
+          "query_sha256": "c62441dd4a3628d8fafb3f5cc877b037d04760c34f2a7b8059bba4d30c8402a2",
+          "expected_gallery_images": [
+            "hat/13a17d51-3560-445c-8802-8749fcf27ed7.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "hat",
+          "applied_category": "hat",
+          "results": [
+            {
+              "identity": "reviewed-f432cd7b049b5f96",
+              "image": "hat/13a17d51-3560-445c-8802-8749fcf27ed7.jpg",
+              "category": "hat",
+              "score": 0.942688
+            },
+            {
+              "identity": "aae17fcd-a7c4-462a-8006-e0e935d34b3c",
+              "image": "hat/aae17fcd-a7c4-462a-8006-e0e935d34b3c.jpg",
+              "category": "hat",
+              "score": 0.844428
+            },
+            {
+              "identity": "324b3d8f-3a20-4668-b58b-b4083ed1039a",
+              "image": "hat/324b3d8f-3a20-4668-b58b-b4083ed1039a.jpg",
+              "category": "hat",
+              "score": 0.840931
+            },
+            {
+              "identity": "29c2d4f8-f682-4995-919b-2ce2a9a64c1d",
+              "image": "hat/29c2d4f8-f682-4995-919b-2ce2a9a64c1d.jpg",
+              "category": "hat",
+              "score": 0.836668
+            },
+            {
+              "identity": "1aac00cd-b42a-40f1-a82a-dcc44a0879d4",
+              "image": "hat/1aac00cd-b42a-40f1-a82a-dcc44a0879d4.jpg",
+              "category": "hat",
+              "score": 0.817743
+            },
+            {
+              "identity": "8a123238-58ae-43bc-91ef-63c2a34df63f",
+              "image": "hat/8a123238-58ae-43bc-91ef-63c2a34df63f.jpg",
+              "category": "hat",
+              "score": 0.816951
+            },
+            {
+              "identity": "e3c2ae0c-6ca2-49a9-9bb4-e2e9346828b0",
+              "image": "hat/e3c2ae0c-6ca2-49a9-9bb4-e2e9346828b0.jpg",
+              "category": "hat",
+              "score": 0.815176
+            },
+            {
+              "identity": "047bf1cf-28e2-45e2-a96b-cc3def23f030",
+              "image": "hat/047bf1cf-28e2-45e2-a96b-cc3def23f030.jpg",
+              "category": "hat",
+              "score": 0.809891
+            },
+            {
+              "identity": "a2b1af1e-dc4a-4e74-b7ae-3290dbe564d9",
+              "image": "hat/a2b1af1e-dc4a-4e74-b7ae-3290dbe564d9.jpg",
+              "category": "hat",
+              "score": 0.806625
+            },
+            {
+              "identity": "047ea75e-1f1d-46a0-bcbc-5210dc465eb3",
+              "image": "hat/047ea75e-1f1d-46a0-bcbc-5210dc465eb3.jpg",
+              "category": "hat",
+              "score": 0.806455
+            }
+          ]
+        },
+        {
+          "number": 4,
+          "reviewed_group_id": "reviewed-288a8e351d34cfa4",
+          "query_image": "hat/ad5095c6-ac1f-400e-b75a-3eb389b8ffbc.jpg",
+          "query_sha256": "83fb580579bef19a05abe6c859698e34a1d96043957d93acc1da610304e8489b",
+          "expected_gallery_images": [
+            "hat/0979a14e-051a-4659-8e87-2f6a424e2c12.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "hat",
+          "applied_category": "hat",
+          "results": [
+            {
+              "identity": "reviewed-288a8e351d34cfa4",
+              "image": "hat/0979a14e-051a-4659-8e87-2f6a424e2c12.jpg",
+              "category": "hat",
+              "score": 0.932204
+            },
+            {
+              "identity": "eb5b5b2d-1db8-4a2a-9ab7-53067df7558b",
+              "image": "hat/eb5b5b2d-1db8-4a2a-9ab7-53067df7558b.jpg",
+              "category": "hat",
+              "score": 0.743525
+            },
+            {
+              "identity": "ceb6ea8b-5289-4305-a52b-b4b44d3beeb9",
+              "image": "hat/ceb6ea8b-5289-4305-a52b-b4b44d3beeb9.jpg",
+              "category": "hat",
+              "score": 0.71197
+            },
+            {
+              "identity": "d7602a0b-ddf5-4087-8a83-4e1ed8092f7e",
+              "image": "hat/d7602a0b-ddf5-4087-8a83-4e1ed8092f7e.jpg",
+              "category": "hat",
+              "score": 0.704237
+            },
+            {
+              "identity": "c46870a8-412f-4fa6-8e37-b42f9b025782",
+              "image": "hat/c46870a8-412f-4fa6-8e37-b42f9b025782.jpg",
+              "category": "hat",
+              "score": 0.70392
+            },
+            {
+              "identity": "65f56e85-fda3-4f9d-a88f-15ae9739ff1a",
+              "image": "hat/65f56e85-fda3-4f9d-a88f-15ae9739ff1a.jpg",
+              "category": "hat",
+              "score": 0.687715
+            },
+            {
+              "identity": "5f36ec16-d10a-4952-bba7-bcf2923ca5f6",
+              "image": "hat/5f36ec16-d10a-4952-bba7-bcf2923ca5f6.jpg",
+              "category": "hat",
+              "score": 0.680213
+            },
+            {
+              "identity": "baf70158-25de-4d08-9981-e7c160fa87ad",
+              "image": "hat/baf70158-25de-4d08-9981-e7c160fa87ad.jpg",
+              "category": "hat",
+              "score": 0.679077
+            },
+            {
+              "identity": "2f96b4e8-3af7-4b3f-9488-69a51df7a917",
+              "image": "hat/2f96b4e8-3af7-4b3f-9488-69a51df7a917.jpg",
+              "category": "hat",
+              "score": 0.673856
+            },
+            {
+              "identity": "reviewed-f432cd7b049b5f96",
+              "image": "hat/13a17d51-3560-445c-8802-8749fcf27ed7.jpg",
+              "category": "hat",
+              "score": 0.671582
+            }
+          ]
+        },
+        {
+          "number": 5,
+          "reviewed_group_id": "reviewed-eeb2c35908c42d7d",
+          "query_image": "shoes/c8582c70-17af-4f48-a866-eac7e0572560.jpg",
+          "query_sha256": "f3abfbac48f3586da1a7ed32dae869a8ecdbfee5a0adf37250412f56ab3d6b04",
+          "expected_gallery_images": [
+            "shoes/51e600b8-da42-434b-8953-c6fb890121a0.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "shoes",
+          "applied_category": "shoes",
+          "results": [
+            {
+              "identity": "reviewed-eeb2c35908c42d7d",
+              "image": "shoes/51e600b8-da42-434b-8953-c6fb890121a0.jpg",
+              "category": "shoes",
+              "score": 0.939812
+            },
+            {
+              "identity": "0fd66046-0879-42ab-be2e-a919c8a82aab",
+              "image": "shoes/0fd66046-0879-42ab-be2e-a919c8a82aab.jpg",
+              "category": "shoes",
+              "score": 0.81163
+            },
+            {
+              "identity": "0a30baec-1938-47c5-b495-68a51701b43d",
+              "image": "shoes/0a30baec-1938-47c5-b495-68a51701b43d.jpg",
+              "category": "shoes",
+              "score": 0.751918
+            },
+            {
+              "identity": "8b6de4c0-3f40-476d-bad4-a4ee3275176e",
+              "image": "shoes/8b6de4c0-3f40-476d-bad4-a4ee3275176e.jpg",
+              "category": "shoes",
+              "score": 0.75159
+            },
+            {
+              "identity": "82fd1225-3950-496c-8bbd-36f57007ecd5",
+              "image": "shoes/82fd1225-3950-496c-8bbd-36f57007ecd5.jpg",
+              "category": "shoes",
+              "score": 0.750102
+            },
+            {
+              "identity": "75557d1e-b607-4918-82d0-b3f14f31d5a7",
+              "image": "shoes/75557d1e-b607-4918-82d0-b3f14f31d5a7.jpg",
+              "category": "shoes",
+              "score": 0.739586
+            },
+            {
+              "identity": "c287c715-21bb-420c-ad4d-128d2dd3078d",
+              "image": "shoes/c287c715-21bb-420c-ad4d-128d2dd3078d.jpg",
+              "category": "shoes",
+              "score": 0.739475
+            },
+            {
+              "identity": "3ebf66af-1f51-4e17-ba48-6e256d1595e5",
+              "image": "shoes/3ebf66af-1f51-4e17-ba48-6e256d1595e5.jpg",
+              "category": "shoes",
+              "score": 0.737537
+            },
+            {
+              "identity": "b00f4c40-c1b2-4fcb-9380-12b1134cd3ed",
+              "image": "shoes/b00f4c40-c1b2-4fcb-9380-12b1134cd3ed.jpg",
+              "category": "shoes",
+              "score": 0.731727
+            },
+            {
+              "identity": "76649754-ab0b-44ef-a9b6-8f42f7e91047",
+              "image": "shoes/76649754-ab0b-44ef-a9b6-8f42f7e91047.jpg",
+              "category": "shoes",
+              "score": 0.723266
+            }
+          ]
+        },
+        {
+          "number": 6,
+          "reviewed_group_id": "reviewed-d84c69f2ea006a73",
+          "query_image": "shoes/79ff13ef-0cee-4ad9-928a-70a8aacd5704.jpg",
+          "query_sha256": "40e870516328ba1c8b529c7cd65ce9b36bc6401bad9ff64c393a411ce8499f24",
+          "expected_gallery_images": [
+            "shoes/5fea042c-f2ac-4523-a813-fc0eae2d9472.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "shoes",
+          "applied_category": "shoes",
+          "results": [
+            {
+              "identity": "reviewed-d84c69f2ea006a73",
+              "image": "shoes/5fea042c-f2ac-4523-a813-fc0eae2d9472.jpg",
+              "category": "shoes",
+              "score": 0.938088
+            },
+            {
+              "identity": "00f6e504-7c27-438e-a5d7-bc65e557bb2b",
+              "image": "shoes/00f6e504-7c27-438e-a5d7-bc65e557bb2b.jpg",
+              "category": "shoes",
+              "score": 0.895574
+            },
+            {
+              "identity": "b2d00753-c0bd-48f9-95f2-18a91ea62206",
+              "image": "shoes/b2d00753-c0bd-48f9-95f2-18a91ea62206.jpg",
+              "category": "shoes",
+              "score": 0.892221
+            },
+            {
+              "identity": "e938611b-9f82-4096-93ae-536ab6d7bb4d",
+              "image": "shoes/e938611b-9f82-4096-93ae-536ab6d7bb4d.jpg",
+              "category": "shoes",
+              "score": 0.876021
+            },
+            {
+              "identity": "51c73057-ed52-4bf3-afa8-34a015301565",
+              "image": "shoes/51c73057-ed52-4bf3-afa8-34a015301565.jpg",
+              "category": "shoes",
+              "score": 0.859803
+            },
+            {
+              "identity": "35707ebd-0264-4bbf-b5f2-a33c5c4bff4d",
+              "image": "shoes/35707ebd-0264-4bbf-b5f2-a33c5c4bff4d.jpg",
+              "category": "shoes",
+              "score": 0.83792
+            },
+            {
+              "identity": "d1ced6ee-7b6a-4152-9e9c-261db0f8f4c5",
+              "image": "shoes/d1ced6ee-7b6a-4152-9e9c-261db0f8f4c5.jpg",
+              "category": "shoes",
+              "score": 0.824213
+            },
+            {
+              "identity": "0e6871ee-7246-48ad-a356-a7fdde9878d2",
+              "image": "shoes/0e6871ee-7246-48ad-a356-a7fdde9878d2.jpg",
+              "category": "shoes",
+              "score": 0.814919
+            },
+            {
+              "identity": "f5bb1e14-cec6-436d-b13d-66a30d91e330",
+              "image": "shoes/f5bb1e14-cec6-436d-b13d-66a30d91e330.jpg",
+              "category": "shoes",
+              "score": 0.812498
+            },
+            {
+              "identity": "778b036d-be9c-4ff0-8db0-29f3cf24c579",
+              "image": "shoes/778b036d-be9c-4ff0-8db0-29f3cf24c579.jpg",
+              "category": "shoes",
+              "score": 0.795653
+            }
+          ]
+        },
+        {
+          "number": 7,
+          "reviewed_group_id": "reviewed-f91fed794d3cd755",
+          "query_image": "skirt/d44cfac9-3fda-47ba-8eb1-8b130f60b08c.jpg",
+          "query_sha256": "4175bc10e04ecf74a415ef6a8213c357de71bbdeac8bac4bf1de6a719aa5e330",
+          "expected_gallery_images": [
+            "skirt/bb437c07-06e4-4b16-b3aa-8382dd35de0a.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "skirt",
+          "applied_category": "skirt",
+          "results": [
+            {
+              "identity": "reviewed-f91fed794d3cd755",
+              "image": "skirt/bb437c07-06e4-4b16-b3aa-8382dd35de0a.jpg",
+              "category": "skirt",
+              "score": 0.961319
+            },
+            {
+              "identity": "f309b378-084e-4709-9519-7087175395ca",
+              "image": "skirt/f309b378-084e-4709-9519-7087175395ca.jpg",
+              "category": "skirt",
+              "score": 0.925055
+            },
+            {
+              "identity": "a6a301fe-74f4-4a22-9847-a6f6ce98aa4b",
+              "image": "skirt/a6a301fe-74f4-4a22-9847-a6f6ce98aa4b.jpg",
+              "category": "skirt",
+              "score": 0.875511
+            },
+            {
+              "identity": "ce118595-1373-463c-9be5-0b7d62ce1f0d",
+              "image": "skirt/ce118595-1373-463c-9be5-0b7d62ce1f0d.jpg",
+              "category": "skirt",
+              "score": 0.8612
+            },
+            {
+              "identity": "7e77ec6d-2bd6-45c7-9904-cf1fae288afc",
+              "image": "skirt/7e77ec6d-2bd6-45c7-9904-cf1fae288afc.jpg",
+              "category": "skirt",
+              "score": 0.860755
+            },
+            {
+              "identity": "6d210194-60de-49c5-a215-05201cfa1a64",
+              "image": "skirt/6d210194-60de-49c5-a215-05201cfa1a64.jpg",
+              "category": "skirt",
+              "score": 0.859387
+            },
+            {
+              "identity": "def00273-79ed-414b-b7d3-d742001a2d15",
+              "image": "skirt/def00273-79ed-414b-b7d3-d742001a2d15.jpg",
+              "category": "skirt",
+              "score": 0.852081
+            },
+            {
+              "identity": "22d78476-595a-412d-861e-880264696556",
+              "image": "skirt/22d78476-595a-412d-861e-880264696556.jpg",
+              "category": "skirt",
+              "score": 0.851352
+            },
+            {
+              "identity": "672b0d76-2277-4edf-8903-51cd6646b139",
+              "image": "skirt/672b0d76-2277-4edf-8903-51cd6646b139.jpg",
+              "category": "skirt",
+              "score": 0.851237
+            },
+            {
+              "identity": "0da586b0-bbfb-44fd-a629-12aee2b1d430",
+              "image": "skirt/0da586b0-bbfb-44fd-a629-12aee2b1d430.jpg",
+              "category": "skirt",
+              "score": 0.846991
+            }
+          ]
+        }
+      ]
+    },
+    "sam2": {
+      "metrics": {
+        "query_count": 7,
+        "reviewed_identity_top1": 1.0,
+        "reviewed_identity_top5": 1.0,
+        "reviewed_identity_top10": 1.0,
+        "reviewed_identity_mrr_at10": 1.0
+      },
+      "queries": [
+        {
+          "number": 1,
+          "reviewed_group_id": "reviewed-ce066c76164b4d69",
+          "query_image": "outwear/c258578a-6d97-4514-91b5-7d146893756f.jpg",
+          "query_sha256": "c1f6276d87cfdf702a88f5b0bbbfecceec0e5a9cd393c2c9f0652a86ea810a7f",
+          "expected_gallery_images": [
+            "outwear/62bb46a5-44de-48d9-8c95-3b11ef386471.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "outwear",
+          "applied_category": "outwear",
+          "results": [
+            {
+              "identity": "reviewed-ce066c76164b4d69",
+              "image": "outwear/62bb46a5-44de-48d9-8c95-3b11ef386471.jpg",
+              "category": "outwear",
+              "score": 0.945778
+            },
+            {
+              "identity": "8c0ed4ce-1389-4e82-9b1c-4059de402988",
+              "image": "outwear/8c0ed4ce-1389-4e82-9b1c-4059de402988.jpg",
+              "category": "outwear",
+              "score": 0.858443
+            },
+            {
+              "identity": "90ff3bb7-d6b5-4b77-998a-d64543128c00",
+              "image": "outwear/90ff3bb7-d6b5-4b77-998a-d64543128c00.jpg",
+              "category": "outwear",
+              "score": 0.850633
+            },
+            {
+              "identity": "d7e1beb5-c1eb-41e9-8bf0-242ecf2e04e4",
+              "image": "outwear/d7e1beb5-c1eb-41e9-8bf0-242ecf2e04e4.jpg",
+              "category": "outwear",
+              "score": 0.841743
+            },
+            {
+              "identity": "59927935-c092-4dce-97da-b55312183d61",
+              "image": "outwear/59927935-c092-4dce-97da-b55312183d61.jpg",
+              "category": "outwear",
+              "score": 0.841423
+            },
+            {
+              "identity": "01e42413-5514-46d0-8e44-8060d5410dee",
+              "image": "outwear/01e42413-5514-46d0-8e44-8060d5410dee.jpg",
+              "category": "outwear",
+              "score": 0.834245
+            },
+            {
+              "identity": "d039bfd4-d924-4d83-9d8a-b15595e0080a",
+              "image": "outwear/d039bfd4-d924-4d83-9d8a-b15595e0080a.jpg",
+              "category": "outwear",
+              "score": 0.828098
+            },
+            {
+              "identity": "6d57d841-f0f9-4aa2-971f-0149ce938319",
+              "image": "outwear/6d57d841-f0f9-4aa2-971f-0149ce938319.jpg",
+              "category": "outwear",
+              "score": 0.820358
+            },
+            {
+              "identity": "1fe43e89-0e78-4667-881b-3feb27a63ce3",
+              "image": "outwear/1fe43e89-0e78-4667-881b-3feb27a63ce3.jpg",
+              "category": "outwear",
+              "score": 0.813347
+            },
+            {
+              "identity": "1b2ace0a-382e-4b87-8e9d-35cbcfac636b",
+              "image": "outwear/1b2ace0a-382e-4b87-8e9d-35cbcfac636b.jpg",
+              "category": "outwear",
+              "score": 0.810897
+            }
+          ],
+          "sam_score": 0.9509651064872742,
+          "sam_bbox": {
+            "x": 27,
+            "y": 0,
+            "width": 342,
+            "height": 520
+          },
+          "points": [
+            [
+              130,
+              150
+            ],
+            [
+              270,
+              150
+            ],
+            [
+              120,
+              365
+            ],
+            [
+              285,
+              380
+            ],
+            [
+              15,
+              15
+            ],
+            [
+              380,
+              30
+            ],
+            [
+              15,
+              470
+            ]
+          ],
+          "labels": [
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "number": 2,
+          "reviewed_group_id": "reviewed-3f12b72411f58e42",
+          "query_image": "dress/ce27bde3-b523-449c-87b0-35c4317d32d1.jpg",
+          "query_sha256": "aaa5eaecf6b0da0e1ee15984e8abaee59b240d24139d19a3dea3bf9a2b619abc",
+          "expected_gallery_images": [
+            "dress/123cedc9-f0ee-432b-a087-7c4981e60c75.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "dress",
+          "applied_category": "dress",
+          "results": [
+            {
+              "identity": "reviewed-3f12b72411f58e42",
+              "image": "dress/123cedc9-f0ee-432b-a087-7c4981e60c75.jpg",
+              "category": "dress",
+              "score": 0.902798
+            },
+            {
+              "identity": "824014f4-825b-4bf2-835e-e3b8b7d0f387",
+              "image": "dress/824014f4-825b-4bf2-835e-e3b8b7d0f387.jpg",
+              "category": "dress",
+              "score": 0.846791
+            },
+            {
+              "identity": "4b8e5d41-3e12-4d2b-8634-e62e71d613ff",
+              "image": "dress/4b8e5d41-3e12-4d2b-8634-e62e71d613ff.jpg",
+              "category": "dress",
+              "score": 0.806642
+            },
+            {
+              "identity": "a1190e56-0e53-41e3-ad16-a63575173747",
+              "image": "dress/a1190e56-0e53-41e3-ad16-a63575173747.jpg",
+              "category": "dress",
+              "score": 0.806363
+            },
+            {
+              "identity": "9d92e0e2-f5ae-45da-9c03-e782de380e88",
+              "image": "dress/9d92e0e2-f5ae-45da-9c03-e782de380e88.jpg",
+              "category": "dress",
+              "score": 0.805964
+            },
+            {
+              "identity": "d405f7e3-be05-4b67-8741-8b3507f2d405",
+              "image": "dress/d405f7e3-be05-4b67-8741-8b3507f2d405.jpg",
+              "category": "dress",
+              "score": 0.804888
+            },
+            {
+              "identity": "c6815f1d-54b5-4b94-a8a8-02cd9db5c08a",
+              "image": "dress/c6815f1d-54b5-4b94-a8a8-02cd9db5c08a.jpg",
+              "category": "dress",
+              "score": 0.80172
+            },
+            {
+              "identity": "37271dcc-d0e5-4f31-81ac-ad4b5974812e",
+              "image": "dress/37271dcc-d0e5-4f31-81ac-ad4b5974812e.jpg",
+              "category": "dress",
+              "score": 0.800167
+            },
+            {
+              "identity": "08868e1e-e19a-43de-b883-82694af5a482",
+              "image": "dress/08868e1e-e19a-43de-b883-82694af5a482.jpg",
+              "category": "dress",
+              "score": 0.78934
+            },
+            {
+              "identity": "c9d22645-4b60-4108-bde7-a3716c181f00",
+              "image": "dress/c9d22645-4b60-4108-bde7-a3716c181f00.jpg",
+              "category": "dress",
+              "score": 0.786218
+            }
+          ],
+          "sam_score": 0.970481276512146,
+          "sam_bbox": {
+            "x": 50,
+            "y": 83,
+            "width": 283,
+            "height": 624
+          },
+          "points": [
+            [
+              100,
+              120
+            ],
+            [
+              280,
+              130
+            ],
+            [
+              150,
+              260
+            ],
+            [
+              220,
+              500
+            ],
+            [
+              220,
+              640
+            ],
+            [
+              25,
+              30
+            ],
+            [
+              375,
+              300
+            ],
+            [
+              20,
+              600
+            ]
+          ],
+          "labels": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "number": 3,
+          "reviewed_group_id": "reviewed-f432cd7b049b5f96",
+          "query_image": "hat/678edcd0-607e-433d-8433-46e11fb24df3.jpg",
+          "query_sha256": "c62441dd4a3628d8fafb3f5cc877b037d04760c34f2a7b8059bba4d30c8402a2",
+          "expected_gallery_images": [
+            "hat/13a17d51-3560-445c-8802-8749fcf27ed7.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "hat",
+          "applied_category": "hat",
+          "results": [
+            {
+              "identity": "reviewed-f432cd7b049b5f96",
+              "image": "hat/13a17d51-3560-445c-8802-8749fcf27ed7.jpg",
+              "category": "hat",
+              "score": 0.922852
+            },
+            {
+              "identity": "ab8b393f-f1e4-4d80-8d36-b213efa3b897",
+              "image": "hat/ab8b393f-f1e4-4d80-8d36-b213efa3b897.jpg",
+              "category": "hat",
+              "score": 0.815145
+            },
+            {
+              "identity": "29c2d4f8-f682-4995-919b-2ce2a9a64c1d",
+              "image": "hat/29c2d4f8-f682-4995-919b-2ce2a9a64c1d.jpg",
+              "category": "hat",
+              "score": 0.810603
+            },
+            {
+              "identity": "1aac00cd-b42a-40f1-a82a-dcc44a0879d4",
+              "image": "hat/1aac00cd-b42a-40f1-a82a-dcc44a0879d4.jpg",
+              "category": "hat",
+              "score": 0.791062
+            },
+            {
+              "identity": "aae17fcd-a7c4-462a-8006-e0e935d34b3c",
+              "image": "hat/aae17fcd-a7c4-462a-8006-e0e935d34b3c.jpg",
+              "category": "hat",
+              "score": 0.789702
+            },
+            {
+              "identity": "14d9f39c-48f5-4da6-bea4-b9f8b94633ed",
+              "image": "hat/14d9f39c-48f5-4da6-bea4-b9f8b94633ed.jpg",
+              "category": "hat",
+              "score": 0.778301
+            },
+            {
+              "identity": "7ed099ea-7a28-4b95-97a5-aac86e19cdbd",
+              "image": "hat/7ed099ea-7a28-4b95-97a5-aac86e19cdbd.jpg",
+              "category": "hat",
+              "score": 0.773574
+            },
+            {
+              "identity": "ceb6ea8b-5289-4305-a52b-b4b44d3beeb9",
+              "image": "hat/ceb6ea8b-5289-4305-a52b-b4b44d3beeb9.jpg",
+              "category": "hat",
+              "score": 0.765384
+            },
+            {
+              "identity": "7be69850-c705-4e3f-b815-a3940a0a619d",
+              "image": "hat/7be69850-c705-4e3f-b815-a3940a0a619d.jpg",
+              "category": "hat",
+              "score": 0.765374
+            },
+            {
+              "identity": "73ac436f-d222-491e-8603-70bf6f1f6ad9",
+              "image": "hat/73ac436f-d222-491e-8603-70bf6f1f6ad9.jpg",
+              "category": "hat",
+              "score": 0.760887
+            }
+          ],
+          "sam_score": 0.9834370613098145,
+          "sam_bbox": {
+            "x": 63,
+            "y": 89,
+            "width": 225,
+            "height": 319
+          },
+          "points": [
+            [
+              200,
+              170
+            ],
+            [
+              190,
+              340
+            ],
+            [
+              30,
+              30
+            ],
+            [
+              355,
+              450
+            ]
+          ],
+          "labels": [
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "number": 4,
+          "reviewed_group_id": "reviewed-288a8e351d34cfa4",
+          "query_image": "hat/ad5095c6-ac1f-400e-b75a-3eb389b8ffbc.jpg",
+          "query_sha256": "83fb580579bef19a05abe6c859698e34a1d96043957d93acc1da610304e8489b",
+          "expected_gallery_images": [
+            "hat/0979a14e-051a-4659-8e87-2f6a424e2c12.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "hat",
+          "applied_category": "hat",
+          "results": [
+            {
+              "identity": "reviewed-288a8e351d34cfa4",
+              "image": "hat/0979a14e-051a-4659-8e87-2f6a424e2c12.jpg",
+              "category": "hat",
+              "score": 0.855569
+            },
+            {
+              "identity": "ceb6ea8b-5289-4305-a52b-b4b44d3beeb9",
+              "image": "hat/ceb6ea8b-5289-4305-a52b-b4b44d3beeb9.jpg",
+              "category": "hat",
+              "score": 0.661767
+            },
+            {
+              "identity": "ab8b393f-f1e4-4d80-8d36-b213efa3b897",
+              "image": "hat/ab8b393f-f1e4-4d80-8d36-b213efa3b897.jpg",
+              "category": "hat",
+              "score": 0.65276
+            },
+            {
+              "identity": "eb5b5b2d-1db8-4a2a-9ab7-53067df7558b",
+              "image": "hat/eb5b5b2d-1db8-4a2a-9ab7-53067df7558b.jpg",
+              "category": "hat",
+              "score": 0.638625
+            },
+            {
+              "identity": "70731fd8-417c-4d20-94c5-56cf17a7178e",
+              "image": "hat/70731fd8-417c-4d20-94c5-56cf17a7178e.jpg",
+              "category": "hat",
+              "score": 0.636952
+            },
+            {
+              "identity": "reviewed-f432cd7b049b5f96",
+              "image": "hat/13a17d51-3560-445c-8802-8749fcf27ed7.jpg",
+              "category": "hat",
+              "score": 0.634777
+            },
+            {
+              "identity": "d7602a0b-ddf5-4087-8a83-4e1ed8092f7e",
+              "image": "hat/d7602a0b-ddf5-4087-8a83-4e1ed8092f7e.jpg",
+              "category": "hat",
+              "score": 0.631961
+            },
+            {
+              "identity": "74530f6e-302d-440c-843c-ac1aad9d57be",
+              "image": "hat/74530f6e-302d-440c-843c-ac1aad9d57be.jpg",
+              "category": "hat",
+              "score": 0.631508
+            },
+            {
+              "identity": "3d1948c4-067b-4f07-9310-7becd16dbd0f",
+              "image": "hat/3d1948c4-067b-4f07-9310-7becd16dbd0f.jpg",
+              "category": "hat",
+              "score": 0.628792
+            },
+            {
+              "identity": "bb784ba1-b4d8-4a0b-a72a-a20d2c8bbef6",
+              "image": "hat/bb784ba1-b4d8-4a0b-a72a-a20d2c8bbef6.jpg",
+              "category": "hat",
+              "score": 0.627143
+            }
+          ],
+          "sam_score": 0.9775897860527039,
+          "sam_bbox": {
+            "x": 82,
+            "y": 61,
+            "width": 250,
+            "height": 357
+          },
+          "points": [
+            [
+              200,
+              160
+            ],
+            [
+              220,
+              350
+            ],
+            [
+              20,
+              30
+            ],
+            [
+              380,
+              480
+            ]
+          ],
+          "labels": [
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "number": 5,
+          "reviewed_group_id": "reviewed-eeb2c35908c42d7d",
+          "query_image": "shoes/c8582c70-17af-4f48-a866-eac7e0572560.jpg",
+          "query_sha256": "f3abfbac48f3586da1a7ed32dae869a8ecdbfee5a0adf37250412f56ab3d6b04",
+          "expected_gallery_images": [
+            "shoes/51e600b8-da42-434b-8953-c6fb890121a0.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "shoes",
+          "applied_category": "shoes",
+          "results": [
+            {
+              "identity": "reviewed-eeb2c35908c42d7d",
+              "image": "shoes/51e600b8-da42-434b-8953-c6fb890121a0.jpg",
+              "category": "shoes",
+              "score": 0.845484
+            },
+            {
+              "identity": "0fd66046-0879-42ab-be2e-a919c8a82aab",
+              "image": "shoes/0fd66046-0879-42ab-be2e-a919c8a82aab.jpg",
+              "category": "shoes",
+              "score": 0.748923
+            },
+            {
+              "identity": "82fd1225-3950-496c-8bbd-36f57007ecd5",
+              "image": "shoes/82fd1225-3950-496c-8bbd-36f57007ecd5.jpg",
+              "category": "shoes",
+              "score": 0.717191
+            },
+            {
+              "identity": "8b6de4c0-3f40-476d-bad4-a4ee3275176e",
+              "image": "shoes/8b6de4c0-3f40-476d-bad4-a4ee3275176e.jpg",
+              "category": "shoes",
+              "score": 0.71075
+            },
+            {
+              "identity": "9e27ae62-9bdc-497c-b8cb-745252b6c232",
+              "image": "shoes/9e27ae62-9bdc-497c-b8cb-745252b6c232.jpg",
+              "category": "shoes",
+              "score": 0.678374
+            },
+            {
+              "identity": "c287c715-21bb-420c-ad4d-128d2dd3078d",
+              "image": "shoes/c287c715-21bb-420c-ad4d-128d2dd3078d.jpg",
+              "category": "shoes",
+              "score": 0.677912
+            },
+            {
+              "identity": "30b6fd9b-d172-4d5d-a1c1-c36d23f769dd",
+              "image": "shoes/30b6fd9b-d172-4d5d-a1c1-c36d23f769dd.jpg",
+              "category": "shoes",
+              "score": 0.6728
+            },
+            {
+              "identity": "3ebf66af-1f51-4e17-ba48-6e256d1595e5",
+              "image": "shoes/3ebf66af-1f51-4e17-ba48-6e256d1595e5.jpg",
+              "category": "shoes",
+              "score": 0.666947
+            },
+            {
+              "identity": "76649754-ab0b-44ef-a9b6-8f42f7e91047",
+              "image": "shoes/76649754-ab0b-44ef-a9b6-8f42f7e91047.jpg",
+              "category": "shoes",
+              "score": 0.666582
+            },
+            {
+              "identity": "b00f4c40-c1b2-4fcb-9380-12b1134cd3ed",
+              "image": "shoes/b00f4c40-c1b2-4fcb-9380-12b1134cd3ed.jpg",
+              "category": "shoes",
+              "score": 0.665344
+            }
+          ],
+          "sam_score": 0.8754481673240662,
+          "sam_bbox": {
+            "x": 58,
+            "y": 43,
+            "width": 287,
+            "height": 346
+          },
+          "points": [
+            [
+              140,
+              150
+            ],
+            [
+              120,
+              300
+            ],
+            [
+              290,
+              110
+            ],
+            [
+              270,
+              290
+            ],
+            [
+              25,
+              30
+            ],
+            [
+              365,
+              460
+            ],
+            [
+              30,
+              470
+            ]
+          ],
+          "labels": [
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "number": 6,
+          "reviewed_group_id": "reviewed-d84c69f2ea006a73",
+          "query_image": "shoes/79ff13ef-0cee-4ad9-928a-70a8aacd5704.jpg",
+          "query_sha256": "40e870516328ba1c8b529c7cd65ce9b36bc6401bad9ff64c393a411ce8499f24",
+          "expected_gallery_images": [
+            "shoes/5fea042c-f2ac-4523-a813-fc0eae2d9472.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "shoes",
+          "applied_category": "shoes",
+          "results": [
+            {
+              "identity": "reviewed-d84c69f2ea006a73",
+              "image": "shoes/5fea042c-f2ac-4523-a813-fc0eae2d9472.jpg",
+              "category": "shoes",
+              "score": 0.854815
+            },
+            {
+              "identity": "e938611b-9f82-4096-93ae-536ab6d7bb4d",
+              "image": "shoes/e938611b-9f82-4096-93ae-536ab6d7bb4d.jpg",
+              "category": "shoes",
+              "score": 0.80633
+            },
+            {
+              "identity": "35707ebd-0264-4bbf-b5f2-a33c5c4bff4d",
+              "image": "shoes/35707ebd-0264-4bbf-b5f2-a33c5c4bff4d.jpg",
+              "category": "shoes",
+              "score": 0.799633
+            },
+            {
+              "identity": "00f6e504-7c27-438e-a5d7-bc65e557bb2b",
+              "image": "shoes/00f6e504-7c27-438e-a5d7-bc65e557bb2b.jpg",
+              "category": "shoes",
+              "score": 0.786246
+            },
+            {
+              "identity": "b2d00753-c0bd-48f9-95f2-18a91ea62206",
+              "image": "shoes/b2d00753-c0bd-48f9-95f2-18a91ea62206.jpg",
+              "category": "shoes",
+              "score": 0.779729
+            },
+            {
+              "identity": "51c73057-ed52-4bf3-afa8-34a015301565",
+              "image": "shoes/51c73057-ed52-4bf3-afa8-34a015301565.jpg",
+              "category": "shoes",
+              "score": 0.776751
+            },
+            {
+              "identity": "d1ced6ee-7b6a-4152-9e9c-261db0f8f4c5",
+              "image": "shoes/d1ced6ee-7b6a-4152-9e9c-261db0f8f4c5.jpg",
+              "category": "shoes",
+              "score": 0.769191
+            },
+            {
+              "identity": "3b86d877-2b9e-4c8b-a6a2-1d87513309d0",
+              "image": "shoes/3b86d877-2b9e-4c8b-a6a2-1d87513309d0.jpg",
+              "category": "shoes",
+              "score": 0.760402
+            },
+            {
+              "identity": "f56febf3-452e-4eb2-a514-4b18f950c807",
+              "image": "shoes/f56febf3-452e-4eb2-a514-4b18f950c807.jpg",
+              "category": "shoes",
+              "score": 0.745753
+            },
+            {
+              "identity": "778b036d-be9c-4ff0-8db0-29f3cf24c579",
+              "image": "shoes/778b036d-be9c-4ff0-8db0-29f3cf24c579.jpg",
+              "category": "shoes",
+              "score": 0.731233
+            }
+          ],
+          "sam_score": 0.9595339894294739,
+          "sam_bbox": {
+            "x": 39,
+            "y": 121,
+            "width": 289,
+            "height": 250
+          },
+          "points": [
+            [
+              155,
+              320
+            ],
+            [
+              270,
+              250
+            ],
+            [
+              115,
+              235
+            ],
+            [
+              205,
+              170
+            ],
+            [
+              25,
+              50
+            ],
+            [
+              370,
+              450
+            ]
+          ],
+          "labels": [
+            1,
+            1,
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        {
+          "number": 7,
+          "reviewed_group_id": "reviewed-f91fed794d3cd755",
+          "query_image": "skirt/d44cfac9-3fda-47ba-8eb1-8b130f60b08c.jpg",
+          "query_sha256": "4175bc10e04ecf74a415ef6a8213c357de71bbdeac8bac4bf1de6a719aa5e330",
+          "expected_gallery_images": [
+            "skirt/bb437c07-06e4-4b16-b3aa-8382dd35de0a.jpg"
+          ],
+          "target_rank_at10": 1,
+          "predicted_category": "skirt",
+          "applied_category": "skirt",
+          "results": [
+            {
+              "identity": "reviewed-f91fed794d3cd755",
+              "image": "skirt/bb437c07-06e4-4b16-b3aa-8382dd35de0a.jpg",
+              "category": "skirt",
+              "score": 0.927149
+            },
+            {
+              "identity": "f309b378-084e-4709-9519-7087175395ca",
+              "image": "skirt/f309b378-084e-4709-9519-7087175395ca.jpg",
+              "category": "skirt",
+              "score": 0.897279
+            },
+            {
+              "identity": "a6a301fe-74f4-4a22-9847-a6f6ce98aa4b",
+              "image": "skirt/a6a301fe-74f4-4a22-9847-a6f6ce98aa4b.jpg",
+              "category": "skirt",
+              "score": 0.856284
+            },
+            {
+              "identity": "ce118595-1373-463c-9be5-0b7d62ce1f0d",
+              "image": "skirt/ce118595-1373-463c-9be5-0b7d62ce1f0d.jpg",
+              "category": "skirt",
+              "score": 0.84206
+            },
+            {
+              "identity": "6d210194-60de-49c5-a215-05201cfa1a64",
+              "image": "skirt/6d210194-60de-49c5-a215-05201cfa1a64.jpg",
+              "category": "skirt",
+              "score": 0.8406
+            },
+            {
+              "identity": "6da4653c-905d-4257-aa82-824afda0c0a5",
+              "image": "skirt/6da4653c-905d-4257-aa82-824afda0c0a5.jpg",
+              "category": "skirt",
+              "score": 0.82954
+            },
+            {
+              "identity": "7e77ec6d-2bd6-45c7-9904-cf1fae288afc",
+              "image": "skirt/7e77ec6d-2bd6-45c7-9904-cf1fae288afc.jpg",
+              "category": "skirt",
+              "score": 0.828746
+            },
+            {
+              "identity": "978f5148-3c6b-4393-9d12-df98d51b8881",
+              "image": "skirt/978f5148-3c6b-4393-9d12-df98d51b8881.jpg",
+              "category": "skirt",
+              "score": 0.826287
+            },
+            {
+              "identity": "672b0d76-2277-4edf-8903-51cd6646b139",
+              "image": "skirt/672b0d76-2277-4edf-8903-51cd6646b139.jpg",
+              "category": "skirt",
+              "score": 0.82249
+            },
+            {
+              "identity": "22d78476-595a-412d-861e-880264696556",
+              "image": "skirt/22d78476-595a-412d-861e-880264696556.jpg",
+              "category": "skirt",
+              "score": 0.818063
+            }
+          ],
+          "sam_score": 0.9642478227615356,
+          "sam_bbox": {
+            "x": 0,
+            "y": 41,
+            "width": 400,
+            "height": 427
+          },
+          "points": [
+            [
+              140,
+              160
+            ],
+            [
+              290,
+              170
+            ],
+            [
+              120,
+              350
+            ],
+            [
+              320,
+              370
+            ],
+            [
+              20,
+              25
+            ],
+            [
+              375,
+              35
+            ],
+            [
+              200,
+              510
+            ]
+          ],
+          "labels": [
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  },
+  "sam2_vs_full_top1": {
+    "delta_top1": 0.0,
+    "bootstrap_95_ci": [
+      0.0,
+      0.0
+    ],
+    "improved_queries": 0,
+    "worsened_queries": 0,
+    "unchanged_queries": 7,
+    "mcnemar_exact_p": 1.0
+  },
+  "sam2_failure_count": 0,
+  "production_index_or_routing_changed": false,
+  "limitations": [
+    "Seven purposive visual-identity groups; not general accuracy or merchant SKU verification.",
+    "Reverse views reuse the same reviewed product groups as the forward pilot; not an independent test set.",
+    "These are existing catalog captures held out within the pilot, not newly collected consumer photos.",
+    "Points were chosen visually by the assistant before reverse results, not by the user; masks were not human approved.",
+    "No point refinement after results or failed-case dropping; a failure stays in the SAM2 denominator.",
+    "MRR is truncated at rank 10; this does not replace the older category-only experiment."
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "schema_version": "1.0",
+  "created_at_utc": "2026-10-24T14:18:14.558820+00:00",
+  "scope": "inventory_and_candidate_triage_not_retrieval_accuracy",
+  "dataset": {
+    "local_name": "clothing_small",
+    "upstream_name": "alexeygrigorev/clothing-dataset-small",
+    "upstream_url": "https://github.com/alexeygrigorev/clothing-dataset",
+    "local_license_file": "datasets/clothing_small/LICENSE",
+    "split_counts": {
+      "test": 372,
+      "train": 3068,
+      "validation": 341
+    },
+    "total_images": 3781,
+    "category_count": 10,
+    "category_counts": {
+      "train": {
+        "dress": 241,
+        "hat": 123,
+        "longsleeve": 455,
+        "outwear": 184,
+        "pants": 468,
+        "shirt": 290,
+        "shoes": 198,
+        "shorts": 202,
+        "skirt": 112,
+        "t-shirt": 795
+      },
+      "validation": {
+        "dress": 32,
+        "hat": 14,
+        "longsleeve": 49,
+        "outwear": 24,
+        "pants": 49,
+        "shirt": 29,
+        "shoes": 26,
+        "shorts": 25,
+        "skirt": 12,
+        "t-shirt": 81
+      },
+      "test": {
+        "dress": 15,
+        "hat": 12,
+        "longsleeve": 72,
+        "outwear": 38,
+        "pants": 42,
+        "shirt": 26,
+        "shoes": 73,
+        "shorts": 30,
+        "skirt": 12,
+        "t-shirt": 52
+      }
+    }
+  },
+  "identity_metadata": {
+    "application_product_id": "image filename stem (UUID)",
+    "generation_source": "tools/build_train_catalog_metadata.py",
+    "official_upstream_columns": [
+      "image",
+      "sender_id",
+      "label",
+      "kids"
+    ],
+    "seller_or_sku_identity_available": false,
+    "image_count_is_not_verified_unique_product_count": true
+  },
+  "duplicate_audit": {
+    "images_checked": 3781,
+    "byte_identical_groups": 0,
+    "pixel_identical_groups": 0,
+    "pixel_method": "SHA256 of EXIF-transposed RGB dimensions and pixel bytes",
+    "does_not_exclude_recompression_crop_or_same_photo": true
+  },
+  "existing_human_visual_groups": 12,
+  "candidate_audit": {
+    "selection": "Two highest disjoint nearest-neighbor pairs per category among the top-12 neighbors, excluding all existing human-group member images and the previous 20 reviewed pairs; exact pixel and byte matches excluded.",
+    "selected_pairs": 20,
+    "triaged_by_assistant": true,
+    "stronger_candidates_for_user_confirmation": [
+      {
+        "category": "shirt",
+        "images": [
+          "shirt/7e200cc9-e2fe-40ae-9e69-0d3ef877241b.jpg",
+          "shirt/b070e185-a513-471e-bfa6-e0d4b480a73e.jpg"
+        ],
+        "titles": [
+          "ظ‚ظ…ظٹطµ ط±ظ‚ظ… 143",
+          "ظ‚ظ…ظٹطµ ط±ظ‚ظ… 198"
+        ],
+        "embedding_cosine": 0.9713315367698669,
+        "pixel_identical": false,
+        "dhash_distance": 14,
+        "status": "unreviewed_similarity_candidate_not_identity_label",
+        "pair_number": 1,
+        "visual_review": "candidate_for_user_confirmation",
+        "reason": "Matching pale long-sleeve shirt construction on red background; different arrangement. Identity requires owner confirmation.",
+        "image_sha256": [
+          "0361ee3c4939bc939c660542d8cbe2908e80abd012f72d2c26ed3e1f7bd0a1d8",
+          "6f2f9bc08cb621662645c1179cd5d2c030cc8d8ad0c966aa08790307c45a7a0c"
+        ]
+      },
+      {
+        "category": "pants",
+        "images": [
+          "pants/10f4ac8d-9d8d-4a59-88dc-5e085d61aa48.jpg",
+          "pants/a91c9a10-7d56-4689-9911-a2905d759ec4.jpg"
+        ],
+        "titles": [
+          "ط¨ظ†ط·ط§ظ„ ط±ظ‚ظ… 28",
+          "ط¨ظ†ط·ط§ظ„ ط±ظ‚ظ… 288"
+        ],
+        "embedding_cosine": 0.962286651134491,
+        "pixel_identical": false,
+        "dhash_distance": 20,
+        "status": "unreviewed_similarity_candidate_not_identity_label",
+        "pair_number": 5,
+        "visual_review": "candidate_for_user_confirmation",
+        "reason": "Likely same dark trousers on the same bed in a different arrangement; confirmation required.",
+        "image_sha256": [
+          "a5058bfb9051d12f16693bd08d525e12c5435e4956b7d15c4ca349f95fe1f86e",
+          "d87f68f1850724cb21ea69e6bcaf6288fd40218c22cc6c6d18c34caa42d3e1c6"
+        ]
+      },
+      {
+        "category": "t-shirt",
+        "images": [
+          "t-shirt/1210f1df-66ca-4490-992e-d922d47432de.jpg",
+          "t-shirt/a1ce79d6-ad15-4bc6-96bb-ed6b380d0104.jpg"
+        ],
+        "titles": [
+          "طھظٹط´ظٹط±طھ ط±ظ‚ظ… 59",
+          "طھظٹط´ظٹط±طھ ط±ظ‚ظ… 502"
+        ],
+        "embedding_cosine": 0.9575889110565186,
+        "pixel_identical": false,
+        "dhash_distance": 24,
+        "status": "unreviewed_similarity_candidate_not_identity_label",
+        "pair_number": 6,
+        "visual_review": "candidate_for_user_confirmation",
+        "reason": "Matching red/navy adidas design and carpet, with a changed viewpoint; confirmation required.",
+        "image_sha256": [
+          "77261264d34d94451dc426874539882351e086055ddfbb9cf9de23e44d74aa8a",
+          "a0208764e4de074b6077cf53b5882b23f63ecfa61bcf0866895d26c9da60cbbc"
+        ]
+      },
+      {
+        "category": "shoes",
+        "images": [
+          "shoes/1558e0ca-2ef3-402e-bf6c-d2d62c974cd4.jpg",
+          "shoes/84cfca64-c7c9-427b-af29-6afa22ce7a8d.jpg"
+        ],
+        "titles": [
+          "ط­ط°ط§ط، ط±ظ‚ظ… 14",
+          "ط­ط°ط§ط، ط±ظ‚ظ… 102"
+        ],
+        "embedding_cosine": 0.9298192858695984,
+        "pixel_identical": false,
+        "dhash_distance": 35,
+        "status": "unreviewed_similarity_candidate_not_identity_label",
+        "pair_number": 14,
+        "visual_review": "candidate_for_user_confirmation",
+        "reason": "Matching purple/black winter boot construction across rear/side views; confirmation required.",
+        "image_sha256": [
+          "70d6c7593ff7d89a6c44f7b338fe4d5266e008c39564f396fe061dbdecd8c35f",
+          "9a361f40d5418a88033f84e627bfd5ab8e64ee88f3e8b9916e46f67a2e83fe9f"
+        ]
+      },
+      {
+        "category": "outwear",
+        "images": [
+          "outwear/3d7a04ef-f6c9-4461-9db2-b2c87b3aa481.jpg",
+          "outwear/b2ee19d6-93f1-4688-9545-d265887f226f.jpg"
+        ],
+        "titles": [
+          "ط¬ط§ظƒظٹطھ ط±ظ‚ظ… 49",
+          "ط¬ط§ظƒظٹطھ ط±ظ‚ظ… 121"
+        ],
+        "embedding_cosine": 0.9262736439704895,
+        "pixel_identical": false,
+        "dhash_distance": 30,
+        "status": "unreviewed_similarity_candidate_not_identity_label",
+        "pair_number": 17,
+        "visual_review": "candidate_for_user_confirmation",
+        "reason": "Matching distinctive grey coat, dark collar and button/pocket layout across flat/hanging views; confirmation required.",
+        "image_sha256": [
+          "0e7fe2f2ed531c23ac98d94bec9a0e196b0a0f3638b28bc13566a51b6c81405d",
+          "5c16b632733267cc7b775f5da8d8385750002ffcb58abecd19ac2cf1985e1d4e"
+        ]
+      }
+    ],
+    "accepted_new_identity_labels": 0,
+    "promoted_to_live_grouping": false,
+    "used_for_current_pilot": false
+  },
+  "artifacts": {
+    "data/catalog_siglip2.faiss": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+    "data/catalog_metadata_train.json": "fcdf2f6c5155737a24f5cc352fce6ed615df621367195fce30dcab2d5de25a69",
+    "data/reviewed_product_groups.json": "4dabd9042af385110a581cd15959a4103dd50884cb22984eefffd28e6b5607d5"
+  },
+  "decision": "Keep the current catalog for the presentation and the limited reviewed-view pilot; do not download another dataset in this stage.",
+  "future_dataset_option": {
+    "name": "DeepFashion2",
+    "official_url": "https://github.com/switchablenorms/DeepFashion2",
+    "reason": "Official pair_id and item style support positive shop/user pairs; requires a separate experimental gallery, identity mapping and evaluation protocol.",
+    "download_performed": false
+  },
+  "local_review_page": "evaluation/cache/dataset_identity_audit/review_five_pairs.html",
+  "limitations": [
+    "The new visual candidates are not user-confirmed ground truth.",
+    "Candidate selection favors embedding-similar pairs, so evaluating them without accounting for selection would be biased.",
+    "The current source is for classification and supplies no shop SKU or authoritative product identity.",
+    "No new dataset or query photo was downloaded or generated.",
+    "The index, catalog images and live grouping were not modified."
+  ]
+}

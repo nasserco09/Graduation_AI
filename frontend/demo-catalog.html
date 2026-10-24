@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="styles/product-management.css">
   <script src="js/admin-session.js" defer></script>
   <script src="js/demo-catalog.js" defer></script>
+  <script src="js/catalog-backup.js" defer></script>
 </head>
 <body><main>
   <nav class="topbar" aria-label="التنقل"><a class="brand" href="/">Fashion Search <span>البحث البصري عن الأزياء</span></a><a href="/?source=products" class="button secondary">البحث في منتجاتي ←</a></nav>
@@ -21,6 +22,13 @@
     <div><span>متوفرة للبحث</span><strong id="stat-available">—</strong></div>
     <div><span>غير متوفرة</span><strong id="stat-unavailable">—</strong></div>
     <div><span>صور المنتجات</span><strong id="stat-images">—</strong></div>
+  </section>
+  <section class="backup-section" aria-labelledby="backup-title">
+    <div class="backup-heading"><div><h2 id="backup-title">النسخ الاحتياطي والاسترجاع</h2><p class="muted">احفظ منتجاتك المضافة وصورها وبياناتها في ملف، واسترجعها عند الحاجة.</p></div><button id="backup-export" type="button" class="button secondary">تنزيل نسخة احتياطية</button></div>
+    <div class="backup-import"><div><label for="backup-file">استرجاع نسخة محفوظة</label><input id="backup-file" type="file" accept=".zip,application/zip,application/x-zip-compressed" aria-describedby="backup-help"><p id="backup-help" class="field-hint">اختر ملف النسخة الاحتياطية، ثم راجع محتواه قبل تأكيد الاسترجاع. الحد الأقصى 200MB.</p></div></div>
+    <p class="field-hint">تحتوي النسخة على كتالوج منتجاتك المضافة فقط. الكتالوج البحثي الأصلي وحساب الإدارة محفوظان بشكل مستقل.</p>
+    <p id="backup-status" class="status" role="status" aria-live="polite"></p>
+    <details class="backup-history"><summary>نسخ محفوظة تلقائيًا قبل الاسترجاع</summary><p class="field-hint">يمكن تنزيل نسخة سابقة ثم اختيارها في خانة الاسترجاع أعلاه.</p><div id="backup-history-list"></div><button id="backup-history-refresh" type="button" class="text-button">تحديث النسخ المحفوظة</button></details>
   </section>
   <section class="catalog-section" aria-labelledby="catalog-title">
     <div class="section-heading"><div><h2 id="catalog-title">منتجاتك</h2><p id="product-count" class="muted"></p></div><button id="refresh-catalog" type="button" class="button secondary">تحديث القائمة</button></div>
@@ -57,5 +65,13 @@
 </dialog>
 <dialog id="delete-dialog" class="delete-dialog" aria-labelledby="delete-title">
   <p class="eyebrow danger-text">حذف منتج</p><h2 id="delete-title">تأكيد حذف المنتج</h2><p>هل تريد حذف <strong id="delete-name"></strong>؟</p><p class="muted">سيُحذف المنتج وصوره من كتالوجك ونتائج البحث. إذا كان غير متوفر مؤقتًا، يمكنك إيقاف توفره من التعديل بدل حذفه.</p><p id="delete-status" class="status" role="status" aria-live="polite"></p><div class="dialog-actions"><button id="delete-confirm" class="danger" type="button">حذف المنتج</button><button id="delete-cancel" class="button secondary" type="button" autofocus>إلغاء</button></div>
+</dialog>
+<dialog id="restore-dialog" class="restore-dialog" aria-labelledby="restore-title">
+  <p class="eyebrow">مراجعة النسخة الاحتياطية</p><h2 id="restore-title">استرجاع كتالوج المنتجات</h2>
+  <p id="restore-summary"></p><p id="restore-current" class="muted"></p>
+  <p class="restore-warning">سيستبدل الاسترجاع المنتجات والصور الحالية بمحتوى هذه النسخة. سنحفظ نسخة من الحالة الحالية تلقائيًا لتستطيع الرجوع إليها.</p>
+  <p class="field-hint">حساب الإدارة والكتالوج البحثي الأصلي لن يتغيّرا.</p>
+  <p id="restore-status" class="status" role="status" aria-live="polite"></p>
+  <div class="dialog-actions"><button id="restore-confirm" type="button">استرجاع هذه النسخة</button><button id="restore-cancel" type="button" class="button secondary" autofocus>إلغاء</button></div>
 </dialog>
 </body></html>

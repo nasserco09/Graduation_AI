@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "scope": "reviewed_reverse_assistant_point_pilot",
+  "prepared_at_utc": "2026-10-24T14:27:16.816099+00:00",
+  "selection_author": "assistant_visual_review_not_user_mask_approval",
+  "gallery_count": 3061,
+  "query_count": 7,
+  "artifacts": {
+    "data/catalog_siglip2.faiss": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+    "data/catalog_siglip2_paths.json": "6f8c7ed06ea7dc032d2a3e68e53df602690b7c410706b2cc31529a8d4e9dcdb3",
+    "data/reviewed_product_groups.json": "4dabd9042af385110a581cd15959a4103dd50884cb22984eefffd28e6b5607d5",
+    "data/catalog_metadata_train.json": "fcdf2f6c5155737a24f5cc352fce6ed615df621367195fce30dcab2d5de25a69",
+    "models/siglip2_base/config.json": "fe8b5fe6d5734360678fd71c11c21e1ea3364bd8598d34295d9206335973ffd7",
+    "models/siglip2_base/model.safetensors": "612923381c76ec5a9bed335d1c48827e3f2e506ac31b044b63b2031fadee6a0b"
+  },
+  "queries": [
+    {
+      "number": 1,
+      "reviewed_group_id": "reviewed-ce066c76164b4d69",
+      "query_image": "outwear/c258578a-6d97-4514-91b5-7d146893756f.jpg",
+      "query_sha256": "c1f6276d87cfdf702a88f5b0bbbfecceec0e5a9cd393c2c9f0652a86ea810a7f",
+      "width": 400,
+      "height": 534,
+      "expected_gallery_images": [
+        "outwear/62bb46a5-44de-48d9-8c95-3b11ef386471.jpg"
+      ]
+    },
+    {
+      "number": 2,
+      "reviewed_group_id": "reviewed-3f12b72411f58e42",
+      "query_image": "dress/ce27bde3-b523-449c-87b0-35c4317d32d1.jpg",
+      "query_sha256": "aaa5eaecf6b0da0e1ee15984e8abaee59b240d24139d19a3dea3bf9a2b619abc",
+      "width": 400,
+      "height": 711,
+      "expected_gallery_images": [
+        "dress/123cedc9-f0ee-432b-a087-7c4981e60c75.jpg"
+      ]
+    },
+    {
+      "number": 3,
+      "reviewed_group_id": "reviewed-f432cd7b049b5f96",
+      "query_image": "hat/678edcd0-607e-433d-8433-46e11fb24df3.jpg",
+      "query_sha256": "c62441dd4a3628d8fafb3f5cc877b037d04760c34f2a7b8059bba4d30c8402a2",
+      "width": 400,
+      "height": 534,
+      "expected_gallery_images": [
+        "hat/13a17d51-3560-445c-8802-8749fcf27ed7.jpg"
+      ]
+    },
+    {
+      "number": 4,
+      "reviewed_group_id": "reviewed-288a8e351d34cfa4",
+      "query_image": "hat/ad5095c6-ac1f-400e-b75a-3eb389b8ffbc.jpg",
+      "query_sha256": "83fb580579bef19a05abe6c859698e34a1d96043957d93acc1da610304e8489b",
+      "width": 400,
+      "height": 534,
+      "expected_gallery_images": [
+        "hat/0979a14e-051a-4659-8e87-2f6a424e2c12.jpg"
+      ]
+    },
+    {
+      "number": 5,
+      "reviewed_group_id": "reviewed-eeb2c35908c42d7d",
+      "query_image": "shoes/c8582c70-17af-4f48-a866-eac7e0572560.jpg",
+      "query_sha256": "f3abfbac48f3586da1a7ed32dae869a8ecdbfee5a0adf37250412f56ab3d6b04",
+      "width": 400,
+      "height": 533,
+      "expected_gallery_images": [
+        "shoes/51e600b8-da42-434b-8953-c6fb890121a0.jpg"
+      ]
+    },
+    {
+      "number": 6,
+      "reviewed_group_id": "reviewed-d84c69f2ea006a73",
+      "query_image": "shoes/79ff13ef-0cee-4ad9-928a-70a8aacd5704.jpg",
+      "query_sha256": "40e870516328ba1c8b529c7cd65ce9b36bc6401bad9ff64c393a411ce8499f24",
+      "width": 400,
+      "height": 533,
+      "expected_gallery_images": [
+        "shoes/5fea042c-f2ac-4523-a813-fc0eae2d9472.jpg"
+      ]
+    },
+    {
+      "number": 7,
+      "reviewed_group_id": "reviewed-f91fed794d3cd755",
+      "query_image": "skirt/d44cfac9-3fda-47ba-8eb1-8b130f60b08c.jpg",
+      "query_sha256": "4175bc10e04ecf74a415ef6a8213c357de71bbdeac8bac4bf1de6a719aa5e330",
+      "width": 400,
+      "height": 533,
+      "expected_gallery_images": [
+        "skirt/bb437c07-06e4-4b16-b3aa-8382dd35de0a.jpg"
+      ]
+    }
+  ],
+  "limitations": [
+    "Reverse view of the same seven purposeful development groups; not an independent test set.",
+    "The original user reviewed product identity; assistant will choose points before reverse results.",
+    "No new consumer photos or verified SKU identity."
+  ],
+  "inference_run_when_prepared": false
+}

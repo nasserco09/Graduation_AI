@@ -205,4 +205,5 @@ get('search-form').addEventListener('submit',async event=>{
     }catch(error){if(generation===searchGeneration)status('search-status','تعذر البحث: '+error.message,true);}
     finally{if(generation===searchGeneration)get('search-submit').disabled=false;}
 });
+window.addEventListener('catalog-restored',()=>{clearSearchAfterEdit();refreshCatalog('تم استرجاع الكتالوج وتحديث المنتجات.');});
 refreshCatalog();

@@ -4,9 +4,9 @@ Hybrid AI-based visual search prototype for a graduation project.
 
 The system allows users to upload an image of a fashion product, optionally select the target object manually or with AI assistance, and search for visually similar products from a local catalog.
 
-The verified local presentation release is **v1.2.0-rc.8** on `feature/frontend-v2`.
+The local presentation release is **v1.2.0-rc.9** on `feature/frontend-v2`.
 Launch it with `Start_Demo.cmd` or the existing desktop shortcut at
-`http://127.0.0.1:8000/`. See [release verification](docs/PRESENTATION_RC8_AR.md)
+`http://127.0.0.1:8000/`. See [release verification](docs/PRESENTATION_RC9_AR.md)
 and [product management](docs/PRODUCT_MANAGEMENT_AR.md).
 The Word and PowerPoint files under `docs/preliminary_discussion/` document the
 earlier rc.7 preliminary discussion; final university materials will be prepared
@@ -232,9 +232,9 @@ the target computer's CUDA installation.
 
 ## Verification
 
-### Local administrator (development branch)
+### Local administrator and catalog backups
 
-On `codex/admin-search-hardening`, opening `/demo-catalog.html` requires the
+Opening `/demo-catalog.html` requires the
 single local administrator. First use opens `/admin-login.html` to create the
 account with your own password; there are no default credentials. Visitors can
 still search both catalogs and use SAM2 without an account. Administration is
@@ -244,8 +244,13 @@ session-bound CSRF token. Account settings support password changes and logout.
 The ignored `data/admin_auth.db` stores the account and revocable sessions,
 independently of products and FAISS. Local recovery uses
 `python tools/admin_account.py --reset` with interactive password prompts.
-See [the administrator guide](docs/ADMIN_ACCESS_AR.md). The presentation tag
-`v1.2.0-rc.8` is retained independently while this branch is tested.
+See [the administrator guide](docs/ADMIN_ACCESS_AR.md).
+
+The product manager supports a portable ZIP backup of added products, photos
+and embeddings. Restore validates the archive, previews counts, checks for
+intervening edits, and saves a downloadable recovery copy before replacement.
+The account and original research catalog are separate. See
+[the backup and recovery guide](docs/CATALOG_BACKUP_AR.md).
 
 ### Test commands
 
@@ -253,7 +258,7 @@ Run the dependency-light unit suite from the project root:
 
 ```powershell
 python -m unittest discover -s tests -v
-node --test tests/frontend_selection.test.cjs tests/frontend_demo_catalog.test.cjs tests/frontend_admin_auth.test.cjs
+node --test tests/frontend_selection.test.cjs tests/frontend_demo_catalog.test.cjs tests/frontend_admin_auth.test.cjs tests/frontend_catalog_backup.test.cjs
 ```
 
 The JavaScript tests require Node.js only for development and execute the actual
@@ -303,3 +308,14 @@ The best exploratory policy changed 323/341 correct categories to 324/341;
 other thresholds tied or worsened the result. This does not establish a robust
 improvement. Current production routing is retained. No new exact-product
 accuracy is claimed. See [the comparison and limits](docs/UNCERTAIN_CATEGORY_REPLAY_AR.md).
+
+## Reviewed identity pilot and further collection
+
+The current dataset uses image IDs rather than merchant product IDs. Seven
+previously reviewed alternate-view pairs were evaluated after removing every
+query from the gallery and recomputing category centroids from gallery images
+only. This small, selected development pilot is separate from aggregate search
+accuracy. No new customer-photo accuracy is claimed. The collection tools record
+the target product and SAM2 points before retrieval and reject byte/pixel copies
+of indexed photos. See [the protocol and results](docs/SEARCH_IDENTITY_PILOT_AR.md)
+and [the dataset audit](docs/DATASET_IDENTITY_AUDIT_AR.md).
