@@ -44,6 +44,16 @@ decision, SHA-256 verification value, and preprocessing metadata.
 - `POST /api/reindex`: rebuild the catalog index; this is an administrative
   endpoint and is intentionally not exposed in the public UI.
 
+In the administrator development branch, monitoring and all
+`/api/demo-catalog/products` routes require the administrator session cookie.
+Unsafe administration requests also require `X-CSRF-Token` from the
+authenticated `/api/auth/session` response. Private pages use
+`js/admin-session.js` to attach it and redirect expired sessions to login.
+`/api/auth/setup` is a one-time local setup, `/api/auth/login` signs in,
+`/api/auth/logout` revokes the session, and `/api/auth/password` changes the
+password after verification and revokes all sessions. Search, segmentation,
+feedback, health, categories, catalog validation and result images stay public.
+
 ## Search flow
 
 1. Upload, capture, paste, or choose a local catalog sample.

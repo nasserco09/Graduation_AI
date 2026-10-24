@@ -95,7 +95,7 @@ async function refreshCatalog(message='') {
     const generation=++catalogGeneration;get('refresh-catalog').disabled=true;
     status('catalog-status','جارٍ تحميل المنتجات…');
     try {
-        const data=await json(await fetch(API+'/products',{cache:'no-store'}));
+        const data=await json(await AdminSession.request(API+'/products',{cache:'no-store'}));
         if(generation!==catalogGeneration)return false;
         products=data.products;renderCatalog();status('catalog-status',message);return true;
     } catch(error) {if(generation===catalogGeneration)status('catalog-status','تعذر تحميل المنتجات. '+error.message,true);return false;}
@@ -172,7 +172,7 @@ get('product-form').addEventListener('submit',async event=>{
             url+='/'+encodeURIComponent(editingProduct.product_id)+'/content';method='PUT';body.append('revision',String(editingProduct.revision));buildImagePayload(body);
         } else for(const photo of editorPhotos)body.append('images',photo.file);
         setEditorBusy(true);status('product-status','جارٍ حفظ المنتج وتجهيز الصور الجديدة للبحث…');
-        await json(await fetch(url,{method,body}));
+        await json(await AdminSession.request(url,{method,body}));
         const message=editingProduct?'تم حفظ بيانات المنتج وصوره.':'تمت إضافة المنتج وأصبح جاهزًا للبحث إذا كان متوفرًا.';
         clearSearchAfterEdit();setEditorBusy(false);closeEditor();await refreshCatalog(message);get('add-product').focus();
     }catch(error){status('product-status',error.message,true);}
@@ -182,7 +182,7 @@ get('delete-confirm').addEventListener('click',async()=>{
     if(deleteBusy||!deletingProduct)return;
     setDeleteBusy(true);status('delete-status','جارٍ حذف المنتج…');
     try {
-        await json(await fetch(API+'/products/'+encodeURIComponent(deletingProduct.product_id)+'?revision='+encodeURIComponent(deletingProduct.revision),{method:'DELETE'}));
+        await json(await AdminSession.request(API+'/products/'+encodeURIComponent(deletingProduct.product_id)+'?revision='+encodeURIComponent(deletingProduct.revision),{method:'DELETE'}));
         clearSearchAfterEdit();setDeleteBusy(false);closeDelete();deletingProduct=null;await refreshCatalog('تم حذف المنتج وصوره من الكتالوج.');get('add-product').focus();
     }catch(error){status('delete-status',error.message,true);}
     finally{setDeleteBusy(false);}

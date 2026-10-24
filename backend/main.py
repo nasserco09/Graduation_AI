@@ -21,6 +21,7 @@ from backend.catalog_config import CATALOG_DIR, CATALOG_SOURCE
 from backend.catalog_metadata import METADATA_SCHEMA_VERSION
 from backend.image_preprocessing import PREPROCESSING_VERSION, preprocess_image
 from backend.request_validation import MAX_IMAGE_BYTES, validate_image_bytes
+from backend.admin_auth import install_admin_security
 from backend.demo_catalog_api import create_demo_catalog_router
 from backend.product_grouping import ReviewedProductGroups
 from backend.search_engine import SearchEngine
@@ -45,6 +46,10 @@ DATA = ROOT / "data"
 
 app = FastAPI(
     title="Graduation AI Visual Search"
+)
+
+admin_auth = install_admin_security(
+    app, Path(os.getenv('GRADUATION_AI_AUTH_DB', str(DATA / 'admin_auth.db'))), FRONTEND
 )
 
 

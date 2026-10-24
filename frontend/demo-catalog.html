@@ -6,10 +6,12 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="assets/vendor/fonts.css">
   <link rel="stylesheet" href="styles/product-management.css">
+  <script src="js/admin-session.js" defer></script>
   <script src="js/demo-catalog.js" defer></script>
 </head>
 <body><main>
   <nav class="topbar" aria-label="التنقل"><a class="brand" href="/">Fashion Search <span>البحث البصري عن الأزياء</span></a><a href="/?source=products" class="button secondary">البحث في منتجاتي ←</a></nav>
+  <div class="admin-bar" aria-label="حساب الإدارة"><span>الأدمن: <b id="admin-username" dir="ltr">…</b></span><a href="/admin-account.html">إعدادات الحساب</a><button id="admin-logout" class="text-button" type="button">تسجيل الخروج</button></div>
   <header class="page-header">
     <div><p class="eyebrow">كتالوج منتجاتك</p><h1>إدارة المنتجات</h1><p class="subtitle">صور واضحة، بيانات محدثة، ومنتجات جاهزة للبحث البصري.</p></div>
     <button id="add-product" type="button">＋ إضافة منتج</button>

@@ -187,7 +187,7 @@ category. Search mode, routing, ranked product IDs, scores, and latency are
 stored in a local SQLite database. Raw query images and personal identity are
 not stored.
 
-Open `/api/monitoring/summary` for aggregate indicators, or run:
+As an authenticated administrator, open `/api/monitoring/summary` for aggregate indicators, or run locally:
 
 ```powershell
 python -m evaluation.analyze_search_feedback
@@ -232,11 +232,28 @@ the target computer's CUDA installation.
 
 ## Verification
 
+### Local administrator (development branch)
+
+On `codex/admin-search-hardening`, opening `/demo-catalog.html` requires the
+single local administrator. First use opens `/admin-login.html` to create the
+account with your own password; there are no default credentials. Visitors can
+still search both catalogs and use SAM2 without an account. Administration is
+checked server-side on every product-management request. Writes require a
+session-bound CSRF token. Account settings support password changes and logout.
+
+The ignored `data/admin_auth.db` stores the account and revocable sessions,
+independently of products and FAISS. Local recovery uses
+`python tools/admin_account.py --reset` with interactive password prompts.
+See [the administrator guide](docs/ADMIN_ACCESS_AR.md). The presentation tag
+`v1.2.0-rc.8` is retained independently while this branch is tested.
+
+### Test commands
+
 Run the dependency-light unit suite from the project root:
 
 ```powershell
 python -m unittest discover -s tests -v
-node --test tests/frontend_selection.test.cjs
+node --test tests/frontend_selection.test.cjs tests/frontend_demo_catalog.test.cjs tests/frontend_admin_auth.test.cjs
 ```
 
 The JavaScript tests require Node.js only for development and execute the actual
@@ -250,7 +267,8 @@ dialogs, and the preview badge when switching selection modes. Interactive
 browser checks and their limits are recorded in `docs/BROWSER_QA_AR.md`.
 
 Then start the application and verify `/api/health`. A stale index is rejected
-automatically; use `POST /api/reindex` or perform the first search to rebuild it.
+automatically; use authenticated `POST /api/reindex` (with CSRF) or perform the
+first search to rebuild it.
 
 For repeatable evidence and integration checks:
 
@@ -276,3 +294,12 @@ held-out comparison with bootstrap confidence intervals and an exact McNemar
 test. See `docs/SAFE_CROP_CATALOG_EXPERIMENT_AR.md` for the commands and the
 decision limits. The experiment does not authorize a production switch without
 exact-product or real-user evidence.
+
+## Uncertain-category fallback review
+
+Six fallback policies were replayed on the 341 historical validation records,
+with query/model/index hashes checked and no test records used for selection.
+The best exploratory policy changed 323/341 correct categories to 324/341;
+other thresholds tied or worsened the result. This does not establish a robust
+improvement. Current production routing is retained. No new exact-product
+accuracy is claimed. See [the comparison and limits](docs/UNCERTAIN_CATEGORY_REPLAY_AR.md).

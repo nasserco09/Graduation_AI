@@ -1,0 +1,137 @@
+{
+  "schema_version": "1.0",
+  "created_at_utc": "2026-10-24T07:57:43.100965+00:00",
+  "scope": "historical_validation_replay_no_fresh_inference",
+  "source_sha256": "7bbc6f6a7aa752e4d88bcf8f79eaf44f1031fd5c026f586b592407f72c2ae12c",
+  "source_created_at_utc": "2026-10-06T15:15:52.632377+00:00",
+  "query_count": 341,
+  "verified_query_hashes": 341,
+  "artifacts": {
+    "data/catalog_siglip2.faiss": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+    "data/catalog_siglip2_paths.json": "6f8c7ed06ea7dc032d2a3e68e53df602690b7c410706b2cc31529a8d4e9dcdb3",
+    "models/siglip2_base/config.json": "fe8b5fe6d5734360678fd71c11c21e1ea3364bd8598d34295d9206335973ffd7",
+    "models/siglip2_base/model.safetensors": "612923381c76ec5a9bed335d1c48827e3f2e506ac31b044b63b2031fadee6a0b"
+  },
+  "test_records_used": false,
+  "current_auto_correct": 323,
+  "unrestricted_correct": 314,
+  "policies": [
+    {
+      "minimum_confidence": 0.0,
+      "minimum_margin": 0.0,
+      "fallback_queries": 0,
+      "correct_queries": 323,
+      "category_top1": 0.9472140762463344,
+      "vs_current_auto": {
+        "delta_top1": 0.0,
+        "bootstrap_95_ci": [
+          0.0,
+          0.0
+        ],
+        "improved_queries": 0,
+        "worsened_queries": 0,
+        "unchanged_queries": 341,
+        "mcnemar_exact_p": 1.0
+      }
+    },
+    {
+      "minimum_confidence": 0.15,
+      "minimum_margin": 0.02,
+      "fallback_queries": 13,
+      "correct_queries": 324,
+      "category_top1": 0.9501466275659824,
+      "vs_current_auto": {
+        "delta_top1": 0.002933,
+        "bootstrap_95_ci": [
+          -0.008798,
+          0.014663
+        ],
+        "improved_queries": 3,
+        "worsened_queries": 2,
+        "unchanged_queries": 336,
+        "mcnemar_exact_p": 1.0
+      }
+    },
+    {
+      "minimum_confidence": 0.2,
+      "minimum_margin": 0.03,
+      "fallback_queries": 26,
+      "correct_queries": 323,
+      "category_top1": 0.9472140762463344,
+      "vs_current_auto": {
+        "delta_top1": 0.0,
+        "bootstrap_95_ci": [
+          -0.017595,
+          0.017595
+        ],
+        "improved_queries": 4,
+        "worsened_queries": 4,
+        "unchanged_queries": 333,
+        "mcnemar_exact_p": 1.0
+      }
+    },
+    {
+      "minimum_confidence": 0.25,
+      "minimum_margin": 0.05,
+      "fallback_queries": 75,
+      "correct_queries": 320,
+      "category_top1": 0.9384164222873901,
+      "vs_current_auto": {
+        "delta_top1": -0.008798,
+        "bootstrap_95_ci": [
+          -0.029326,
+          0.01173
+        ],
+        "improved_queries": 5,
+        "worsened_queries": 8,
+        "unchanged_queries": 328,
+        "mcnemar_exact_p": 0.581055
+      }
+    },
+    {
+      "minimum_confidence": 0.3,
+      "minimum_margin": 0.08,
+      "fallback_queries": 203,
+      "correct_queries": 317,
+      "category_top1": 0.9296187683284457,
+      "vs_current_auto": {
+        "delta_top1": -0.017595,
+        "bootstrap_95_ci": [
+          -0.041056,
+          0.005865
+        ],
+        "improved_queries": 6,
+        "worsened_queries": 12,
+        "unchanged_queries": 323,
+        "mcnemar_exact_p": 0.237885
+      }
+    },
+    {
+      "minimum_confidence": 0.4,
+      "minimum_margin": 0.1,
+      "fallback_queries": 332,
+      "correct_queries": 314,
+      "category_top1": 0.9208211143695014,
+      "vs_current_auto": {
+        "delta_top1": -0.026393,
+        "bootstrap_95_ci": [
+          -0.052786,
+          0.0
+        ],
+        "improved_queries": 6,
+        "worsened_queries": 15,
+        "unchanged_queries": 320,
+        "mcnemar_exact_p": 0.078354
+      }
+    }
+  ],
+  "decision": "retain_current_auto_routing",
+  "production_routing_changed": false,
+  "limitations": [
+    "These are previously observed category labels, not exact-product judgments.",
+    "Six development policies were screened; the best observed policy is exploratory.",
+    "A gain of one validation query does not establish robust improvement.",
+    "No fresh user photos, new held-out set, Top-5 or segmentation-quality measurement is claimed.",
+    "Centroid confidence is not a calibrated probability of a correct match."
+  ]
+}

@@ -18,6 +18,7 @@ function harness(overrideFetch) {
     function element(id){if(!elements.has(id))elements.set(id,make('div',id));return elements.get(id);}
     const defaultFetch=async()=>({ok:true,json:async()=>({products:[]})});
     const context=vm.createContext({document,FormData:class{constructor(){this.values=[];}append(...args){this.values.push(args);}},URL:{createObjectURL:()=> 'blob:preview',revokeObjectURL:url=>revoked.push(url)},fetch:(url,options)=>{calls.push({url,options});return (overrideFetch||defaultFetch)(url,options);}});
+    context.AdminSession={request:context.fetch};
     vm.runInContext(fs.readFileSync(path.join(__dirname,'../frontend/js/demo-catalog.js'),'utf8'),context);
     return {context,element,calls,revoked,run:code=>vm.runInContext(code,context),event:{preventDefault(){}}};
 }

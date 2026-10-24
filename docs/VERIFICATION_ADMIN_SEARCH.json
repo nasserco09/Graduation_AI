@@ -1,0 +1,39 @@
+{
+  "verified_at_utc": "2026-10-24T08:09:05.515552+00:00",
+  "branch": "codex/admin-search-hardening",
+  "presentation_tag_unchanged": "v1.2.0-rc.8",
+  "python_unit_tests": 150,
+  "javascript_unit_tests": 36,
+  "http_search_checks": 32,
+  "http_auth_checks": 21,
+  "evidence_audit_checks": 55,
+  "all_passed": true,
+  "browser_report": "evaluation/cache/admin_search_hardening/browser_qa.json",
+  "private_runtime_reports_ignored_by_git": true,
+  "runtime_counts": {
+    "development": {
+      "products": 3,
+      "images": 4
+    },
+    "presentation": {
+      "products": 3,
+      "images": 4
+    }
+  },
+  "original_faiss_sha256": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+  "real_admin_account_configured": false,
+  "qa_auth_database_separate": true,
+  "normal_development_server": "http://127.0.0.1:8001",
+  "production_routing_changed": false,
+  "search_evidence_scope": "historical_validation_replay_no_fresh_inference",
+  "known_runtime_warnings": [
+    "Transformers SigLIP text token config warning on existing local checkpoint; image search smoke passes.",
+    "Transformers SAM2 video/model type compatibility warning on existing local checkpoint; segmentation smoke passes.",
+    "Starlette TestClient emits httpx deprecation warning; tests pass."
+  ],
+  "limitations": [
+    "Functional browser checks do not measure selection quality or retrieval accuracy.",
+    "Real account setup is intentionally left for the user; no default password.",
+    "Presentation branch/tag have not been promoted to this development build."
+  ]
+}
