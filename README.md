@@ -4,6 +4,14 @@ Hybrid AI-based visual search prototype for a graduation project.
 
 The system allows users to upload an image of a fashion product, optionally select the target object manually or with AI assistance, and search for visually similar products from a local catalog.
 
+The verified local presentation release is **v1.2.0-rc.8** on `feature/frontend-v2`.
+Launch it with `Start_Demo.cmd` or the existing desktop shortcut at
+`http://127.0.0.1:8000/`. See [release verification](docs/PRESENTATION_RC8_AR.md)
+and [product management](docs/PRODUCT_MANAGEMENT_AR.md).
+The Word and PowerPoint files under `docs/preliminary_discussion/` document the
+earlier rc.7 preliminary discussion; final university materials will be prepared
+from the agreed implementation scope, including a LaTeX document.
+
 ---
 
 ## Current Features
@@ -39,6 +47,11 @@ The system allows users to upload an image of a fashion product, optionally sele
 - Concurrency-safe catalog reindexing and searching
 - Expanded application catalog using all 3,068 images from the train split
 - Strict separation of train catalog, validation, and test images
+- Independent added-product catalog, searchable from the main interface with the same selection tools
+- Product creation, editing and deletion, with category, optional price, currency and availability
+- One to five photos per product, photo replacement/removal and a selectable cover photo
+- Product-name search, category/availability filters and catalog summaries in the management page
+- Atomic metadata/photo updates and revision checks that reject stale saves or deletes
 
 ---
 

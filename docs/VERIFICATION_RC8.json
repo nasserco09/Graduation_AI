@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-24",
+  "release_tag": "v1.2.0-rc.8",
+  "branch": "feature/frontend-v2",
+  "previous_release": "v1.2.0-rc.7",
+  "previous_commit": "91c7b89d17b5b0062e14f0f4da5187875abd36ff",
+  "feature_commit": "5884786",
+  "python_tests_passed": 128,
+  "javascript_tests_passed": 26,
+  "evidence_audit_checks_passed": 55,
+  "http_smoke_checks_passed": 32,
+  "product_rollout_checks_passed": 24,
+  "original_products_preserved": 3,
+  "original_images_and_embeddings_preserved": 4,
+  "original_faiss_sha256": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+  "before_migration_backup": "data/demo_store/backups/presentation-before-rc8-20261024.db",
+  "runtime": "http://127.0.0.1:8000/",
+  "scope": "Local visual search and single-catalog product management. Functional checks do not measure retrieval accuracy.",
+  "preliminary_office_artifacts": "Unchanged rc.7 materials; final LaTeX document and presentation are pending scope confirmation."
+}
