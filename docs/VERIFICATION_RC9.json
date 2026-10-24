@@ -80,5 +80,16 @@
   ],
   "http_search_checks": 32,
   "all_passed": true,
-  "evidence_directory": "evaluation/cache/presentation_rc9/"
+  "evidence_directory": "evaluation/cache/presentation_rc9/",
+  "presentation_browser_checks": {
+    "browser": "Google Chrome",
+    "owner_account_opened_admin_page_on_8000": true,
+    "real_catalog_backup_downloaded": true,
+    "downloaded_product_count": 3,
+    "downloaded_image_count": 4,
+    "console_warnings_errors": 0
+  },
+  "automation_limitations": [
+    "Chrome automated file upload was blocked by the browser extension file-URL permission. No permission was changed; backup upload/restore/recovery was tested interactively in the in-app browser on an isolated catalog."
+  ]
 }
