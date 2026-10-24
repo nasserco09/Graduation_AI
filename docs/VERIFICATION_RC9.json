@@ -1,0 +1,84 @@
+{
+  "verified_at_utc": "2026-10-24T14:40:55.191954+00:00",
+  "release": "v1.2.0-rc.9",
+  "application_commit": "aeb174ffc73135b247f5368e1fc29309636c0a2b",
+  "python_tests": 189,
+  "javascript_tests": 43,
+  "backup_backend_api_tests": 23,
+  "identity_evaluation_tests": 15,
+  "evidence_audit_checks": 55,
+  "server_health": {
+    "status": "ok",
+    "reviewed_product_groups": 12,
+    "search_device": "cuda",
+    "segmentation_device": "cuda",
+    "index_ready": true,
+    "preprocessing_version": "visual-search-rgb-square-v1",
+    "catalog_metadata_version": "1.0",
+    "catalog_source": "clothing_small_train",
+    "indexed_images": 3068
+  },
+  "original_products_preserved": true,
+  "original_product_count": 3,
+  "original_image_count": 4,
+  "owner_account_preserved": true,
+  "original_faiss_sha256": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+  "real_backup_export_and_validation_passed": true,
+  "protected_http_checks": [
+    {
+      "method": "GET",
+      "path": "/api/demo-catalog/products/backup",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/demo-catalog/products/backups",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/demo-catalog/products/restore/preview",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/demo-catalog/products/restore",
+      "status": 401,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/demo-catalog.html",
+      "status": 303,
+      "passed": true
+    },
+    {
+      "method": "GET",
+      "path": "/js/catalog-backup.js",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "browser_scope": "isolated fixture backup/export/cancel/restore/recovery, no owner-product mutations",
+  "identity_pilot": {
+    "reviewed_groups": 7,
+    "gallery_count_per_direction": 3061,
+    "forward_auto_top1_hits": 7,
+    "reverse_full_top1_hits": 7,
+    "reverse_sam2_top1_hits": 7,
+    "sam2_failures": 0,
+    "scope": "selected_development_pilot_not_general_accuracy",
+    "production_ranking_changed": false
+  },
+  "university_materials_updated": false,
+  "known_runtime_warnings": [
+    "Existing Transformers checkpoint token/model-type compatibility warnings; exercised image search and SAM2 pass.",
+    "Starlette TestClient httpx deprecation warning; unit suite passes."
+  ],
+  "http_search_checks": 32,
+  "all_passed": true,
+  "evidence_directory": "evaluation/cache/presentation_rc9/"
+}
