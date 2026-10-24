@@ -1,11 +1,12 @@
 """Local-only product entry prototype, isolated from the presentation catalog."""
 import hashlib
+import json
 from backend.category_routing import CATEGORY_LABELS
 from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from fastapi.responses import Response
 from pydantic import BaseModel, StrictBool
 from starlette.concurrency import run_in_threadpool
-from backend.demo_catalog import DemoCatalog
+from backend.demo_catalog import CatalogConflict, DemoCatalog
 from backend.image_preprocessing import PREPROCESSING_VERSION, preprocess_image
 from backend.request_validation import MAX_IMAGE_BYTES, validate_image_bytes
 
@@ -56,6 +57,37 @@ def create_demo_catalog_router(engine, database):
     def get_image(image_id: str):
         try:return Response(store.image_bytes(image_id),media_type='image/jpeg')
         except KeyError:raise HTTPException(404,detail='Demo catalog image not found')
+
+    @router.put('/products/{product_id}/content')
+    async def save_product(product_id: str, name: str = Form(...),
+                           image_order: str = Form(...), images: list[UploadFile] = File(default=[]),
+                           category: str = Form(''), price: str = Form(''),
+                           currency: str = Form('YER'), available: bool = Form(True),
+                           revision: int = Form(..., ge=1)):
+        try:
+            store.details(name, category, price, currency, available)
+            order = json.loads(image_order)
+            if len(images) > 5:
+                raise ValueError('Upload at most 5 images')
+            photos = [validate_image_bytes(await image.read(MAX_IMAGE_BYTES+1), image.content_type)
+                      for image in images]
+            return await run_in_threadpool(store.save, product_id, name, order, photos, encode,
+                                           category, price, currency, available, revision)
+        except KeyError as error:
+            raise HTTPException(404, detail='Demo product not found') from error
+        except CatalogConflict as error:
+            raise HTTPException(409, detail=str(error)) from error
+        except ValueError as error:
+            raise HTTPException(400, detail=str(error)) from error
+
+    @router.delete('/products/{product_id}')
+    def delete_product(product_id: str, revision: int):
+        try:
+            return store.delete(product_id, revision)
+        except KeyError as error:
+            raise HTTPException(404, detail='Demo product not found') from error
+        except CatalogConflict as error:
+            raise HTTPException(409, detail=str(error)) from error
 
     @router.post('/search')
     async def search(image: UploadFile = File(...), top_k: int = 8, category: str = Form('')):

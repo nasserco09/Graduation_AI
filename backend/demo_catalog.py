@@ -1,4 +1,4 @@
-"""Small local catalog prototype: products own multiple images and embeddings."""
+"""Local product catalog with transactional photo management and retrieval."""
 from contextlib import contextmanager
 from io import BytesIO
 import json
@@ -11,6 +11,10 @@ import threading
 from uuid import uuid4
 import faiss
 import numpy as np
+
+
+class CatalogConflict(ValueError):
+    """The product changed after the editor loaded it."""
 
 
 class DemoCatalog:
@@ -28,9 +32,12 @@ class DemoCatalog:
             if not row:
                 db.execute('INSERT INTO config VALUES (?)', (expected,))
             columns = {r[1] for r in db.execute('PRAGMA table_info(products)')}
-            for name, declaration in [('category', "TEXT NOT NULL DEFAULT ''"), ('price', 'TEXT'), ('currency', "TEXT NOT NULL DEFAULT 'YER'"), ('available', 'INTEGER NOT NULL DEFAULT 1')]:
+            for name, declaration in [('category', "TEXT NOT NULL DEFAULT ''"), ('price', 'TEXT'), ('currency', "TEXT NOT NULL DEFAULT 'YER'"), ('available', 'INTEGER NOT NULL DEFAULT 1'), ('revision', 'INTEGER NOT NULL DEFAULT 1')]:
                 if name not in columns:
                     db.execute(f'ALTER TABLE products ADD COLUMN {name} {declaration}')
+            image_columns = {r[1] for r in db.execute('PRAGMA table_info(images)')}
+            if 'position' not in image_columns:
+                db.execute('ALTER TABLE images ADD COLUMN position INTEGER NOT NULL DEFAULT 0')
 
     @contextmanager
     def connect(self):
@@ -69,22 +76,26 @@ class DemoCatalog:
             price = format(Decimal(price), '.2f')
         return {'name':name, 'category':category, 'price':price, 'currency':currency, 'available':available}
 
-    def add(self, name, images, encode, category='', price=None, currency='YER', available=True):
-        details = self.details(name, category, price, currency, available)
-        if not 1 <= len(images) <= 5:
-            raise ValueError('Upload 1 to 5 images for one product')
-        # Complete every embedding before committing any product or image.
+    def prepare_images(self, images, encode):
+        """Encode all new images before changing stored product data."""
         prepared = []
         for image in images:
             vector = self.vector(encode(image))
             stream = BytesIO()
             image.convert('RGB').save(stream, format='JPEG', quality=95)
             prepared.append((str(uuid4()), stream.getvalue(), vector.tobytes()))
+        return prepared
+
+    def add(self, name, images, encode, category='', price=None, currency='YER', available=True):
+        details = self.details(name, category, price, currency, available)
+        if not 1 <= len(images) <= 5:
+            raise ValueError('Upload 1 to 5 images for one product')
+        prepared = self.prepare_images(images, encode)
         pid = str(uuid4())
         with self.lock, self.connect() as db:
             db.execute('INSERT INTO products (id,name,category,price,currency,available) VALUES (?,?,?,?,?,?)', (pid,details['name'],category,details['price'],currency,int(available)))
-            db.executemany('INSERT INTO images VALUES (?,?,?,?)', [(iid,pid,photo,vector) for iid,photo,vector in prepared])
-        return dict(details, product_id=pid, image_count=len(prepared))
+            db.executemany('INSERT INTO images (id,product_id,photo,vector,position) VALUES (?,?,?,?,?)', [(iid,pid,photo,vector,position) for position,(iid,photo,vector) in enumerate(prepared)])
+        return dict(details, product_id=pid, image_count=len(prepared), revision=1)
 
     @staticmethod
     def image_info(iid):
@@ -92,17 +103,79 @@ class DemoCatalog:
 
     def list_products(self):
         with self.lock, self.connect() as db:
-            products = db.execute('SELECT id,name,category,price,currency,available FROM products ORDER BY rowid DESC').fetchall()
-            images = db.execute('SELECT id,product_id FROM images ORDER BY rowid').fetchall()
-        return [{'product_id':pid,'name':name,'category':category,'price':price,'currency':currency,'available':bool(available),'images':[self.image_info(iid) for iid,p in images if p==pid]} for pid,name,category,price,currency,available in products]
+            products = db.execute('SELECT id,name,category,price,currency,available,revision FROM products ORDER BY rowid DESC').fetchall()
+            images = db.execute('SELECT id,product_id FROM images ORDER BY position,rowid').fetchall()
+        grouped = {}
+        for iid, pid in images:
+            grouped.setdefault(pid, []).append(self.image_info(iid))
+        return [{'product_id':pid,'name':name,'category':category,'price':price,'currency':currency,'available':bool(available),'revision':revision,'images':grouped.get(pid, [])} for pid,name,category,price,currency,available,revision in products]
 
     def update(self, pid, name, category='', price=None, currency='YER', available=True):
         details = self.details(name, category, price, currency, available)
         with self.lock, self.connect() as db:
-            cursor = db.execute('UPDATE products SET name=?,category=?,price=?,currency=?,available=? WHERE id=?', (details['name'],category,details['price'],currency,int(available),pid))
+            cursor = db.execute('UPDATE products SET name=?,category=?,price=?,currency=?,available=?,revision=revision+1 WHERE id=?', (details['name'],category,details['price'],currency,int(available),pid))
             if cursor.rowcount != 1:
                 raise KeyError(pid)
         return dict(details, product_id=pid)
+
+    @staticmethod
+    def check_revision(actual, expected):
+        if expected is not None and actual != expected:
+            raise CatalogConflict('Product changed; refresh the catalog before saving or deleting')
+
+    def save(self, pid, name, image_order, images, encode, category='', price=None,
+             currency='YER', available=True, expected_revision=None):
+        """Save details and photo changes in one transaction.
+
+        Image order contains retained image IDs and new:0, new:1, etc. The first
+        entry is the cover. Existing photos and embeddings are never re-encoded.
+        """
+        details = self.details(name, category, price, currency, available)
+        with self.lock, self.connect() as db:
+            row = db.execute('SELECT revision FROM products WHERE id=?', (pid,)).fetchone()
+            if not row:
+                raise KeyError(pid)
+            revision = row[0]
+            self.check_revision(revision, expected_revision)
+            existing = {r[0] for r in db.execute('SELECT id FROM images WHERE product_id=?', (pid,))}
+        if (not isinstance(image_order, list) or not 1 <= len(image_order) <= 5
+                or not all(isinstance(i, str) for i in image_order)
+                or len(set(image_order)) != len(image_order)):
+            raise ValueError('Keep 1 to 5 unique images for the product')
+        new_keys = {f'new:{i}' for i in range(len(images))}
+        if set(image_order) - existing != new_keys:
+            raise ValueError('Image order contains an unknown image or an unused upload')
+        prepared = self.prepare_images(images, encode)
+        new_ids = {f'new:{i}': item[0] for i, item in enumerate(prepared)}
+        ordered = [new_ids.get(key, key) for key in image_order]
+        retained = existing.intersection(image_order)
+        with self.lock, self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row = db.execute('SELECT revision FROM products WHERE id=?', (pid,)).fetchone()
+            if not row:
+                raise KeyError(pid)
+            self.check_revision(row[0], revision)
+            for iid in existing - retained:
+                db.execute('DELETE FROM images WHERE id=? AND product_id=?', (iid, pid))
+            db.executemany('INSERT INTO images (id,product_id,photo,vector) VALUES (?,?,?,?)',
+                           [(iid,pid,photo,vector) for iid,photo,vector in prepared])
+            db.executemany('UPDATE images SET position=? WHERE id=? AND product_id=?',
+                           [(position,iid,pid) for position,iid in enumerate(ordered)])
+            db.execute('UPDATE products SET name=?,category=?,price=?,currency=?,available=?,revision=revision+1 WHERE id=?',
+                       (details['name'], category, details['price'], currency, int(available), pid))
+        return dict(details, product_id=pid, image_count=len(ordered), revision=revision+1,
+                    images=[self.image_info(iid) for iid in ordered])
+
+    def delete(self, pid, expected_revision=None):
+        with self.lock, self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row = db.execute('SELECT revision FROM products WHERE id=?', (pid,)).fetchone()
+            if not row:
+                raise KeyError(pid)
+            self.check_revision(row[0], expected_revision)
+            removed = db.execute('DELETE FROM images WHERE product_id=?', (pid,)).rowcount
+            db.execute('DELETE FROM products WHERE id=?', (pid,))
+        return {'product_id': pid, 'deleted': True, 'deleted_image_count': removed}
 
     def image_bytes(self, iid):
         with self.lock, self.connect() as db:
