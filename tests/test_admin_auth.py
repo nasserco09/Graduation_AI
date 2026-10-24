@@ -19,7 +19,7 @@ from backend.demo_catalog_api import create_demo_catalog_router
 from backend.image_preprocessing import PREPROCESSING_VERSION
 
 PASSWORD = 'Test-only secret phrase 2026!'
-NEW_PASSWORD = 'Another test-only phrase 2026!'
+NEW_PASSWORD = 'QAnew123'
 
 
 class AdminAuthorizationTests(unittest.TestCase):
@@ -143,9 +143,16 @@ class AdminAuthorizationTests(unittest.TestCase):
     def test_auth_rejects_form_posts_oversized_json_and_invalid_passwords(self):
         self.assertEqual(self.client.post('/api/auth/login',data={'username':'admin','password':PASSWORD}).status_code,415)
         self.assertEqual(self.client.post('/api/auth/setup',json={'username':'admin','password':'x'*5000,'confirm_password':'x'*5000}).status_code,413)
-        for username,password,confirm in [('admin','short','short'),('bad name',PASSWORD,PASSWORD),('admin',PASSWORD,'different')]:
+        for username,password,confirm in [('admin','QA12345','QA12345'),('bad name',PASSWORD,PASSWORD),('admin',PASSWORD,'different')]:
             response=self.client.post('/api/auth/setup',json={'username':username,'password':password,'confirm_password':confirm})
             self.assertEqual(response.status_code,400);self.assertNotIn(password,response.text)
+
+    def test_exactly_eight_characters_are_accepted_for_setup_and_login(self):
+        password='QAtest12'
+        response=self.client.post('/api/auth/setup',json={'username':'admin','password':password,'confirm_password':password})
+        self.assertEqual(response.status_code,201)
+        self.client.cookies.clear()
+        self.assertEqual(self.client.post('/api/auth/login',json={'username':'admin','password':password}).status_code,200)
 
     def test_failed_logins_have_generic_errors_and_a_global_rate_limit(self):
         self.setup_admin();self.client.cookies.clear()

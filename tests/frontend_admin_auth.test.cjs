@@ -58,7 +58,7 @@ test('login uses an allowlisted destination even when next contains an external 
 });
 test('first-run setup requires confirmation, posts to setup, and clears passwords after success',async()=>{
     const h=harness('admin-auth.js',async url=>response(url.endsWith('/session')?200:201,url.endsWith('/session')?{configured:false,authenticated:false}:{}),'/admin-login.html');
-    await tick();assert.equal(h.element('auth-confirm').required,true);assert.equal(h.element('auth-password').minLength,15);
+    await tick();assert.equal(h.element('auth-confirm').required,true);assert.equal(h.element('auth-password').minLength,8);
     h.element('auth-password').value='a long test password';h.element('auth-confirm').value='wrong';
     await h.element('auth-form').handlers.submit(h.event);assert.equal(h.calls.length,1);
     h.element('auth-confirm').value='a long test password';

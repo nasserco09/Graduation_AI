@@ -72,7 +72,7 @@ class AdminAuth:
 
     @staticmethod
     def validate_password(password):
-        if not isinstance(password, str) or not 15 <= len(password) <= 128:
+        if not isinstance(password, str) or not 8 <= len(password) <= 128:
             raise AuthError(400, 'invalid_password_length')
         try:
             password.encode('utf-8')

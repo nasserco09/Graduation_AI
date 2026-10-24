@@ -5,7 +5,7 @@
         too_many_attempts:'محاولات كثيرة. انتظر دقيقة ثم حاول مجددًا.',
         already_configured:'أُعدّ حساب الإدارة بالفعل. أعد تحميل الصفحة لتسجيل الدخول.',
         invalid_username:'استخدم اسمًا من 3 إلى 40 حرفًا إنجليزيًا أو رقمًا، يبدأ بحرف.',
-        invalid_password_length:'كلمة المرور يجب أن تكون من 15 إلى 128 حرفًا.',
+        invalid_password_length:'كلمة المرور يجب أن تكون من 8 إلى 128 حرفًا.',
         password_mismatch:'تأكيد كلمة المرور لا يطابق كلمة المرور.',
         wrong_current_password:'كلمة المرور الحالية غير صحيحة.',
         local_setup_only:'إعداد الحساب متاح من الجهاز الذي يشغّل التطبيق فقط.',
@@ -37,7 +37,7 @@
                 el('auth-submit').textContent=setup?'إنشاء حساب الإدارة':'دخول الإدارة';
                 for(const id of ['confirm-field','username-help','password-help'])el(id).hidden=!setup;
                 el('auth-confirm').required=setup;
-                el('auth-password').minLength=setup?15:1;
+                el('auth-password').minLength=setup?8:1;
                 el('auth-password').autocomplete=setup?'new-password':'current-password';
                 if(setup&&!el('auth-username').value)el('auth-username').value='admin';
                 form.hidden=false;

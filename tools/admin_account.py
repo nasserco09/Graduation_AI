@@ -19,7 +19,7 @@ def main():
     if store.configured() and not args.reset:
         parser.error('Account already configured. Use --reset only to recover access.')
     username = input('Administrator username (3-40 ASCII characters): ').strip()
-    password = getpass('New password (15-128 characters): ')
+    password = getpass('New password (8-128 characters): ')
     if password != getpass('Confirm new password: '):
         print('Passwords do not match. Nothing changed.'); return 1
     try:
