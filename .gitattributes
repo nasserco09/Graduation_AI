@@ -1,6 +1,6 @@
 # Preserve bundled upstream files and their recorded SHA-256 checksums.
 frontend/assets/vendor/** -text
 # These sealed inputs are hashed as raw bytes; preserve their original line endings.
-evaluation/reviewed_identity_reverse_points.json -text
-evaluation/results/reviewed_identity_reverse_protocol.json -text
-evaluation/results/reviewed_reverse_sam_pilot.sealed_points.json -text
+evaluation/reviewed_identity_reverse_points.json -text whitespace=cr-at-eol
+evaluation/results/reviewed_identity_reverse_protocol.json -text whitespace=cr-at-eol
+evaluation/results/reviewed_reverse_sam_pilot.sealed_points.json -text whitespace=cr-at-eol
