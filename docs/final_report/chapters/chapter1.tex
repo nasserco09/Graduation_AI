@@ -1,0 +1,340 @@
+% Chapter 1 is independently editable. Shared facts are in config/facts.tex.
+\chapter{Introduction}
+\label{ch:introduction}
+
+\ProjectTitle{} is a local web application for finding visually similar clothing
+from an image. A visitor can search with a complete photograph or select the
+garment of interest before searching. A local administrator can maintain a
+separate product collection through the same application. This chapter establishes
+the problem, objectives, scope, operating environment, and limits of the project.
+The implementation scope described here corresponds to presentation release
+\texttt{\ApplicationRelease}.
+
+\section{Study Background}
+\label{sec:study-background}
+
+A clothing photograph can communicate a garment's appearance more directly than
+a short product description. A person may recognise a jacket's silhouette or a
+dress's pattern while being unsure which words a catalogue uses for it. Visual
+retrieval addresses this situation by using an image to rank catalogue candidates.
+Fashion retrieval research also distinguishes recognising a clothing category
+from identifying the same item across different photographs. DeepFashion, for
+example, provides clothing annotations and image correspondences across consumer,
+street, and shop settings~\cite{Liu2016DeepFashion}. This distinction matters:
+finding another dress is a different task from finding the same dress.
+
+An image encoder maps a photograph to a numerical representation, or embedding,
+which can be compared with stored catalogue representations. SigLIP2 is a family
+of pretrained vision-language encoders developed for visual representation
+learning and related tasks~\cite{Tschannen2025SigLIP2}. Our system uses its image
+encoder to describe the query and catalogue images. We use pretrained model
+weights; developing a new foundation model is outside the project.
+
+A complete photograph may contain a shirt, trousers, shoes, a person, and
+background objects. It does not necessarily tell the retrieval system which item
+the user wants. Promptable segmentation provides a way to express that choice.
+SAM2 supports interactive segmentation through user prompts, and its official
+implementation supplies the improved SAM2.1 checkpoints used by this
+project~\cite{Ravi2024SAM2,MetaSAM2Repository}. In our application, the user can
+refine a selected region and inspect the resulting cutout before submitting it
+for retrieval.
+
+The final stage compares the query embedding with catalogue embeddings. FAISS
+provides vector-search tools for this task~\cite{Johnson2017FAISS}. The application
+uses \texttt{IndexFlatIP}, an exact inner-product index; normalising the vectors
+allows this ranking to represent cosine similarity~\cite{FaissIndexes}.
+Segmentation, encoding, indexing, and the browser interface must therefore work
+together: a relevant representation of the wrong garment still answers the
+wrong question.
+
+\section{Problem Statement}
+\label{sec:problem-statement}
+
+The problem addressed by this project is how to retrieve relevant clothing from
+a bounded catalogue when a query photograph may contain several competing items.
+A full-image embedding represents the whole input, whereas the intended target
+may occupy only part of it. Lighting, pose, background, occlusion, and differences
+between query and catalogue photography can also change the representation.
+
+The system must let the user communicate the target, prepare the query
+consistently with catalogue images, rank the available candidates, and present
+results that the user can inspect. It must also support full-image search when
+selection is unnecessary. The selected cutout is therefore part of the search
+workflow, rather than an invisible intermediate result. Category controls allow
+the user to correct automatic routing or search across categories.
+
+Catalogue coverage creates a separate limitation. If an item is absent, a
+similarity search can return a related garment without returning the same
+commercial product. The project consequently treats visual similarity,
+category relevance, and exact product identity as separate concepts. A displayed
+similarity score is not a calibrated probability that two photographs show the
+same product. Evaluating identity requires verified product relationships and
+different query and gallery photographs.
+
+\section{Objectives}
+\label{sec:objectives}
+
+\subsection{General Aim}
+The aim is to build and evaluate a local visual clothing search application that
+combines interactive garment selection with embedding-based catalogue retrieval.
+
+\subsection{Research Objectives}
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.35em]
+  \item Compare pretrained visual encoders under documented gallery, query, and
+    relevance definitions.
+  \item Compare full-image and selected-garment retrieval, documenting the
+    selection prompts and experimental conditions.
+  \item Assess preprocessing and category-routing choices against a retained
+    baseline before adopting a change.
+  \item Report task-specific retrieval measures and evaluate product identity
+    separately when verified alternate photographs are available.
+\end{enumerate}
+
+\subsection{Application Objectives}
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.35em]
+  \item Provide image input, query preview, full-image search, SAM2 refinement,
+    and manual selection within one browser workflow.
+  \item Apply consistent image encoding, retrieve ranked candidates, and expose
+    automatic and user-selected category controls.
+  \item Support product creation, editing, and deletion with photographs,
+    descriptive metadata, price, and availability.
+  \item Protect local administration and catalogue recovery, and maintain a
+    presentation release supported by source control and functional verification.
+\end{enumerate}
+
+\section{Scope of Study}
+\label{sec:scope}
+
+The application processes still images of clothing. Its principal workflow
+combines SAM2.1 garment selection, SigLIP2 image embeddings with
+\EmbeddingDimensions{} dimensions, and FAISS retrieval behind a FastAPI service.
+Manual rectangle, polygon, and freehand selection are available when the user
+prefers direct control. SAM2 interaction can be refined with positive and negative
+points. The accepted query or cutout is previewed before search.
+
+The original research gallery contains \TrainImageCount{} images in ten clothing
+categories from the \texttt{clothing-dataset-small} collection~\cite{GrigorevClothingDataset}.
+The dataset's named training partition serves as the retrieval gallery; it does
+not imply that the project trained SigLIP2 or SAM2 on these images.
+The \ValidationImageCount{} validation images and \TestImageCount{} test images are
+kept outside that gallery for evaluation. These category-labelled partitions do
+not establish that every image represents a unique commercial product.
+
+A second, independent catalogue contains products added through the management
+page. Each product can have one to five photographs, a name, an optional category
+and price, a currency, and an availability state. The main search page can search
+this collection using the same full-image and selection tools. Prices describe
+the products and do not determine their visual-similarity ranking. Updating this
+collection does not add its images to the original research gallery.
+
+Visitors can search without an account. One local administrator controls product
+management, catalogue export and restore, and account settings. Backups cover the
+added-product collection and its associated images and embeddings; they are
+separate from the research dataset, model checkpoints, and administrator account.
+The application runs on the team's computer through a local browser connection.
+Table~\ref{tab:scope} summarises the main boundaries.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Implemented scope and deferred capabilities}
+  \label{tab:scope}
+  \begingroup\small\setstretch{1.1}\renewcommand{\arraystretch}{1.18}
+  \begin{tabularx}{\linewidth}{@{}Y Y@{}}
+    \toprule
+    \textbf{Included in the current scope} & \textbf{Outside the current scope} \\
+    \midrule
+    Still-image search with full-image or selected-garment queries &
+      Video retrieval and a native mobile application \\ \addlinespace
+    Original research gallery and an independent added-product collection &
+      An automatically collected city-wide or multi-store catalogue \\ \addlinespace
+    One local administrator and visitor search &
+      Seller accounts, store ownership, and permissions for multiple businesses \\ \addlinespace
+    Product photographs, descriptive metadata, price, and availability &
+      Orders, payment, checkout, and inventory transactions \\ \addlinespace
+    Local backup, restore preview, and recovery copies &
+      Managed cloud hosting and distributed storage \\ \addlinespace
+    Documented category retrieval and limited reviewed identity studies &
+      Guaranteed exact-SKU matching or general consumer-photo accuracy \\
+    \bottomrule
+  \end{tabularx}
+  \endgroup
+\end{table}
+
+\section{Hardware and Software Requirements}
+\label{sec:requirements}
+
+\subsection{Verified Hardware Environment}
+Table~\ref{tab:hardware} records the computer available for development and the
+local presentation, checked on \EnvironmentCheckDate. It is a reference
+environment in which the application has been exercised, not a measured minimum
+specification. GPU acceleration is used for neural inference when CUDA is
+available. The installed FAISS package performs vector search on the CPU.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Verified local presentation environment}
+  \label{tab:hardware}
+  \begingroup\small\setstretch{1.1}\renewcommand{\arraystretch}{1.18}
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}Y@{}}
+    \toprule
+    \textbf{Component} & \textbf{Verified configuration or requirement} \\
+    \midrule
+    Processor & \ReferenceProcessor \\ \addlinespace
+    Memory & \ReferenceMemory \\ \addlinespace
+    Graphics & \ReferenceGPU \\ \addlinespace
+    Operating system & \ReferenceOS \\ \addlinespace
+    Local storage & Space for model checkpoints, dataset images, vector indices,
+      application databases, and retained backup files \\ \addlinespace
+    User access & A local browser, keyboard, and pointing device; model and data
+      files prepared before the presentation \\
+    \bottomrule
+  \end{tabularx}
+  \endgroup
+\end{table}
+
+The implementation contains a CPU fallback, but its latency depends on the model,
+input, and hardware. We therefore do not infer a performance guarantee for an
+untested machine. Once the required assets are available locally, the presentation
+launcher uses the local model files without downloading them during startup.
+
+\FloatBarrier
+\subsection{Software Environment}
+The backend uses Python \PythonRuntimeVersion{} in an isolated virtual
+environment. PyTorch and Transformers load the neural models, FAISS ranks vectors,
+and FastAPI with Uvicorn serves the application. The frontend uses HTML, CSS, and
+JavaScript, while SQLite stores the added-product collection and account data.
+Table~\ref{tab:software} identifies the main responsibilities.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Principal software components}
+  \label{tab:software}
+  \begingroup\small\setstretch{1.1}\renewcommand{\arraystretch}{1.18}
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.29\linewidth}Y@{}}
+    \toprule
+    \textbf{Component} & \textbf{Role in the project} \\
+    \midrule
+    Python and virtual environment & Backend execution and dependency isolation \\ \addlinespace
+    PyTorch and Transformers & Local SigLIP2 and SAM2.1 inference \\ \addlinespace
+    FAISS CPU and NumPy & Normalised vector storage, comparison, and ranking \\ \addlinespace
+    FastAPI and Uvicorn & Image, segmentation, search, and administration services \\ \addlinespace
+    SQLite & Product records, photographs, embeddings, and local account storage \\ \addlinespace
+    HTML, CSS, and JavaScript & Browser search, selection, and administration interface \\ \addlinespace
+    Git and LaTeX & Version control and editable academic documentation \\
+    \bottomrule
+  \end{tabularx}
+  \endgroup
+\end{table}
+
+The repository records application dependencies, while checkpoints, the dataset,
+local databases, and backups are separate runtime resources. Access to source
+code alone is therefore insufficient to reproduce the complete local environment;
+the setup instructions must also identify these resources.
+
+\FloatBarrier
+\section{Significance of Project}
+\label{sec:significance}
+
+The practical value of the project is the connection between a user's visual
+intent and an inspectable retrieval process. Selection lets the user indicate
+which garment matters. Previewing the submitted cutout makes selection errors
+visible before retrieval, and category correction provides another way to refine
+a search without changing the underlying encoder.
+
+Product management gives the search system a maintained collection to search.
+A catalogue operator can update photographs and descriptive information through
+the browser, while visitor search remains available without administrative access.
+Backup and recovery support the continued use of that local collection. This
+demonstrates a path towards store-specific visual search without claiming that
+multi-store deployment has already been implemented.
+
+The research value lies in evaluating the components under explicit conditions.
+Encoder comparison, garment selection, preprocessing, and category routing can
+be investigated separately. Reporting the data and relevance definition alongside
+each result makes it possible to discuss both improvements and failures without
+treating all measures as one notion of accuracy. The project contributes an
+integrated, evaluated prototype rather than a newly trained foundation model.
+
+\section{Constraints and Critical Assumptions}
+\label{sec:constraints}
+
+\begin{description}[leftmargin=0pt,labelindent=0pt,font=\normalfont\bfseries,itemsep=0.6em]
+  \item[Catalogue coverage.]
+    Retrieval is limited to available catalogue content. A relevant-looking
+    result does not establish that the requested commercial product is present.
+  \item[Product identity.]
+    Original catalogue identifiers are derived from image files. Category labels
+    and file identifiers are insufficient to establish exact-SKU ground truth.
+    Reviewed alternate views support only the scope of their recorded study.
+  \item[Selection quality.]
+    A mask can include background or omit part of a garment. We assume that the
+    user inspects and, when necessary, refines the selection or uses a manual tool.
+    Successful retrieval does not establish pixel-level mask accuracy.
+  \item[Pretrained representations.]
+    The encoders may emphasise category, shape, texture, and colour differently.
+    Visual similarity is not calibrated identity confidence, and a better
+    category match need not be the closest commercial product.
+  \item[Evaluation comparability.]
+    Results from different queries, gallery exclusions, preprocessing versions,
+    or relevance definitions must remain separate. Functional test counts measure
+    exercised software behaviour, not retrieval accuracy.
+  \item[Local operation and data.]
+    The current deployment assumes the team's computer, available local models,
+    and one administrator. The database and its backups require local protection;
+    the implemented account controls do not establish readiness for public,
+    multi-tenant hosting.
+\end{description}
+
+The original catalogue index remains the active presentation baseline. Catalogue
+cropping and other ranking changes are experimental choices, not assumed
+improvements. Any later change must be compared with the retained baseline
+under an appropriate evaluation protocol.
+
+\section{Project Management}
+\label{sec:project-management}
+
+Development is organised into problem definition, data preparation, model
+evaluation, implementation, integration, verification, and documentation.
+Experimental comparisons iterate within these stages. A proposed improvement is
+checked against its baseline before promotion to the presentation version.
+This approach accommodates both software defects and research findings that do
+not support adopting a change.
+
+Git records the application source and presentation releases. The current
+documentation uses \texttt{\ApplicationRelease} as its implementation reference.
+Table~\ref{tab:milestones} summarises the work packages at the time of this
+chapter's preparation. Completed implementation and recorded experiments are
+distinguished from the remaining submission work.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Project work packages and current status}
+  \label{tab:milestones}
+  \begingroup\small\setstretch{1.1}\renewcommand{\arraystretch}{1.18}
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.08\linewidth}Y >{\raggedright\arraybackslash}p{0.18\linewidth}@{}}
+    \toprule
+    \textbf{ID} & \textbf{Work package and output} & \textbf{Status} \\
+    \midrule
+    M1 & Dataset preparation and baseline encoder comparison & Recorded \\ \addlinespace
+    M2 & Full-image search, SAM2 refinement, and manual selection & Implemented \\ \addlinespace
+    M3 & Shared preprocessing, category controls, and query preview & Implemented \\ \addlinespace
+    M4 & Product editing, local administrator access, backup, and restore & Implemented \\ \addlinespace
+    M5 & Functional verification and reviewed identity pilot & Recorded \\ \addlinespace
+    M6 & LaTeX report and chapter review & In progress \\ \addlinespace
+    M7 & Final presentation, poster, brochure, video, and submission review & Pending \\
+    \bottomrule
+  \end{tabularx}
+  \endgroup
+\end{table}
+
+\FloatBarrier
+The remaining academic materials will be derived from the same verified scope
+and evidence. The university's announced discussion period is 4--7 November
+2026. Document preparation proceeds chapter by chapter so that terminology,
+references, diagrams, and results can be reviewed before the report is submitted
+for supervisor and faculty approval. Later feedback may require revisions to the
+report or a separately tested application change.
+
+This chapter has established the intended users, retrieval problem, implemented
+scope, operating environment, and principal limits. The next chapter reviews
+the literature supporting the encoder, segmentation, and retrieval choices.

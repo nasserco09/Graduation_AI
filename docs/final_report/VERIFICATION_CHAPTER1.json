@@ -1,0 +1,20 @@
+{
+  "verified_at_utc": "2026-10-31T17:35:56.203733+00:00",
+  "implementation_reference": "v1.2.0-rc.9",
+  "scope": "editable_chapter_1_review_not_final_thesis",
+  "preview_file": "preview/Chapter_1_Review_v1.pdf",
+  "preview_sha256": "55398b76b94d9fdbe819ae1d325f138382d687820e6c33ea9c2fc2a31d14e4fc",
+  "pdf_pages": 15,
+  "chapter_body_pages": 9,
+  "tables": 4,
+  "bibtex_sources": 7,
+  "citation_links_checked": 7,
+  "external_source_urls_checked": 7,
+  "all_citations_resolve": true,
+  "all_pages_visually_checked": true,
+  "local_cached_latex_build_passed": true,
+  "desktop_editor_build_passed": true,
+  "classic_pdflatex_route_executed": false,
+  "application_code_changed": false,
+  "application_tests_rerun_for_documentation_publish": false
+}

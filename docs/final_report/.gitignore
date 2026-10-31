@@ -1,0 +1,20 @@
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+/build/
+# Earlier design drafts are preserved locally; only the current cover is published.
+/frontmatter/outline.tex
+/images/approved_cover.jpg
+/images/search_workflow_v2.png
+/design/COVER_ART_PROMPT.txt

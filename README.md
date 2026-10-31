@@ -9,8 +9,13 @@ Launch it with `Start_Demo.cmd` or the existing desktop shortcut at
 `http://127.0.0.1:8000/`. See [release verification](docs/PRESENTATION_RC9_AR.md)
 and [product management](docs/PRODUCT_MANAGEMENT_AR.md).
 The Word and PowerPoint files under `docs/preliminary_discussion/` document the
-earlier rc.7 preliminary discussion; final university materials will be prepared
-from the agreed implementation scope, including a LaTeX document.
+earlier rc.7 preliminary discussion. The editable final-report project now contains
+the approved cover and Chapter 1, with seven linked bibliography sources and four
+tables. See the [LaTeX editing and build guide](docs/final_report/README_AR.md),
+[current PDF review](docs/final_report/preview/Chapter_1_Review_v1.pdf), and
+[university submission status](docs/UNIVERSITY_SUBMISSION_2026_AR.md).
+Chapters 2--7 and the final presentation, poster, brochure, and video are still
+being prepared. The application release tag remains `v1.2.0-rc.9`.
 
 ---
 
