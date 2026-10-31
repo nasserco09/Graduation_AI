@@ -17,6 +17,16 @@ tables. See the [LaTeX editing and build guide](docs/final_report/README_AR.md),
 Chapters 2--7 and the final presentation, poster, brochure, and video are still
 being prepared. The application release tag remains `v1.2.0-rc.9`.
 
+For a clean installation on Windows x86_64 with Python 3.12, download the
+runtime ZIP from [runtime-rc9-v1](https://github.com/nasserco09/Graduation_AI/releases/tag/runtime-rc9-v1).
+It includes the two active models, all 3,068 gallery images, the original FAISS
+index, application code and local frontend assets. Extract into a new folder,
+run `Setup_Runtime.cmd`, then `Start_Demo.cmd`. Initial dependency installation
+requires internet or compatible local wheels; Python and wheels are not bundled.
+Personal accounts, added products and telemetry are excluded. The repository is
+private, so downloading requires repository access. See the
+[runtime distribution and verification guide](docs/RUNTIME_DISTRIBUTION_AR.md).
+
 ---
 
 ## Current Features

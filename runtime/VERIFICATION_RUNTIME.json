@@ -1,0 +1,162 @@
+{
+  "verified_at_utc": "2026-10-31T19:59:42.537838+00:00",
+  "application_release": "v1.2.0-rc.9",
+  "package_release": "runtime-rc9-v1",
+  "scope": "independent_Windows_x64_Python_3.12_environment_CPU_localhost_8013",
+  "installation": {
+    "new_venv": true,
+    "system_site_packages": false,
+    "source": "local_compatible_wheels",
+    "pip_check": "passed",
+    "pinned_distributions": 51,
+    "public_version_availability_checks": {
+      "checked": 51,
+      "available": 51
+    },
+    "online_full_install_tested": false
+  },
+  "functional_http": {
+    "passed": true,
+    "checks": 32,
+    "names": [
+      "health",
+      "catalog_metadata",
+      "asset:/",
+      "asset:/about.html",
+      "asset:/js/app.js",
+      "asset:/styles/styles.css",
+      "asset:/styles/about.css",
+      "asset:/assets/logo.svg",
+      "asset:/docs",
+      "full_image",
+      "full_image:result_image",
+      "sam2_positive",
+      "sam2_positive:cutout",
+      "sam2_positive:search",
+      "sam2_positive:search:result_image",
+      "sam2_refined",
+      "sam2_refined:cutout",
+      "sam2_refined:search",
+      "sam2_refined:search:result_image",
+      "prepared_manual_rect",
+      "prepared_manual_rect:result_image",
+      "prepared_manual_poly",
+      "prepared_manual_poly:result_image",
+      "prepared_manual_free",
+      "prepared_manual_free:result_image",
+      "unrestricted",
+      "unrestricted:result_image",
+      "category_override",
+      "category_override:result_image",
+      "invalid_image",
+      "empty_points",
+      "invalid_top_k"
+    ]
+  },
+  "isolated_administration": {
+    "scope": "isolated_runtime_copy_only",
+    "passed": true,
+    "checks": [
+      {
+        "name": "clean_account",
+        "passed": true
+      },
+      {
+        "name": "guest_management_protected",
+        "passed": true
+      },
+      {
+        "name": "create_local_admin",
+        "passed": true
+      },
+      {
+        "name": "admin_session",
+        "passed": true
+      },
+      {
+        "name": "clean_added_catalog",
+        "passed": true
+      },
+      {
+        "name": "add_product",
+        "passed": true
+      },
+      {
+        "name": "search_added_product",
+        "passed": true
+      },
+      {
+        "name": "admin_login",
+        "passed": true
+      },
+      {
+        "name": "edit_product",
+        "passed": true
+      },
+      {
+        "name": "export_backup",
+        "passed": true
+      },
+      {
+        "name": "delete_qa_product",
+        "passed": true
+      },
+      {
+        "name": "preview_backup",
+        "passed": true
+      },
+      {
+        "name": "restore_backup",
+        "passed": true
+      },
+      {
+        "name": "restored_product",
+        "passed": true
+      },
+      {
+        "name": "logout",
+        "passed": true
+      }
+    ],
+    "harness_note": "Price assertion corrected to compare Decimal values; API normalizes 6500 to 6500.00. Local QA-only password recovery was used between test runs."
+  },
+  "package_boundary_unit_tests": {
+    "passed": 8,
+    "failed": 0,
+    "command": "python -m unittest tests.test_runtime_bundle -v"
+  },
+  "catalog_images": 3068,
+  "original_resources": [
+    {
+      "path": "data/catalog_siglip2.faiss",
+      "role": "catalog_index",
+      "bytes": 9424941,
+      "sha256": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac"
+    },
+    {
+      "path": "models/sam2_base_plus/model.safetensors",
+      "role": "model",
+      "bytes": 323476296,
+      "sha256": "2012733a0de5d03efd1bba550a2847c4551be9ef2e0d497c83074df66189f780"
+    },
+    {
+      "path": "models/siglip2_base/model.safetensors",
+      "role": "model",
+      "bytes": 1500800904,
+      "sha256": "612923381c76ec5a9bed335d1c48827e3f2e506ac31b044b63b2031fadee6a0b"
+    }
+  ],
+  "privacy": {
+    "personal_databases_in_manifest": false,
+    "runtime_databases_start_empty": true,
+    "original_environment_unchanged": true,
+    "original_application_code_unchanged": true
+  },
+  "limitations": [
+    "Same Windows host, new virtual environment; not a different physical computer.",
+    "CPU inference verified; GPU compatibility on another host requires checking.",
+    "Functional checks do not establish retrieval accuracy or quality of automatic selection.",
+    "No additional interactive browser session in this verification.",
+    "The archive is built from the verified allowlist; QA-generated account, product and telemetry databases are excluded."
+  ]
+}
