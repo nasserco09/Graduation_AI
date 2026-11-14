@@ -1,0 +1,246 @@
+\chapter{Research Methodology}
+\label{ch:methodology}
+
+\section{Introduction}
+The project combines experimental retrieval comparisons with iterative software
+development. The research question is whether communicating the intended garment
+before image encoding improves retrieval under a defined relevance criterion.
+Supporting questions concern the choice of pretrained encoder, the effect of
+category filtering, and whether modifying gallery images justifies replacing the
+original index. The engineering question is whether the resulting workflow can
+be used and maintained through a local browser application.
+
+These questions require different evidence. Labelled retrieval queries measure
+ranking behaviour; unit and integration tests exercise software contracts;
+browser observations examine visible interaction; reviewed alternate views
+provide limited identity evidence. The study records these evidence types
+separately rather than combining them into a single accuracy figure.
+
+\section{Data Collection and Dataset Specification}
+\subsection{Source and Partition Roles}
+The image collection is the public ten-class \texttt{clothing-dataset-small}
+subset~\cite{GrigorevClothingDataset}. Its local inventory contains 3,781 images:
+3,068 in the named training split, 341 in validation, and 372 in test.
+Table~\ref{tab:data-splits} gives the category distribution. The original directory
+key \texttt{outwear} is retained in code for compatibility and described as
+outerwear in the report.
+
+\begin{table}[H]
+\centering\caption{Verified image inventory by category and partition}
+\label{tab:data-splits}
+\begin{ReportTable}\input{tables/dataset}\end{ReportTable}
+\end{table}
+
+The training split is the retrieval gallery, not a newly collected training
+set for the neural models. All encoders used in this project are pretrained.
+Validation supports comparison and development choices; test supplies the
+retained final category comparisons. Validation and test images are not inserted
+into the application's original research gallery.
+
+\subsection{Identity and Duplicate Auditing}
+The supplied dataset does not include verified merchant SKU identities. The
+application derives an image identifier from each filename and maps it to a
+category and display title. Two different filenames may still depict the same
+garment, and two similar garments may be different products. Consequently,
+3,068 is a count of searchable images, not a verified count of unique products.
+
+The recorded dataset audit computed both file hashes and decoded, EXIF-aware
+RGB-pixel hashes across all 3,781 images. It found no exact byte or decoded-pixel
+duplicate groups. A fresh byte-level audit during report preparation again found
+no overlap between the three partitions. These checks do not rule out resized,
+recompressed, cropped, or alternate-view photographs of the same garment.
+Visual near-duplicate judgments are therefore kept distinct from exact hash
+matches and from independently verified commercial identities.
+
+\subsection{Independent Added-Product Data}
+Products entered through the management page form a second catalogue. Each has
+an explicit product UUID and one to five associated photographs. Their vectors
+are produced by the same deployed encoder but stored with product data in a
+separate SQLite database. This catalogue supports application use and CRUD
+testing; it is not added to the research gallery or silently included in the
+historical evaluation results.
+
+\section{Image Preparation and Representation}
+\subsection{Shared Application Preprocessing}
+The deployed preprocessing contract, \texttt{visual-search-rgb-square-v1}, applies
+the following operations to gallery and query images:
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.3em]
+ \item Apply EXIF orientation to the decoded image.
+ \item Composite transparency onto a white background and convert to RGB.
+ \item Centre the image on a white square whose side is the larger input dimension.
+ \item Apply the checkpoint's image processor and run the fixed SigLIP2 image encoder.
+ \item Convert the representation to float32 and apply $L_2$ normalisation.
+\end{enumerate}
+Square padding retains the aspect ratio before the model's own resizing. It
+does not segment the gallery. For a SAM2 query, background pixels outside the
+accepted mask become white and the result is cropped to the mask's bounding box;
+the same square preparation then follows. The implementation produces a
+white-background PNG cutout, not a transparent product image.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=5mm]
+\node[reportbox,text width=10.9cm] (input) {Original gallery image or accepted query image};
+\node[reportbox,text width=10.9cm,below=of input] (rgb) {EXIF correction; white alpha composite; RGB conversion};
+\node[reportbox,text width=10.9cm,below=of rgb] (square) {Aspect-preserving square padding, then checkpoint processor};
+\node[reportbox,text width=10.9cm,below=of square] (encoder) {Fixed SigLIP2 image encoder; $d=768$};
+\node[reportbox,text width=10.9cm,below=of encoder] (norm) {$L_2$ normalisation; float32 vector for inner-product ranking};
+\draw[reportarrow] (input)--(rgb);\draw[reportarrow] (rgb)--(square);
+\draw[reportarrow] (square)--(encoder);\draw[reportarrow] (encoder)--(norm);
+\end{tikzpicture}
+\caption{Shared preprocessing and representation contract in the deployed application}
+\label{fig:preprocessing}
+\end{figure}
+
+\subsection{Index and Artifact Consistency}
+The persistent FAISS index is accompanied by a path-mapping JSON file containing
+the encoder name, dimension, preprocessing version, metadata schema, image count,
+relative paths, and a catalogue checksum. Loading validates these fields against
+the installed resources. Incompatible state is rejected so that a later search
+or authorised reindex can build a consistent index. The checksum covers image
+content and canonical metadata, not only file modification times.
+
+Model weights, index files, query hashes, and protocol settings are recorded
+where supported by the relevant experiment. Such records strengthen evidence
+about which artifacts were used. They do not retroactively supply provenance
+that was absent from an older cached experiment.
+
+\section{Experimental Protocols}
+\subsection{Historical Encoder Comparison}
+The retained benchmark compares ResNet50, EfficientNet-B3, CLIP, DINOv2, and
+SigLIP2. Each uses the same 3,068-image train gallery and 341 validation queries.
+Features are normalised and ranked by exact inner product. A retrieved image is
+relevant when its category equals the query category.
+
+The saved runs reused gallery and validation embedding caches. The historical
+evaluation adapters do not explicitly invoke the deployed square-preprocessing
+function. Therefore, these results support the recorded model-selection
+comparison, but their zero recorded encoding times cannot be interpreted as
+real inference latency, and the values are not presented as a fresh benchmark
+of the final application.
+
+\subsection{Historical Full-Image and SAM2 Comparison}
+Two retained synthetic protocols use the same construction procedure but
+different query partitions. The validation experiment draws ten targets per
+category from validation; the final recorded experiment draws ten per category
+from test. Each produces 100 two-panel composite images. A target and a
+distractor from another class are fitted into separate 512-by-512 white panels
+and combined into a 1,024-by-512 image. Seed 42 controls sampling and placement.
+
+The complete composite and the selected-garment cutout are encoded separately
+against the same train gallery. A positive point at the centre of the target's
+panel is supplied to SAM2. The metric uses the target category. This controlled
+construction tests competing garment content, but does not reproduce all the
+occlusion, pose, and background complexity of a naturally photographed outfit.
+The validation and test scores remain separate because their images differ.
+
+The original scripts reuse existing embeddings and cutouts by existence.
+The historical records do not contain all model, code, and original input hashes
+from the time of execution. Their stored scores are audited for consistency,
+while the report explicitly retains this provenance limitation.
+
+\subsection{Application-Aligned Category Routing}
+The category-routing comparison uses the existing original gallery vectors and
+newly encodes the clean validation and test queries through
+the application's shared query encoder. For each query, unrestricted retrieval and
+automatic-centroid filtering use the same representation and gallery. Top-1
+correctness is paired by query. No category-confidence threshold is selected or
+changed in this comparison.
+
+The original-gallery prediction is the category with highest query-to-centroid
+cosine score. A temperature-scaled softmax with $\tau=0.07$ produces the
+catalogue-relative display confidence. This value describes the represented
+categories and is not a calibrated probability that the first result is correct.
+
+\subsection{Catalogue-Cropping Experiment}
+The cropping study creates a separate candidate gallery using a conservative
+SAM2-guided bounding crop. Final candidate pixels come from the original image;
+the mask is used to locate the crop rather than to whiten every background
+pixel. The original-gallery index remains intact. Three configurations are
+compared: original embeddings, candidate-crop embeddings, and a weighted
+combination of their similarity scores.
+
+Candidate hybrid weights are screened on validation only. The retained mixture
+uses 90\% original and 10\% crop similarity. The subsequent comparisons cover
+372 clean test images, 100 complete composites, and their 100 selected cutouts.
+All configurations within this experiment share its query preparation. These
+application-aligned values cannot be pooled with the historical 46\%--75\%
+experiment as if they came from one run.
+
+\subsection{Reviewed Alternate-View Identity Pilot}
+Twelve visually reviewed groups were available from earlier catalogue review.
+Five pairs were conservatively excluded before inference because independence
+of the views was uncertain. Seven groups remained. A fixed rule selected one
+view per group as query and the other as the accepted target. All seven queries,
+and any byte-identical or decoded-pixel-identical copies, were removed from the
+gallery before any condition. The retained gallery contained 3,061 images.
+Category centroids were recomputed from that retained gallery only.
+
+The forward pilot compares automatic and unrestricted search. A separately
+specified reverse pilot swaps the two views and compares full images with SAM2
+cutouts on the same reverse gallery. The reverse prompts were selected visually
+by the assistant and sealed before reverse retrieval results, without subsequent
+point refinement. They were not user-approved reference masks. A SAM2 failure
+would remain a failure in the denominator; none occurred in the seven cases.
+
+These are selected development cases, not independent consumer photographs or
+seller-verified SKU labels. The reverse direction reuses the same seven groups
+and is not counted as seven additional independent products. The protocol
+prevents direct self-match but cannot establish dataset-wide identity accuracy.
+
+\section{Evaluation Measures}
+Let $Q$ be the query set, $R_q$ the number of gallery images judged relevant to
+query $q$, and $r_q(j)\in\{0,1\}$ the relevance of the result at rank $j$.
+Relevance is category equality in the main experiments and reviewed-group
+membership in the identity pilot. Following the ranked-retrieval concepts in
+\cite{Manning2008IR}, the implemented cutoff conventions are:
+\begin{align}
+ P_q@K &= \frac{1}{K}\sum_{j=1}^{K} r_q(j), \\
+ \operatorname{Hit}_q@K &= \mathbb{1}\!\left[\sum_{j=1}^{K}r_q(j)>0\right], \\
+ \operatorname{AP}_q@K &= \frac{\sum_{j=1}^{K}(P_q@j)r_q(j)}{\min(R_q,K)}, \\
+ \operatorname{mAP}@K &= \frac{1}{|Q|}\sum_{q\in Q}\operatorname{AP}_q@K, \\
+ \operatorname{MRR}@K &= \frac{1}{|Q|}\sum_{q\in Q}\frac{\mathbb{1}[\rho_q\leq K]}{\rho_q}.
+\end{align}
+Here $\rho_q$ is the first relevant rank; its contribution is zero if no relevant
+result appears within the cutoff. AP is defined as zero for an empty relevant
+set. Mean P@K averages the per-query values. At $K=1$, category P@1 and Hit@1
+coincide. Identity Top-$K$ in the pilot is a hit rate over reviewed target groups,
+not precision among all $K$ returned images.
+
+For paired Top-1 comparisons, let $b$ count queries corrected by the candidate
+and $c$ count queries made incorrect. The observed gain is
+\begin{equation}
+ \Delta_{\mathrm{Top1}}=\frac{b-c}{|Q|}.
+\end{equation}
+The saved comparison scripts resample paired query differences 10,000 times
+with seed 42 to obtain percentile 95\% bootstrap intervals. They also report
+two-sided exact McNemar tests over the discordant pairs. These describe sampling
+uncertainty under the recorded query set; they do not repair class-label or
+selection bias. Statistical results are interpreted alongside the effect size
+and experimental design.
+
+\section{Software Development and Verification Method}
+A baseline, an isolated candidate change, comparison, and justified promotion
+structure development. The original index is retained when evidence does not
+support a replacement. Unit tests cover validation, metadata, routing, revisions,
+authentication, and backups. JavaScript tests use controlled responses to exercise
+selection and request state; HTTP checks use actual inference, and browser
+observations examine the visible workflow.
+
+Final-report verification reruns these checks using an independent application
+copy with matching active code and separate account/product databases. Records
+state their date, command, scope, and limitations. A functional test is not a
+retrieval query and contributes no evidence of general model accuracy.
+
+\section{Ethical and Reproducibility Considerations}
+Dataset and model use retains upstream notices. Research fixtures are
+identified separately from user uploads. Monitoring stores query hashes and
+search metadata, not raw search photographs; optional user notes still require
+normal local data care. Results retain their denominator, relevance definition,
+gallery, and preprocessing. Re-reading a historical result is not described as
+new inference, and an exact-product claim requires appropriate identity evidence.
+
+\section{Summary}
+The method separates category experiments, reviewed identity pilots, and software
+verification. These protocols constrain the interpretation of results and lead
+to the operating requirements analysed in the next chapter.

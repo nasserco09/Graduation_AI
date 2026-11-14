@@ -1,0 +1,24 @@
+\begin{tikzpicture}[node distance=13mm]
+\node[storebox,align=left,text width=5.7cm] (products) {
+ \textbf{products}\\\rule{5.5cm}{0.3pt}\\
+ \texttt{id} : text, primary key\\
+ \texttt{name} : text\\
+ \texttt{category} : text\\
+ \texttt{price} : optional decimal text\\
+ \texttt{currency} : text\\
+ \texttt{available} : integer boolean\\
+ \texttt{revision} : integer};
+\node[storebox,align=left,text width=5.7cm,right=of products] (images) {
+ \textbf{images}\\\rule{5.5cm}{0.3pt}\\
+ \texttt{id} : text, primary key\\
+ \texttt{product\_id} : text, foreign key\\
+ \texttt{photo} : JPEG BLOB\\
+ \texttt{vector} : float32 BLOB\\
+ \texttt{position} : integer\\
+ \phantom{revision}\\
+ \textit{Application rule: 1--5 per product}};
+\draw[reportarrow] (products.east)--node[above,font=\small]{1:N}(images.west);
+\node[storebox,text width=11.5cm,below=of $(products.south)!0.5!(images.south)$] (config) {
+ \textbf{config}: encoder/preprocessing signature and vector dimension\\
+ Independent singleton configuration; not a product ownership relation};
+\end{tikzpicture}

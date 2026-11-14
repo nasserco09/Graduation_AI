@@ -1,0 +1,16 @@
+\begin{tikzpicture}[node distance=5mm]
+\node[reportbox,text width=8.1cm] (upload) {Upload and validate image; choose catalogue};
+\node[reportbox,text width=8.1cm,below=of upload] (mode) {Use the full image or prepare a selected query};
+\node[reportbox,text width=3.9cm,minimum height=22mm,below left=8mm and -3.5cm of mode] (full) {Full-image query};
+\node[reportbox,text width=3.9cm,minimum height=22mm,below right=8mm and -3.5cm of mode] (selected) {SAM2 points or\\manual region\\Inspect and accept};
+\node[reportbox,text width=8.1cm,below=8mm of $(full.south)!0.5!(selected.south)$] (preview) {Preview the exact submitted image};
+\node[reportbox,text width=8.1cm,below=of preview] (encode) {Shared preparation; encode and normalise};
+\node[reportbox,text width=8.1cm,below=of encode] (search) {Apply category rule; FAISS similarity ranking};
+\node[reportbox,text width=8.1cm,below=of search] (display) {Group products where configured; show results};
+\node[reportbox,text width=8.1cm,below=of display] (review) {Inspect matches; correct category, selection, or source};
+\draw[reportarrow] (upload)--(mode);
+\draw[reportarrow] (mode.south)--(full.north);\draw[reportarrow] (mode.south)--(selected.north);
+\draw[reportarrow] (full.south)--(preview.north);\draw[reportarrow] (selected.south)--(preview.north);
+\draw[reportarrow] (preview)--(encode);\draw[reportarrow] (encode)--(search);
+\draw[reportarrow] (search)--(display);\draw[reportarrow] (display)--(review);
+\end{tikzpicture}

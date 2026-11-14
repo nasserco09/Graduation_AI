@@ -1,0 +1,35 @@
+\begin{tikzpicture}[node distance=12mm]
+\node[storebox,text width=5.9cm,align=left] (events) {
+ \textbf{search\_events}\\\rule{5.7cm}{0.3pt}\\
+ \texttt{search\_id} : text, PK\\
+ \texttt{created\_at\_utc} : text\\
+ \texttt{query\_sha256} : text\\
+ \texttt{search\_mode} : text\\
+ \texttt{requested\_category} : text\\
+ \texttt{predicted\_category} : text?\\
+ \texttt{applied\_category} : text?\\
+ \texttt{category\_confidence} : real\\
+ \texttt{top\_k} : integer\\
+ \texttt{result\_count} : integer\\
+ \texttt{latency\_ms} : real\\
+ \texttt{top\_product\_id} : text?\\
+ \texttt{top\_similarity} : real?\\
+ \texttt{result\_product\_ids\_json} : text\\
+ \texttt{result\_scores\_json} : text\\
+ \texttt{model\_name} : text\\
+ \texttt{preprocessing\_version} : text};
+\node[storebox,text width=5.9cm,align=left,right=of events] (feedback) {
+ \textbf{search\_feedback}\\\rule{5.7cm}{0.3pt}\\
+ \texttt{feedback\_id} : text, PK\\
+ \texttt{search\_id} : text, FK, UNIQUE\\
+ \texttt{created\_at\_utc} : text\\
+ \texttt{verdict} : text\\
+ \texttt{selected\_product\_id} : text?\\
+ \texttt{corrected\_category} : text?\\
+ \texttt{notes} : text?};
+\draw[reportarrow] (events.east)--node[above,font=\scriptsize]{1:0..1}(feedback.west);
+\node[reportnote,text width=12.3cm,below=7mm of events.south east] {
+ FK: search\_feedback.search\_id references search\_events.search\_id,
+ ON DELETE CASCADE. ``?'' marks nullable fields. Product identifiers are recorded
+ values, not cross-database SQL foreign keys. No raw query image is stored.};
+\end{tikzpicture}

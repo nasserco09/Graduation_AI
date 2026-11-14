@@ -1,0 +1,37 @@
+{
+  "team": ["Nasser Yousef", "Noor Yousef", "Naeem Basalma"],
+  "supervisor": "Dr. Ayman Alsabri",
+  "github_url": "https://github.com/nasserco09/Graduation_AI",
+  "overview": "An image-based fashion search application that retrieves visually similar garments from a local catalogue. Users can search the full photo or select one garment before retrieval.",
+  "problem": "Several garments and background details can distract whole-image search. Selecting the intended piece gives the encoder a more focused query.",
+  "objectives": [
+    "Retrieve visually similar clothing from an image.",
+    "Refine the target with positive and negative SAM2 points.",
+    "Support local product entry and management.",
+    "Evaluate search with clearly defined relevance."
+  ],
+  "technologies": [
+    ["SigLIP2", "Pre-trained image encoder"],
+    ["SAM2.1", "Interactive segmentation"],
+    ["FAISS", "Vector similarity ranking"],
+    ["FastAPI", "Python web backend"],
+    ["SQLite", "Product and account stores"],
+    ["HTML / CSS / JS", "Browser interface"]
+  ],
+  "pipeline": [
+    {"title": "Input image", "detail": "Upload a clothing photo."},
+    {"title": "Choose target", "detail": "Full image or accepted selection."},
+    {"title": "Encode", "detail": "SigLIP2: normalised 768-D vector."},
+    {"title": "Rank", "detail": "FAISS with category-aware retrieval."},
+    {"title": "Results", "detail": "Inspect visually similar products."}
+  ],
+  "evidence": {
+    "gallery_images": 3068,
+    "embedding_dimensions": 768,
+    "historical_composite_test_n": 100,
+    "historical_full_image_category_top1_percent": 46,
+    "historical_selected_category_top1_percent": 75,
+    "limit": "Category relevance, not exact-product identity or a general 75% accuracy guarantee.",
+    "source": "evaluation/results/FINAL_TEST_RESULTS.json"
+  }
+}

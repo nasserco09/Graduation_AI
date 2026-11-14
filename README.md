@@ -10,21 +10,28 @@ Launch it with `Start_Demo.cmd` or the existing desktop shortcut at
 and [product management](docs/PRODUCT_MANAGEMENT_AR.md).
 The Word and PowerPoint files under `docs/preliminary_discussion/` document the
 earlier rc.7 preliminary discussion. The editable final-report project now contains
-the approved cover and Chapter 1, with seven linked bibliography sources and four
-tables. See the [LaTeX editing and build guide](docs/final_report/README_AR.md),
-[current PDF review](docs/final_report/preview/Chapter_1_Review_v1.pdf), and
+the submission report with seven chapters, two appendices, editable system/data
+diagrams, linked bibliography sources and source-backed results. See the
+[LaTeX editing and build guide](docs/final_report/README_AR.md),
+[submission PDF](docs/final_report/preview/AI_Visual_Product_Search_Submission_2026.pdf), and
 [university submission status](docs/UNIVERSITY_SUBMISSION_2026_AR.md).
-Chapters 2--7 and the final presentation, poster, brochure, and video are still
-being prepared. The application release tag remains `v1.2.0-rc.9`.
+The [250 x 140 cm university poster](docs/poster/README_AR.md) includes a
+print-ready PDF, editable SVG and verified public GitHub QR. The final
+presentation, brochure, and video are separate deliverables.
+The application release tag remains `v1.2.0-rc.9`. On 14 November 2026 the team
+authorized public repository access and resumed the verified split-runtime upload.
+The repository's default branch is `feature/frontend-v2`, which contains the
+verified application and current submission materials; `main` is historical.
 
-For a clean installation on Windows x86_64 with Python 3.12, download the
-runtime ZIP from [runtime-rc9-v1](https://github.com/nasserco09/Graduation_AI/releases/tag/runtime-rc9-v1).
-It includes the two active models, all 3,068 gallery images, the original FAISS
+The locally verified Windows x86_64 runtime package targets Python 3.12.
+Its planned download location is [runtime-rc9-v1](https://github.com/nasserco09/Graduation_AI/releases/tag/runtime-rc9-v1);
+the resumed upload is in progress, so the runtime release is not yet complete.
+The local package includes the two active models, all 3,068 gallery images, the original FAISS
 index, application code and local frontend assets. Extract into a new folder,
 run `Setup_Runtime.cmd`, then `Start_Demo.cmd`. Initial dependency installation
 requires internet or compatible local wheels; Python and wheels are not bundled.
 Personal accounts, added products and telemetry are excluded. The repository is
-private, so downloading requires repository access. See the
+public and its QR link opens without signing in. See the
 [runtime distribution and verification guide](docs/RUNTIME_DISTRIBUTION_AR.md).
 
 ---

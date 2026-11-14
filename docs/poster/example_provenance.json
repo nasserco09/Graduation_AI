@@ -1,0 +1,14 @@
+{
+  "query_sha256": "39f2f743a3e93423453f5905ed2dca17e5b39b9729040e65659fa5ac72e0c7c0",
+  "ranked_ids": [
+    "041c6bde-e737-46fd-9586-984c1503941f",
+    "4c60802b-fe0c-4cc8-a36e-0c6bde058bea",
+    "dfad87ed-9747-45a3-a6cb-68697882009a"
+  ],
+  "raw_cosine_scores": [
+    0.825506,
+    0.822762,
+    0.808729
+  ],
+  "source": "Read-only isolated QA search event; exact query-byte hash match; original catalogue photos."
+}

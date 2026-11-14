@@ -1,0 +1,90 @@
+\chapter{Evidence Register and Reproducibility}
+\label{app:evidence}
+
+\section{Evidence Sources}
+Table~\ref{tab:evidence-register} identifies the machine-readable project evidence.
+The listed files support the report's own measurements and are distinct from
+the research publications in References. Their hashes are retained with the
+editable report sources so that later revisions can be compared.
+
+\begin{ReportTable}
+\begin{longtable}{@{}L{0.49\linewidth}L{0.43\linewidth}@{}}
+\caption{Project evidence register}\label{tab:evidence-register}\\
+\toprule\textbf{Source relative to the project root}&\textbf{Evidence and limit}\\\midrule\endfirsthead
+\toprule\textbf{Source}&\textbf{Evidence and limit, continued}\\\midrule\endhead
+\path{evaluation/results/summary.csv} and individual encoder JSON files & Historical five-encoder validation comparison; category relevance and cache-backed vectors.\\\addlinespace
+\path{evaluation/results/FINAL_TEST_RESULTS.json} & Historical clean test and 100 synthetic test composites, including 46\% to 75\% category Top-1.\\\addlinespace
+\path{evaluation/results/sam2_vs_full.json} & Separate historical validation-composite comparison: 48\% to 80\%.\\\addlinespace
+\path{evaluation/results/category_routing_comparison.json} & Application-aligned clean-query paired routing comparison, recorded query/artifact hashes, and statistics.\\\addlinespace
+\path{evaluation/results/safe_crop_catalog_ab.json} & Separate original/crop/hybrid comparisons and retained-original-index decision.\\\addlinespace
+\path{evaluation/results/uncertain_category_replay.json} & Exploratory replay of already observed validation queries; no new independent test.\\\addlinespace
+\path{evaluation/results/dataset_identity_audit.json} & Dataset counts and exact byte/pixel duplicate audit; no general SKU identity guarantee.\\\addlinespace
+\path{evaluation/results/reviewed_identity_pilot.json} & Seven selected reviewed identity groups, forward direction, 3,061-image retained gallery.\\\addlinespace
+\path{evaluation/results/reviewed_reverse_sam_pilot.json} & Reverse full-image/SAM2 pilot on the same seven groups; tied 7/7 results.\\\addlinespace
+\path{evaluation/reviewed_identity_reverse_points.json} & Assistant-selected point prompts fixed before reverse retrieval, not user-approved reference masks.\\\addlinespace
+\path{docs/VERIFICATION_RC9.json} & Earlier release verification, including 189 Python tests, 43 JavaScript tests, and recorded CUDA health.\\\addlinespace
+\path{runtime/VERIFICATION_RUNTIME.json} & Independent-environment runtime checks recorded for the packaging stage.\\\addlinespace
+\path{docs/final_report/VERIFICATION_SUBMISSION.json} & Final-document build, references, assets, numeric checks, and rerun software verification.\\\addlinespace
+\path{docs/final_report/notes/evidence_snapshot.json} & Compact numeric snapshot and SHA-256 source register generated from retained results.\\
+\bottomrule
+\end{longtable}
+\end{ReportTable}
+
+\section{Reproduction Commands and Their Meaning}
+Run the following commands from the project root using the prepared environment.
+Unit tests do not require starting the web service. JavaScript tests use Node.js
+for development; Node.js is not an inference-runtime dependency.
+
+\begin{lstlisting}
+.venv\Scripts\python.exe -m unittest discover -s tests -v
+node --test tests/frontend_selection.test.cjs tests/frontend_demo_catalog.test.cjs tests/frontend_admin_auth.test.cjs tests/frontend_catalog_backup.test.cjs
+\end{lstlisting}
+
+The evidence audit checks saved results and current file overlap without running
+model inference. The routing command freshly encodes its queries but reuses the
+existing original gallery vectors. The smoke command requires an already-running
+local service and its fixture; successful searches create normal telemetry in
+that service's database.
+
+\begin{lstlisting}
+.venv\Scripts\python.exe -m evaluation.audit_evidence
+.venv\Scripts\python.exe -m evaluation.compare_category_routing
+.venv\Scripts\python.exe tools\smoke_local_app.py --url http://127.0.0.1:8013 --output evaluation/cache/local_smoke.json
+\end{lstlisting}
+
+The legacy \texttt{benchmark.py}, \texttt{compare\_sam2.py}, and
+\texttt{final\_test.py} scripts can reuse existence-based caches. Running them
+without a deliberate cache/provenance protocol is not equivalent to reproducing
+the original execution state or measuring a new application baseline. Preserve
+the original artifacts when preparing a new controlled study.
+
+\section{Selected Artifact Fingerprints}
+The original application FAISS index has SHA-256:
+\begin{quote}\small\path{2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac}\end{quote}
+The retained SigLIP2 and SAM2.1 weight-file fingerprints are, respectively:
+\begin{quote}\small
+\path{612923381c76ec5a9bed335d1c48827e3f2e506ac31b044b63b2031fadee6a0b}\par
+\path{2012733a0de5d03efd1bba550a2847c4551be9ef2e0d497c83074df66189f780}
+\end{quote}
+The local runtime ZIP reconstructed from its 28 parts has SHA-256:
+\begin{quote}\small\path{dd713d933cb3395e754ce607ef33bfd0fabdc7105c92cc4d846b4c4075975f0c}\end{quote}
+These values identify specific files, not accuracy estimates or a guarantee
+about independently downloaded resources. A new intentional artifact revision
+must have its own fingerprint and accompanying verification record.
+
+\section{Document Production and Editable Materials}
+The source document is \path{docs/final_report/main.tex}. Shared names and
+environment facts are in \texttt{config/project.tex} and \texttt{config/facts.tex}.
+Chapters, diagram sources, appendices, BibTeX records, and the evidence-generation
+script are separate editable files. Numeric tables and two vector plots are
+generated from the retained results by \texttt{generate\_evidence.py}. The PDF
+is built from these sources with numbered, linked citations and automatic lists.
+
+The cover uses the previously approved conceptual artwork and original university
+logo. Its illustration was generated with image-generation assistance and is
+not a screenshot of the application. Body screenshots were captured from the
+actual isolated application during the final-report checks. The composite is
+an existing evaluation fixture; its source images are from the clothing dataset.
+No screenshot is presented as a newly collected customer photograph or as proof
+of aggregate accuracy. Signature and stamp spaces remain blank for the actual
+university approval process.

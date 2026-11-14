@@ -4,3 +4,6 @@ frontend/assets/vendor/** -text
 evaluation/reviewed_identity_reverse_points.json -text whitespace=cr-at-eol
 evaluation/results/reviewed_identity_reverse_protocol.json -text whitespace=cr-at-eol
 evaluation/results/reviewed_reverse_sam_pilot.sealed_points.json -text whitespace=cr-at-eol
+# PDF cross-reference offsets require byte-for-byte storage, including ReportLab
+# PDFs whose first bytes may look like text to Git's automatic detection.
+*.pdf binary

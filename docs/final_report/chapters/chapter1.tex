@@ -134,7 +134,7 @@ separate from the research dataset, model checkpoints, and administrator account
 The application runs on the team's computer through a local browser connection.
 Table~\ref{tab:scope} summarises the main boundaries.
 
-\begin{table}[!htbp]
+\begin{table}[H]
   \centering
   \caption{Implemented scope and deferred capabilities}
   \label{tab:scope}
@@ -170,7 +170,7 @@ environment in which the application has been exercised, not a measured minimum
 specification. GPU acceleration is used for neural inference when CUDA is
 available. The installed FAISS package performs vector search on the CPU.
 
-\begin{table}[!htbp]
+\begin{table}[H]
   \centering
   \caption{Verified local presentation environment}
   \label{tab:hardware}
@@ -205,7 +205,7 @@ and FastAPI with Uvicorn serves the application. The frontend uses HTML, CSS, an
 JavaScript, while SQLite stores the added-product collection and account data.
 Table~\ref{tab:software} identifies the main responsibilities.
 
-\begin{table}[!htbp]
+\begin{table}[H]
   \centering
   \caption{Principal software components}
   \label{tab:software}
@@ -302,11 +302,11 @@ not support adopting a change.
 
 Git records the application source and presentation releases. The current
 documentation uses \texttt{\ApplicationRelease} as its implementation reference.
-Table~\ref{tab:milestones} summarises the work packages at the time of this
-chapter's preparation. Completed implementation and recorded experiments are
-distinguished from the remaining submission work.
+Table~\ref{tab:milestones} summarises the project work packages. The implemented
+application and recorded experiments form the basis of this report; other
+academic presentation materials are separate deliverables.
 
-\begin{table}[!htbp]
+\begin{table}[H]
   \centering
   \caption{Project work packages and current status}
   \label{tab:milestones}
@@ -320,21 +320,17 @@ distinguished from the remaining submission work.
     M3 & Shared preprocessing, category controls, and query preview & Implemented \\ \addlinespace
     M4 & Product editing, local administrator access, backup, and restore & Implemented \\ \addlinespace
     M5 & Functional verification and reviewed identity pilot & Recorded \\ \addlinespace
-    M6 & LaTeX report and chapter review & In progress \\ \addlinespace
-    M7 & Final presentation, poster, brochure, video, and submission review & Pending \\
+    M6 & Editable LaTeX report, figures, references, and verification & Prepared \\ \addlinespace
+    M7 & Presentation, poster, brochure, and video & Separate deliverables \\
     \bottomrule
   \end{tabularx}
   \endgroup
 \end{table}
 
 \FloatBarrier
-The remaining academic materials will be derived from the same verified scope
-and evidence. The university's announced discussion period is 4--7 November
-2026. Document preparation proceeds chapter by chapter so that terminology,
-references, diagrams, and results can be reviewed before the report is submitted
-for supervisor and faculty approval. Later feedback may require revisions to the
-report or a separately tested application change.
-
-This chapter has established the intended users, retrieval problem, implemented
-scope, operating environment, and principal limits. The next chapter reviews
-the literature supporting the encoder, segmentation, and retrieval choices.
+The academic materials use the same implementation scope and evidence.
+This report contains the introduction, literature review, research methodology,
+system analysis, system design, implementation and evaluation, and conclusions,
+followed by operational and evidence appendices. Formal approval is recorded on
+the signature pages after the relevant university reviewers sign them. Later
+feedback can be incorporated through the editable source files.

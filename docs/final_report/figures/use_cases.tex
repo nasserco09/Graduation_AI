@@ -1,0 +1,14 @@
+\begin{tikzpicture}[x=1cm,y=1cm]
+\node[reportbox,text width=2cm] (visitor) at (-5.1,2.8) {Visitor};
+\node[reportbox,text width=2cm] (admin) at (5.1,-2) {Local administrator};
+\node[reportbox,ellipse,text width=5.1cm] (search) at (0,3.5) {Search either catalogue};
+\node[reportbox,ellipse,text width=5.1cm] (select) at (0,1.8) {Select / refine / preview a garment};
+\node[reportbox,ellipse,text width=5.1cm] (feedback) at (0,0.1) {Inspect results and provide feedback};
+\node[reportbox,ellipse,text width=5.1cm] (manage) at (0,-1.6) {Create, edit, and delete products};
+\node[reportbox,ellipse,text width=5.1cm] (backup) at (0,-3.3) {Export, preview, restore, and recover};
+\node[reportbox,ellipse,text width=5.1cm] (account) at (0,-5) {Manage local account and reindex};
+\node[draw=UniversityBlue!50,dashed,fit=(search)(select)(feedback)(manage)(backup)(account),inner sep=5mm,
+ label={[font=\small]above:Local visual-search application}] {};
+\draw (visitor)--(search);\draw (visitor)--(select);\draw (visitor)--(feedback);
+\draw (admin)--(manage);\draw (admin)--(backup);\draw (admin)--(account);
+\end{tikzpicture}

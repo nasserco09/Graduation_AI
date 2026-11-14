@@ -1,0 +1,17 @@
+\begin{tikzpicture}[x=1cm,y=1cm]
+\foreach \x/\name in {0/Browser,4/FastAPI,8/Model services,12/Gallery index} {
+ \node[reportbox,text width=2.25cm,font=\small] at (\x,0) {\name};
+ \draw[dashed,black!45] (\x,-0.5)--(\x,-9);
+}
+\draw[reportarrow] (0,-1)--node[above,font=\scriptsize]{image + point labels}(4,-1);
+\draw[reportarrow] (4,-1.9)--node[above,font=\scriptsize]{validated SAM2 input}(8,-1.9);
+\draw[reportarrow] (8,-2.8)--node[above,font=\scriptsize]{mask, overlay, cutout}(4,-2.8);
+\draw[reportarrow] (4,-3.6)--node[above,font=\scriptsize]{selection preview}(0,-3.6);
+\node[reportnote,text width=3cm] at (0,-4.3) {User refines or accepts};
+\draw[reportarrow] (0,-5)--node[above,font=\scriptsize]{accepted query + category}(4,-5);
+\draw[reportarrow] (4,-5.8)--node[above,font=\scriptsize]{preprocess + SigLIP2}(8,-5.8);
+\draw[reportarrow] (8,-6.6)--node[above,font=\scriptsize]{normalised vector}(4,-6.6);
+\draw[reportarrow] (4,-7.3)--node[above,font=\scriptsize]{exact ranking / category filter}(12,-7.3);
+\draw[reportarrow] (12,-8.1)--node[above,font=\scriptsize]{ranked images and metadata}(4,-8.1);
+\draw[reportarrow] (4,-8.9)--node[above,font=\scriptsize]{results + query hash}(0,-8.9);
+\end{tikzpicture}

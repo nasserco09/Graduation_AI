@@ -13,6 +13,7 @@
 *.synctex.gz
 *.toc
 /build/
+/build_submission/
 # Earlier design drafts are preserved locally; only the current cover is published.
 /frontmatter/outline.tex
 /images/approved_cover.jpg

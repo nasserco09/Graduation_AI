@@ -1,0 +1,13 @@
+{
+  "checked_at_utc": "2026-11-14T09:40:39.690876+00:00",
+  "repository_url": "https://github.com/nasserco09/Graduation_AI",
+  "visibility": "public",
+  "default_branch": "feature/frontend-v2",
+  "anonymous_api_status": 200,
+  "anonymous_web_status": 200,
+  "user_authorized_public_access": true,
+  "history_scan_commits": 39,
+  "history_scan_blobs": 456,
+  "high_confidence_credential_findings": 0,
+  "runtime_upload": "in progress; only published after every part digest matches"
+}

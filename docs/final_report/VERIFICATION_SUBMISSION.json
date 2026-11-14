@@ -1,0 +1,321 @@
+{
+  "schema_version": "1.0",
+  "document_status": "submission",
+  "completed_at_utc": "2026-11-12T21:18:15.209108+00:00",
+  "completed_local_date": "2026-11-13",
+  "application_verification_date": "2026-11-12",
+  "application_release": "v1.2.0-rc.9",
+  "source_reference": {
+    "branch": "feature/frontend-v2",
+    "commit_before_document_edits": "ab530ea8959742aa816fb1c89c682c88d2464b3a",
+    "commit_or_push_performed": false
+  },
+  "document": {
+    "title": "Visual Fashion Product Search Using Interactive Segmentation",
+    "team": [
+      "Nasser Yousef",
+      "Noor Yousef",
+      "Naeem Basalma"
+    ],
+    "supervisor": "Dr. Ayman Alsabri",
+    "pdf": "preview/AI_Visual_Product_Search_Submission_2026.pdf",
+    "pdf_sha256": "396e236374686754f8fd4d284bbe4a41b4008ae5e120ea40eda5bcfc38ae8a9b",
+    "bytes": 2472077,
+    "pages": 81,
+    "chapters": 7,
+    "appendices": 2,
+    "numbered_figures": 14,
+    "numbered_tables": 16,
+    "bibliography_sources": 18,
+    "interactive_citation_destinations": 18,
+    "editable_native_diagrams": [
+      "shared preprocessing",
+      "local architecture",
+      "use cases",
+      "search activity",
+      "segmentation and search sequence",
+      "service classes",
+      "product and photo ERD",
+      "physical administrator/session schema",
+      "search-event and feedback ERD"
+    ],
+    "signatures_and_stamp": "Intentionally blank for genuine university approval."
+  },
+  "pdf_validation": {
+    "engine": "Tectonic 0.17.0 (XeTeX and BibTeX)",
+    "cached_compilation_passed": true,
+    "all_81_pages_visually_reviewed": true,
+    "visual_review_method": "Rendered contact sheets of all pages plus enlarged critical diagrams, tables, front matter, references and the revised chart.",
+    "internal_links": 180,
+    "unresolved_internal_links": [],
+    "outline_entries": 80,
+    "invalid_outline_entries": [],
+    "labels": 49,
+    "duplicate_labels": [],
+    "unresolved_source_refs": [],
+    "missing_build_assets": [],
+    "unicode_replacement_characters": 0,
+    "empty_text_pages": [],
+    "text_outside_page": [],
+    "bad_latex_log_lines": [],
+    "unembedded_fonts": [],
+    "all_reference_urls_http_200": true,
+    "reference_urls": [
+      {
+        "url": "https://www.cv-foundation.org/openaccess/content_cvpr_2016/html/Liu_DeepFashion_Powering_Robust_CVPR_2016_paper.html",
+        "status": 200,
+        "final_url": "https://www.cv-foundation.org/openaccess/content_cvpr_2016/html/Liu_DeepFashion_Powering_Robust_CVPR_2016_paper.html"
+      },
+      {
+        "url": "https://arxiv.org/abs/2502.14786",
+        "status": 200,
+        "final_url": "https://arxiv.org/abs/2502.14786"
+      },
+      {
+        "url": "https://arxiv.org/abs/2408.00714",
+        "status": 200,
+        "final_url": "https://arxiv.org/abs/2408.00714"
+      },
+      {
+        "url": "https://github.com/facebookresearch/sam2",
+        "status": 200,
+        "final_url": "https://github.com/facebookresearch/sam2"
+      },
+      {
+        "url": "https://arxiv.org/abs/1702.08734",
+        "status": 200,
+        "final_url": "https://arxiv.org/abs/1702.08734"
+      },
+      {
+        "url": "https://github.com/facebookresearch/faiss/wiki/Faiss-indexes",
+        "status": 200,
+        "final_url": "https://github.com/facebookresearch/faiss/wiki/Faiss-indexes"
+      },
+      {
+        "url": "https://github.com/alexeygrigorev/clothing-dataset-small",
+        "status": 200,
+        "final_url": "https://github.com/alexeygrigorev/clothing-dataset-small"
+      },
+      {
+        "url": "https://arxiv.org/abs/1901.07973",
+        "status": 200,
+        "final_url": "https://arxiv.org/abs/1901.07973"
+      },
+      {
+        "url": "https://arxiv.org/abs/1512.03385",
+        "status": 200,
+        "final_url": "https://arxiv.org/abs/1512.03385"
+      },
+      {
+        "url": "https://proceedings.mlr.press/v97/tan19a.html",
+        "status": 200,
+        "final_url": "https://proceedings.mlr.press/v97/tan19a.html"
+      },
+      {
+        "url": "https://proceedings.mlr.press/v139/radford21a.html",
+        "status": 200,
+        "final_url": "https://proceedings.mlr.press/v139/radford21a.html"
+      },
+      {
+        "url": "https://arxiv.org/abs/2304.07193",
+        "status": 200,
+        "final_url": "https://arxiv.org/abs/2304.07193"
+      },
+      {
+        "url": "https://huggingface.co/google/siglip2-base-patch16-224",
+        "status": 200,
+        "final_url": "https://huggingface.co/google/siglip2-base-patch16-224"
+      },
+      {
+        "url": "https://huggingface.co/facebook/sam2.1-hiera-base-plus",
+        "status": 200,
+        "final_url": "https://huggingface.co/facebook/sam2.1-hiera-base-plus"
+      },
+      {
+        "url": "https://fastapi.tiangolo.com/",
+        "status": 200,
+        "final_url": "https://fastapi.tiangolo.com/"
+      },
+      {
+        "url": "https://www.sqlite.org/transactional.html",
+        "status": 200,
+        "final_url": "https://www.sqlite.org/transactional.html"
+      },
+      {
+        "url": "https://argon2-cffi.readthedocs.io/en/stable/parameters.html",
+        "status": 200,
+        "final_url": "https://argon2-cffi.readthedocs.io/en/stable/parameters.html"
+      },
+      {
+        "url": "https://doi.org/10.1017/CBO9780511809071",
+        "status": 200,
+        "final_url": "https://www.cambridge.org/highereducation/books/introduction-to-information-retrieval/669D108D20F556C5C30957D63B5AB65C"
+      }
+    ],
+    "other_latex_engines_or_overleaf_tested": false
+  },
+  "software_verification": {
+    "python_tests": {
+      "passed": 197,
+      "failed": 0,
+      "log_sha256": "d10272f0e1de08b7357780a3d13beaff69ba2e912a2d2a3faff5252fdbd8d7fa"
+    },
+    "javascript_tests": {
+      "passed": 43,
+      "failed": 0,
+      "log_sha256": "8660bc2ff990284bb316f2d32fafedec7eeacec15b865a97d431f883d727e8f7"
+    },
+    "evidence_audit": {
+      "passed": 55,
+      "failed": 0,
+      "scope": "saved_artifact_consistency_and_current_byte_level_split_audit_not_fresh_inference",
+      "result_sha256": "dd6aa66c7c19134c7d6b9d734c083d32aa8e9bc5b1662085e2f5b527504cf740"
+    },
+    "http_integration": {
+      "passed": 32,
+      "failed": 0,
+      "device": "cpu",
+      "actual_models": true,
+      "result_sha256": "5e82e860e08c4c4d1688deb527c33a6069fb2d65c2d0f605b2f2808307fa09fc"
+    },
+    "administrator_integration": {
+      "passed": 15,
+      "failed": 0,
+      "scope": "isolated_copy_only_no_owner_data_changes",
+      "result_sha256": "ce662753aad9b6ec3dbe021d6d941c1d6b6fe33f453e1598b192181c56048eec"
+    },
+    "browser": {
+      "verified_at_utc": "2026-11-12T20:40:26.836370+00:00",
+      "isolated_application_copy": true,
+      "core_code_matches_working_copy": true,
+      "host": "localhost",
+      "port": 8013,
+      "device": "cpu",
+      "browser": "in-app browser",
+      "observed_steps": [
+        "fixture upload",
+        "full-image search",
+        "positive-point SAM2 segmentation",
+        "cutout preview",
+        "explicit selection acceptance",
+        "selected-query search",
+        "query byte hash verification",
+        "local test administrator sign-in",
+        "management page",
+        "product editor open and cancel",
+        "logout"
+      ],
+      "limits": [
+        "No new general retrieval-accuracy claim.",
+        "No owner-product database was edited.",
+        "No complete manual-gesture or multi-device rerun."
+      ],
+      "screenshots": {
+        "ui_admin.png": "7fef16f23736bd52e3628275188f052ed93454817b2b552dedaef56f8fd992b7",
+        "ui_full_search.png": "41c720f1fc2dc1d3ddc49204a6ff59b8b57788bfc217e57b64892783c880238c",
+        "ui_product_editor.png": "0620d0eee54e51e917d027e92544e17612b71bfc908238195372aa78bac036e5",
+        "ui_sam_selection.png": "779eb958cd8c1b0b7693a383fec22bb3ab23bcadf32166f46f84842b03df1fb9",
+        "ui_selected_search.png": "84fe3a6b472b3a7c360e3e972761f15f359c273d28e3b0cbf64ba92c5d1e9fe0"
+      }
+    },
+    "owner_databases_and_environment_unchanged": true,
+    "test_counts_are_not_retrieval_accuracy": true
+  },
+  "research_interpretation": {
+    "gallery_images": 3068,
+    "validation_images": 341,
+    "test_images": 372,
+    "embedding_dimensions": 768,
+    "historical_synthetic_test": "100 composites; category Top-1 46% full image, 75% SAM2 selection. Not exact-product accuracy or a fresh rerun.",
+    "separate_validation_composites": "100 composites; category Top-1 48% to 80%. Not pooled with historical test.",
+    "application_aligned_clean_test": "372 queries; category Top-1 92.20% all categories to 96.24% automatic category. A separate protocol.",
+    "identity_pilot": "Seven selected reviewed groups, not 14 independent products. Reverse full/SAM2 tied at 7/7. No general 100% accuracy claim.",
+    "retained_original_index": true,
+    "no_neural_model_finetuning_claim": true
+  },
+  "source_package": {
+    "archive_name": "AI_Visual_Product_Search_LaTeX_Submission_2026.zip",
+    "root_folder": "AI_Visual_Product_Search_LaTeX_Submission_2026",
+    "all_build_dependencies_included": true,
+    "requires_models_or_dataset_to_compile": false,
+    "rebuilding_generated_evidence_requires_repository_results_and_dataset": true,
+    "payload_sha256_excluding_verification_record": {
+      "README_AR.md": "41348e78e3a8f4a68c48d4b4b85a36a7d5da5596e489ad913d853b301035dab0",
+      "appendices/evidence.tex": "ec71ea5a1648291db85d02a116b942775e847f13a164d30ee2e33c228c712ef2",
+      "appendices/operations.tex": "bb39f612fd3a460d17519b70bf24ef9d334fc97134cf49b4dcf9ebc4bccda17d",
+      "build_report.ps1": "a6a30cd874ea6a5983d25cf8e2036072491b4c3358b8beed450cb3d011bf1eb2",
+      "build_review.ps1": "de7b01ce56e61105ec5ceff89d0bee7759e66912670ee0f55fb6b3a7c23de73f",
+      "chapters/chapter1.tex": "0a71fbfa41cd37e44d21c6e10bf13f38c13fe4881fc85f67c6df27292addd94c",
+      "chapters/chapter2.tex": "20d9c98acc0adfb6e0ebcc14b8887f88bfa7274588e0485036dbc5381e3f558a",
+      "chapters/chapter3.tex": "91024227334d42493289449c16a01d54ae764c3057228096f990e04adace0fc7",
+      "chapters/chapter4.tex": "bb82732571043ec179ad8dbe6dcd2157f5680e39862399f5db6b3f01b35fee68",
+      "chapters/chapter5.tex": "1767945624c1c45e1521aab67a68dbd745ec1662606d220265d6ef7dbb46226a",
+      "chapters/chapter6.tex": "f9d18b24d76fe6b574dd6398b80e82cb9d837f39fb2f11123c4293da71023b3c",
+      "chapters/chapter7.tex": "c9a252fa88eecfd78ad1b75d719be7fa95ad6db679365856a8007c6380dd0c33",
+      "config/facts.tex": "b6436aa01251b6f9c6a79252a6b87bfdce8dbe273738277e57f118d3192b7037",
+      "config/layout.tex": "df732866e6331d25ad2fadc8f5ff85f71ae8a6b6464e86f60124d79df1a03067",
+      "config/project.tex": "d55756688db1350f3e2b389fb6145c29a2589236e656cf2852626046380a58bd",
+      "figures/architecture.tex": "9874103e040a8093130ce991ce90bc6ae4991d271a1f6feb75cbabc6576b2ab2",
+      "figures/auth_schema.tex": "58a9aaf6613db893ac04d23a25f311e0ba9c57b443783098d44d0427feb89383",
+      "figures/components.tex": "cdc7166d9fa8fa1d978511ac3c58c522c5db63e99043450e808eff2dfadf1d8c",
+      "figures/monitoring_er.tex": "c59475b4bab0c8ddd05ae8ddbb89cfd7295d90239d3a12a4087243f103a2a2a9",
+      "figures/product_er.tex": "ae62fd2c24015b01a640caab22d42489cbcd9954f24cab108cf4e68098012533",
+      "figures/search_activity.tex": "1aad1538e18917c1c1fdc110295dce2b01b253bb3deacdce10ded294084a00de",
+      "figures/search_sequence.tex": "9ed49a57d45b71cf947058d8017f5dd340dcb537be382e591ea9f949fb307328",
+      "figures/use_cases.tex": "27240c8ce26e4742b42d4ecd9e4e26a01808c431c573c87ae38a7596999354a8",
+      "frontmatter/abbreviations.tex": "4753d823c6be5bea7728bf1121d88d9f38443ddc7bd3ab8c249fa259ce22fe2b",
+      "frontmatter/abstract.tex": "0c5ad7dc404c916a5852f40d1004622b03fd31342b5a87313d1408fada787051",
+      "frontmatter/acknowledgements.tex": "089fefa30267ad9e0e0b2848219feb5a7e5d0f419d983baa4c0051d6ec12893d",
+      "frontmatter/approval.tex": "f83f5c893f1e6a4043aa793550d7e25591b44ff41c9d03ebbf9013adffaf35ac",
+      "frontmatter/cover.tex": "7db3adc3e0ef771814aa46ba70bc81a07d80e65a5fbb811850a8d6c18db21a90",
+      "frontmatter/declaration.tex": "d77721d20d12efbad688b6f9479037887fbf581449637c4ae37fc9ead25c75e7",
+      "generate_evidence.py": "ef063e3b8741313204679494bacca539c2784452e3f3e500407121eb55f2f54f",
+      "images/category_routing.pdf": "f103bf08fed048c1f6ccb142426567fcc59c3e3c56f6180ac93e47f74f9f3832",
+      "images/composite_query.jpg": "fef8dcf25b347fa37848a9dc847918e304b30c55203f4b187da361178f49d123",
+      "images/historical_sam2.pdf": "6ff9d438ab6181f770db364c849f6b1dcbacffba5def418c9b326b260366f79e",
+      "images/search_interface_v3.png": "4417edc03435ab9eda6353312a6d368f6b435687454aa6230d7d50e3b0de6cfc",
+      "images/selected_garment.png": "39f2f743a3e93423453f5905ed2dca17e5b39b9729040e65659fa5ac72e0c7c0",
+      "images/ui_admin.png": "7fef16f23736bd52e3628275188f052ed93454817b2b552dedaef56f8fd992b7",
+      "images/ui_full_search.png": "41c720f1fc2dc1d3ddc49204a6ff59b8b57788bfc217e57b64892783c880238c",
+      "images/ui_product_editor.png": "0620d0eee54e51e917d027e92544e17612b71bfc908238195372aa78bac036e5",
+      "images/ui_selected_search.png": "84fe3a6b472b3a7c360e3e972761f15f359c273d28e3b0cbf64ba92c5d1e9fe0",
+      "images/university_logo.png": "4144c33c21a7f1822de8056d17ee5b4140a085b61b0322140a0427a753495b95",
+      "main.tex": "8dab333ecf1ad7473690f4ae121248f803b408d9efc003ffaaf3fba93caa7e61",
+      "notes/SUBMISSION_SOURCES_AR.md": "b22419dd0801799207d84258c01f5399dc30045c14b3a7945235a663b18adf28",
+      "notes/evidence_snapshot.json": "8e12b35dc3efef9da90e64c7ab9b6f00c2094ce9711d105b4b0c6a398cc42b37",
+      "preview/AI_Visual_Product_Search_Submission_2026.pdf": "396e236374686754f8fd4d284bbe4a41b4008ae5e120ea40eda5bcfc38ae8a9b",
+      "references/references.bib": "ad7d91e71e2ca4c6f7e1e00d9978935ac7901cd822edd053ef922d974d856832",
+      "tables/cropping.tex": "4030c019413986dd3c65c762a9b06cfe956411a56493d371d81feb95b0caa50d",
+      "tables/dataset.tex": "53389e7e0f4fe4e8fd6362a95cfa1071fea6d44b453abe03fa369b8acff6711f",
+      "tables/encoders.tex": "0a6b9fe3683a2f789ee01d1601127f58b5b858ec7b3c9d50a05ac917d46c1359",
+      "tables/historical_test.tex": "bdf7098970144070871328b9d48caabb3209ec03070fed11ece68958ae78894a",
+      "tables/routing.tex": "88d313628506423f564820f9e9fdf0a6f356a183a6e96e62d45cdc35c66472db"
+    },
+    "standalone_validation": {
+      "passed": true,
+      "checked_at_utc": "2026-11-12T21:17:39.402758+00:00",
+      "engine": "Tectonic 0.17.0, cached packages",
+      "method": "Extracted actual ZIP and executed its build_report.ps1 with Tectonic on PATH.",
+      "independent_output_directory": true,
+      "uses_application_models_or_dataset_to_build": false,
+      "compiled_payload_files_match_packaged_sha256": 50,
+      "pages": 81,
+      "pixel_identical_pages": 81,
+      "different_text_pages": [],
+      "different_rendered_pages": [],
+      "interactive_citation_destinations": 18,
+      "bad_latex_log_lines": [],
+      "canonical_pdf_sha256": "396e236374686754f8fd4d284bbe4a41b4008ae5e120ea40eda5bcfc38ae8a9b",
+      "rebuilt_pdf_sha256": "225c5c93c02c50c786bed968f5ba181cceba0c097e1e0c60c148faf11a5581ae",
+      "metadata_note": "PDF timestamps/IDs may differ; all page pixels and extracted text are equal."
+    }
+  },
+  "publication": {
+    "github_runtime_upload": "stopped_by_user_incomplete",
+    "upload_resumed": false
+  },
+  "remaining_external_steps": [
+    "Genuine university signatures and stamp.",
+    "Poster, brochure, final slides, and video are separate deliverables."
+  ]
+}

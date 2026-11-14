@@ -1,0 +1,106 @@
+\chapter{Operating Guide and API Reference}
+\label{app:operations}
+
+\section{Local Presentation Startup}
+The reference installation requires the prepared project directory, its Python
+environment, both active model directories, original-gallery images, metadata,
+and matching FAISS index. On the team's machine, open \texttt{Start\_Demo.cmd}
+or its existing desktop shortcut. The launcher checks required assets, uses
+the local checkpoints, configures reviewed groups when available, and opens
+the browser only after the readiness check succeeds. The normal local address
+is \url{http://127.0.0.1:8000/}.
+
+Keep the server process running during the demonstration. If an unrelated or
+unready service occupies the port, the launcher reports that condition rather
+than stopping another process. The health response should identify
+\texttt{clothing\_small\_train}, 3,068 indexed images, and a ready index. The
+reported search and segmentation devices can be CPU or CUDA according to the
+machine's available inference environment.
+
+\section{Visitor Walkthrough}
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.45em]
+ \item Choose an image, then select the original gallery or the added-product source.
+ \item Search the complete image when it already expresses the intended garment.
+ \item For SAM2, place positive points inside the garment and negative points on
+ unwanted regions. Inspect the mask and cutout, add points if needed, then accept it.
+ \item Alternatively, use a rectangle, polygon, or freehand region and inspect
+ the resulting query.
+ \item Choose automatic category, a supported explicit category, or unrestricted
+ search, and select the result count.
+ \item Submit the query. Inspect the returned candidates and, for the original
+ gallery, the query-hash verification and category information. A similar item
+ is not necessarily the same commercial product.
+\end{enumerate}
+
+\section{Product Administration and Recovery}
+Open product management and use the local administrator account. A fresh
+installation requires the operator to create their own account; the system has
+no default credentials. Add a product with 1--5 photos of that product, choose
+descriptive fields, and save. Editing supports photo replacement and ordering,
+a cover choice, and availability. An unavailable product remains manageable
+but is excluded from added-catalogue search. Refresh the list before retrying
+a stale-save or stale-delete conflict.
+
+Use export to keep an independent backup. To restore, choose a compatible ZIP,
+inspect the validated counts, and confirm only when the replacement is intended.
+Preview alone does not replace products. A recovery copy is written before
+confirmed replacement and can be downloaded from the automatic-recovery list.
+Retain copies outside the working project directory as appropriate for the
+operator's local backup practice. This backup covers added products, photos,
+and vectors, not model files, the original gallery, or administrator credentials.
+
+\section{Principal API Contracts}
+\begin{ReportTable}
+\begin{longtable}{@{}L{0.48\linewidth}L{0.44\linewidth}@{}}
+\caption{Principal implemented API routes}\label{tab:api-reference}\\
+\toprule\textbf{Method and route}&\textbf{Purpose and access}\\\midrule\endfirsthead
+\toprule\textbf{Method and route}&\textbf{Purpose and access, continued}\\\midrule\endhead
+\texttt{GET} \path{/api/health} & Public runtime readiness and active gallery information.\\\addlinespace
+\texttt{GET} \path{/api/categories} & Public category keys and labels.\\\addlinespace
+\texttt{GET} \path{/api/catalog/validation} & Public gallery-to-metadata validation.\\\addlinespace
+\texttt{POST} \path{/api/segment} & Public multipart image, point array, and binary labels. Returns overlay and white-background cutout.\\\addlinespace
+\texttt{POST} \path{/api/search} & Public original-gallery query. Multipart image, search mode, category; query parameters include result count and reviewed grouping.\\\addlinespace
+\texttt{POST} \path{/api/demo-catalog/search} & Public added-product search, returning available products and routing information.\\\addlinespace
+\texttt{GET / POST} \path{/api/demo-catalog/products} & Authenticated listing or product creation; protected writes also require CSRF.\\\addlinespace
+\texttt{PUT} \path{/api/demo-catalog/products/{id}/content} & Authenticated combined details/photo save with expected revision.\\\addlinespace
+\texttt{DELETE} \path{/api/demo-catalog/products/{id}} & Authenticated delete with expected revision.\\\addlinespace
+\texttt{GET} \path{/api/demo-catalog/products/backup} & Authenticated export of the added catalogue.\\\addlinespace
+\texttt{POST} \path{/api/demo-catalog/products/restore/preview} & Authenticated backup validation and session-bound preview.\\\addlinespace
+\texttt{POST} \path{/api/demo-catalog/products/restore} & Authenticated confirmation with a preview token.\\\addlinespace
+\texttt{GET} \path{/api/demo-catalog/products/backups} & Authenticated recovery-archive list.\\\addlinespace
+\texttt{GET} \path{/api/auth/session} & Account/session state; authenticated responses provide CSRF.\\\addlinespace
+\texttt{POST} \path{/api/auth/setup} & First local account setup; refuses an already configured account.\\\addlinespace
+\texttt{POST} \path{/api/auth/login} & Credential verification and opaque session issuance.\\\addlinespace
+\texttt{POST} \path{/api/auth/logout} & Protected session revocation.\\\addlinespace
+\texttt{POST} \path{/api/auth/password} & Protected password change and session invalidation.\\\addlinespace
+\texttt{POST} \path{/api/reindex} & Administrator-only original-gallery index rebuild.\\\addlinespace
+\texttt{POST} \path{/api/feedback} & Public feedback associated with an original-gallery search identifier.\\\addlinespace
+\texttt{GET} \path{/api/monitoring/summary} & Administrator-only local search summary.\\
+\bottomrule
+\end{longtable}
+\end{ReportTable}
+
+Invalid image/search fields produce HTTP 400. Authentication, origin/CSRF, and
+stale-write failures use 401, 403, and 409, respectively. Framework parsing may
+reject malformed requests earlier. The live \texttt{/docs} schema provides
+additional route details.
+
+\section{Runtime Distribution}
+The runtime package includes the active application, local frontend assets,
+SigLIP2 and SAM2.1, and the original gallery, metadata, and FAISS index. Unused
+checkpoints, development environments, evaluation-query partitions, accounts,
+user products, and telemetry are excluded. Run \texttt{Setup\_Runtime.cmd} with
+Python 3.12 on Windows x86\_64. Installing dependencies needs internet or compatible
+local wheels; Python and wheels are not bundled.
+
+The verified ZIP is 1,815,578,390 bytes, split into 28 parts of at most 64 MiB.
+Download all parts together with \path{parts_manifest.json},
+\path{assemble_runtime.py}, and \path{Assemble_Runtime.cmd}.
+Assembly verifies every part and the original ZIP hash. Extract the ZIP into
+a new directory, run setup, then the launcher. Local reassembly passed; the
+recorded network transfer was stopped before complete publication.
+
+Source: \url{https://github.com/nasserco09/Graduation_AI}, branch
+\texttt{feature/frontend-v2}, tag \texttt{\ApplicationRelease}.
+Repository access is required. Large runtime assets are separate; their complete
+GitHub publication is not claimed.

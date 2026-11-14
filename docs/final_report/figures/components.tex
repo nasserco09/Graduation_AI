@@ -1,0 +1,36 @@
+\begin{tikzpicture}[node distance=11mm]
+\node[reportbox,text width=5.6cm,align=left] (engine) {
+ \textbf{SearchEngine}\\\rule{5.3cm}{0.3pt}\\
+ index; image paths; catalogue vectors\\
+ \rule{5.3cm}{0.3pt}\\\texttt{encode\_image}, \texttt{search}\\
+ \texttt{load\_index}, \texttt{build\_index}};
+\node[reportbox,text width=5.6cm,align=left,right=of engine] (segmenter) {
+ \textbf{Segmenter}\\\rule{5.3cm}{0.3pt}\\
+ SAM2 processor; model; device\\
+ \rule{5.3cm}{0.3pt}\\\texttt{segment}\\
+ mask selection and cutout encoding};
+\node[reportbox,text width=5.6cm,align=left,below=of engine] (catalogue) {
+ \textbf{DemoCatalog}\\\rule{5.3cm}{0.3pt}\\
+ product/photo database; encoder signature\\
+ \rule{5.3cm}{0.3pt}\\\texttt{add}, \texttt{save}, \texttt{delete}\\
+ \texttt{search\_with\_routing}};
+\node[reportbox,text width=5.6cm,align=left,below=of segmenter] (backups) {
+ \textbf{CatalogBackups}\\\rule{5.3cm}{0.3pt}\\
+ store reference; session-bound previews\\
+ \rule{5.3cm}{0.3pt}\\\texttt{export}, \texttt{preview}, \texttt{restore}\\
+ recovery archive listing};
+\node[reportbox,text width=5.6cm,align=left,below=of catalogue] (auth) {
+ \textbf{AdminAuth}\\\rule{5.3cm}{0.3pt}\\
+ account/session database; hasher; clock\\
+ \rule{5.3cm}{0.3pt}\\\texttt{setup}, \texttt{login}, \texttt{session}\\
+ \texttt{logout}, \texttt{change\_password}};
+\node[reportbox,text width=5.6cm,align=left,below=of backups] (observe) {
+ \textbf{SearchObservability}\\\rule{5.3cm}{0.3pt}\\
+ independent telemetry database\\
+ \rule{5.3cm}{0.3pt}\\\texttt{record\_search}, \texttt{record\_feedback}\\
+ summary and failure-case reporting};
+\draw[reportarrow,dashed] (backups.west)--node[above,font=\scriptsize]{uses}(catalogue.east);
+\node[reportnote,text width=12.3cm,below=8mm of $(auth.south)!0.5!(observe.south)$] {
+ FastAPI route handlers compose these services; arrows indicate dependencies, not inheritance.
+ The added-catalogue encoder callback uses SearchEngine's fixed image encoder.};
+\end{tikzpicture}

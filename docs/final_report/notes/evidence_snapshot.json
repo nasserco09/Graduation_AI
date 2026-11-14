@@ -1,0 +1,530 @@
+{
+  "FINAL_TEST_RESULTS": {
+    "protocol": {
+      "gallery_split": "train",
+      "final_query_split": "test",
+      "gallery_count": 3068,
+      "test_query_count": 372,
+      "multi_product_query_count": 100,
+      "model": "SigLIP2",
+      "segmentation_model": "SAM2.1 Hiera Base Plus"
+    },
+    "clean_test": {
+      "precision_at_1": 0.9086021505376344,
+      "precision_at_5": 0.8897849462365591,
+      "precision_at_10": 0.870967741935484,
+      "map_at_10": 0.8253777308414405,
+      "mrr_at_10": 0.9448060675883255
+    },
+    "multi_product_full_image": {
+      "precision_at_1": 0.46,
+      "precision_at_5": 0.41800000000000004,
+      "precision_at_10": 0.403,
+      "map_at_10": 0.2949170634920635,
+      "mrr_at_10": 0.594718253968254
+    },
+    "multi_product_sam2": {
+      "precision_at_1": 0.75,
+      "precision_at_5": 0.7479999999999998,
+      "precision_at_10": 0.725,
+      "map_at_10": 0.6802607142857142,
+      "mrr_at_10": 0.7913611111111112
+    },
+    "sam2_effect": {
+      "improved_queries": 39,
+      "worsened_queries": 10,
+      "unchanged_queries": 51,
+      "precision_at_1_delta": 0.29
+    }
+  },
+  "safe_crop_catalog_ab": {
+    "schema_version": "1.0",
+    "created_at_utc": "2026-09-26T21:52:30.995102+00:00",
+    "experiment": "original_vs_safe_crop_vs_validation_tuned_hybrid",
+    "evidence_scope": "category_level_retrieval_not_exact_product_identity",
+    "protocol": {
+      "gallery_count": 3068,
+      "validation_split_usage": "hybrid_weight_selection_only",
+      "test_split_usage": "final_comparison_only",
+      "hybrid_safe_weight": 0.1,
+      "hybrid_original_weight": 0.9,
+      "hybrid_weight_candidates": [
+        {
+          "safe_weight": 0.0,
+          "original_weight": 1.0,
+          "precision_at_1": 0.920821,
+          "map_at_10": 0.849331
+        },
+        {
+          "safe_weight": 0.1,
+          "original_weight": 0.9,
+          "precision_at_1": 0.929619,
+          "map_at_10": 0.8512
+        },
+        {
+          "safe_weight": 0.2,
+          "original_weight": 0.8,
+          "precision_at_1": 0.929619,
+          "map_at_10": 0.8505
+        },
+        {
+          "safe_weight": 0.3,
+          "original_weight": 0.7,
+          "precision_at_1": 0.929619,
+          "map_at_10": 0.84904
+        },
+        {
+          "safe_weight": 0.4,
+          "original_weight": 0.6,
+          "precision_at_1": 0.929619,
+          "map_at_10": 0.850237
+        },
+        {
+          "safe_weight": 0.5,
+          "original_weight": 0.5,
+          "precision_at_1": 0.923754,
+          "map_at_10": 0.848206
+        },
+        {
+          "safe_weight": 0.6,
+          "original_weight": 0.4,
+          "precision_at_1": 0.923754,
+          "map_at_10": 0.845927
+        },
+        {
+          "safe_weight": 0.7,
+          "original_weight": 0.3,
+          "precision_at_1": 0.917889,
+          "map_at_10": 0.842862
+        },
+        {
+          "safe_weight": 0.8,
+          "original_weight": 0.2,
+          "precision_at_1": 0.920821,
+          "map_at_10": 0.839976
+        },
+        {
+          "safe_weight": 0.9,
+          "original_weight": 0.1,
+          "precision_at_1": 0.914956,
+          "map_at_10": 0.83722
+        },
+        {
+          "safe_weight": 1.0,
+          "original_weight": 0.0,
+          "precision_at_1": 0.906158,
+          "map_at_10": 0.83388
+        }
+      ],
+      "bootstrap_samples": 10000,
+      "random_seed": 42,
+      "preprocessing_version": "visual-search-rgb-square-v1",
+      "crop_version": "content-preserving-crop-full-v1"
+    },
+    "cache_reused": {
+      "gallery_original": false,
+      "gallery_safe_crop": false,
+      "validation_queries": false,
+      "clean_test_queries": false,
+      "multi_product_full": false,
+      "multi_product_selected": false
+    },
+    "suites": {
+      "clean_test": {
+        "query_count": 372,
+        "original": {
+          "precision_at_1": 0.922043,
+          "precision_at_5": 0.896774,
+          "precision_at_10": 0.877419,
+          "map_at_10": 0.83484,
+          "mrr_at_10": 0.951504,
+          "hit_at_1": 0.922043,
+          "hit_at_5": 0.991935,
+          "hit_at_10": 0.997312,
+          "query_count": 372
+        },
+        "safe_crop": {
+          "precision_at_1": 0.927419,
+          "precision_at_5": 0.891935,
+          "precision_at_10": 0.874462,
+          "map_at_10": 0.834085,
+          "mrr_at_10": 0.953084,
+          "hit_at_1": 0.927419,
+          "hit_at_5": 0.986559,
+          "hit_at_10": 0.997312,
+          "query_count": 372
+        },
+        "hybrid": {
+          "precision_at_1": 0.919355,
+          "precision_at_5": 0.893548,
+          "precision_at_10": 0.87957,
+          "map_at_10": 0.837495,
+          "mrr_at_10": 0.949222,
+          "hit_at_1": 0.919355,
+          "hit_at_5": 0.989247,
+          "hit_at_10": 0.997312,
+          "query_count": 372
+        },
+        "safe_crop_vs_original": {
+          "delta_top1": 0.005376,
+          "bootstrap_95_ci": [
+            -0.021505,
+            0.032258
+          ],
+          "improved_queries": 14,
+          "worsened_queries": 12,
+          "unchanged_queries": 346,
+          "mcnemar_exact_p": 0.845019
+        },
+        "hybrid_vs_original": {
+          "delta_top1": -0.002688,
+          "bootstrap_95_ci": [
+            -0.016129,
+            0.008065
+          ],
+          "improved_queries": 2,
+          "worsened_queries": 3,
+          "unchanged_queries": 367,
+          "mcnemar_exact_p": 1.0
+        },
+        "query_details_csv": "evaluation\\results\\safe_crop_catalog_ab_clean_test_queries.csv"
+      },
+      "multi_product_full": {
+        "query_count": 100,
+        "original": {
+          "precision_at_1": 0.48,
+          "precision_at_5": 0.428,
+          "precision_at_10": 0.397,
+          "map_at_10": 0.310067,
+          "mrr_at_10": 0.595913,
+          "hit_at_1": 0.48,
+          "hit_at_5": 0.72,
+          "hit_at_10": 0.81,
+          "query_count": 100
+        },
+        "safe_crop": {
+          "precision_at_1": 0.43,
+          "precision_at_5": 0.432,
+          "precision_at_10": 0.407,
+          "map_at_10": 0.31264,
+          "mrr_at_10": 0.561885,
+          "hit_at_1": 0.43,
+          "hit_at_5": 0.74,
+          "hit_at_10": 0.79,
+          "query_count": 100
+        },
+        "hybrid": {
+          "precision_at_1": 0.49,
+          "precision_at_5": 0.42,
+          "precision_at_10": 0.396,
+          "map_at_10": 0.311904,
+          "mrr_at_10": 0.595079,
+          "hit_at_1": 0.49,
+          "hit_at_5": 0.71,
+          "hit_at_10": 0.8,
+          "query_count": 100
+        },
+        "safe_crop_vs_original": {
+          "delta_top1": -0.05,
+          "bootstrap_95_ci": [
+            -0.11025,
+            0.01
+          ],
+          "improved_queries": 3,
+          "worsened_queries": 8,
+          "unchanged_queries": 89,
+          "mcnemar_exact_p": 0.226562
+        },
+        "hybrid_vs_original": {
+          "delta_top1": 0.01,
+          "bootstrap_95_ci": [
+            0.0,
+            0.03
+          ],
+          "improved_queries": 1,
+          "worsened_queries": 0,
+          "unchanged_queries": 99,
+          "mcnemar_exact_p": 1.0
+        },
+        "query_details_csv": "evaluation\\results\\safe_crop_catalog_ab_multi_product_full_queries.csv"
+      },
+      "multi_product_selected": {
+        "query_count": 100,
+        "original": {
+          "precision_at_1": 0.76,
+          "precision_at_5": 0.76,
+          "precision_at_10": 0.742,
+          "map_at_10": 0.70039,
+          "mrr_at_10": 0.811778,
+          "hit_at_1": 0.76,
+          "hit_at_5": 0.88,
+          "hit_at_10": 0.91,
+          "query_count": 100
+        },
+        "safe_crop": {
+          "precision_at_1": 0.78,
+          "precision_at_5": 0.764,
+          "precision_at_10": 0.737,
+          "map_at_10": 0.683454,
+          "mrr_at_10": 0.833095,
+          "hit_at_1": 0.78,
+          "hit_at_5": 0.92,
+          "hit_at_10": 0.93,
+          "query_count": 100
+        },
+        "hybrid": {
+          "precision_at_1": 0.76,
+          "precision_at_5": 0.766,
+          "precision_at_10": 0.747,
+          "map_at_10": 0.704485,
+          "mrr_at_10": 0.813944,
+          "hit_at_1": 0.76,
+          "hit_at_5": 0.88,
+          "hit_at_10": 0.91,
+          "query_count": 100
+        },
+        "safe_crop_vs_original": {
+          "delta_top1": 0.02,
+          "bootstrap_95_ci": [
+            -0.03,
+            0.08
+          ],
+          "improved_queries": 5,
+          "worsened_queries": 3,
+          "unchanged_queries": 92,
+          "mcnemar_exact_p": 0.726562
+        },
+        "hybrid_vs_original": {
+          "delta_top1": 0.0,
+          "bootstrap_95_ci": [
+            -0.03,
+            0.03
+          ],
+          "improved_queries": 1,
+          "worsened_queries": 1,
+          "unchanged_queries": 98,
+          "mcnemar_exact_p": 1.0
+        },
+        "query_details_csv": "evaluation\\results\\safe_crop_catalog_ab_multi_product_selected_queries.csv"
+      }
+    },
+    "decision": {
+      "primary_suite": "multi_product_selected",
+      "statistically_supported_hybrid_gain": false,
+      "production_switch_authorized": false,
+      "recommended_next_action": "keep_original_and_review_paired_failures_before_any_switch",
+      "reason": "The paired held-out evidence does not yet prove a hybrid improvement."
+    },
+    "experimental_index": {
+      "active_index_changed": false,
+      "faiss": "data\\experiments\\safe_crop_catalog_v1\\catalog_safe_crop_siglip2.faiss",
+      "mapping": "data\\experiments\\safe_crop_catalog_v1\\catalog_safe_crop_siglip2_paths.json"
+    }
+  },
+  "category_routing_comparison": {
+    "schema_version": "1.0",
+    "created_at_utc": "2026-10-06T15:15:52.632377+00:00",
+    "evidence_scope": "fresh_category_level_query_inference_against_current_original_index",
+    "protocol": {
+      "gallery_count": 3068,
+      "preprocessing": "application_SearchEngine",
+      "threshold_tuned": false,
+      "production_behavior_changed": false
+    },
+    "artifacts": {
+      "data/catalog_siglip2.faiss": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+      "data/catalog_siglip2_paths.json": "6f8c7ed06ea7dc032d2a3e68e53df602690b7c410706b2cc31529a8d4e9dcdb3",
+      "models/siglip2_base/config.json": "fe8b5fe6d5734360678fd71c11c21e1ea3364bd8598d34295d9206335973ffd7",
+      "models/siglip2_base/model.safetensors": "612923381c76ec5a9bed335d1c48827e3f2e506ac31b044b63b2031fadee6a0b"
+    },
+    "suites": {
+      "validation": {
+        "query_count": 341,
+        "unrestricted_top1": 0.9208211143695014,
+        "auto_top1": 0.9472140762463344,
+        "auto_vs_unrestricted": {
+          "delta_top1": 0.026393,
+          "bootstrap_95_ci": [
+            0.0,
+            0.052786
+          ],
+          "improved_queries": 15,
+          "worsened_queries": 6,
+          "unchanged_queries": 320,
+          "mcnemar_exact_p": 0.078354
+        }
+      },
+      "test": {
+        "query_count": 372,
+        "unrestricted_top1": 0.9220430107526881,
+        "auto_top1": 0.9623655913978495,
+        "auto_vs_unrestricted": {
+          "delta_top1": 0.040323,
+          "bootstrap_95_ci": [
+            0.013441,
+            0.067204
+          ],
+          "improved_queries": 21,
+          "worsened_queries": 6,
+          "unchanged_queries": 345,
+          "mcnemar_exact_p": 0.005925
+        }
+      }
+    },
+    "limitations": [
+      "Category correctness does not establish exact product identity.",
+      "The existing catalog vectors are reused; query vectors are freshly encoded.",
+      "Multi-product and real-user photos require a separate evaluation."
+    ]
+  },
+  "reviewed_identity_pilot": {
+    "schema_version": "1.0",
+    "scope": "purposive_reviewed_visual_identity_held_out_view_pilot",
+    "created_at_utc": "2026-10-24T14:15:47.855218+00:00",
+    "query_encoding": "fresh_application_siglip2_cpu",
+    "gallery_vectors": "reused_original_index_vectors_filtered_in_memory",
+    "original_catalog_count": 3068,
+    "gallery_count": 3061,
+    "query_count": 7,
+    "excluded_gallery_images": 7,
+    "split_protocol": {
+      "query_selection": "first member in approved manifest, fixed before inference",
+      "all_queries_removed_globally": true,
+      "byte_and_decoded_pixel_aliases_removed": true,
+      "category_centroids": "recomputed only from retained gallery",
+      "identity_labels": "previous user visual review, not verified merchant SKU",
+      "ambiguous_pairs_excluded_before_inference": {
+        "reviewed-6956fcc37d755f30": "Black dress: same-capture crop/resize cannot be ruled out.",
+        "reviewed-b979d9c9d47ef8b1": "Turquoise shirt: near-identical scene; capture independence uncertain.",
+        "reviewed-3b6dd17e8aa592e1": "Patterned skirt: same-capture crop/resize cannot be ruled out.",
+        "reviewed-922cc744b35df0e6": "Grey shirt: near-identical scene; capture independence uncertain.",
+        "reviewed-ae53edb87e6b1a33": "Black shirt: blur/reframing; independent capture uncertain."
+      }
+    },
+    "artifacts": {
+      "data/catalog_siglip2.faiss": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+      "data/catalog_siglip2_paths.json": "6f8c7ed06ea7dc032d2a3e68e53df602690b7c410706b2cc31529a8d4e9dcdb3",
+      "data/reviewed_product_groups.json": "4dabd9042af385110a581cd15959a4103dd50884cb22984eefffd28e6b5607d5",
+      "data/catalog_metadata_train.json": "fcdf2f6c5155737a24f5cc352fce6ed615df621367195fce30dcab2d5de25a69",
+      "models/siglip2_base/config.json": "fe8b5fe6d5734360678fd71c11c21e1ea3364bd8598d34295d9206335973ffd7",
+      "models/siglip2_base/model.safetensors": "612923381c76ec5a9bed335d1c48827e3f2e506ac31b044b63b2031fadee6a0b"
+    },
+    "elapsed_seconds": 38.959,
+    "suites": {
+      "auto": {
+        "metrics": {
+          "query_count": 7,
+          "reviewed_identity_top1": 1.0,
+          "reviewed_identity_top5": 1.0,
+          "reviewed_identity_top10": 1.0,
+          "reviewed_identity_mrr_at10": 1.0
+        }
+      },
+      "all": {
+        "metrics": {
+          "query_count": 7,
+          "reviewed_identity_top1": 1.0,
+          "reviewed_identity_top5": 1.0,
+          "reviewed_identity_top10": 1.0,
+          "reviewed_identity_mrr_at10": 1.0
+        }
+      }
+    },
+    "sam_comparison": {
+      "status": "pending_pre_result_selection_points_or_new_photos",
+      "measured": false
+    },
+    "production_index_or_routing_changed": false,
+    "limitations": [
+      "Seven purposively selected reviewed groups do not establish general accuracy.",
+      "These are existing catalog photos held out for this pilot, not newly collected consumer images.",
+      "Visual identity judgments are not verified SKU identity; unseen equivalent products may be unlabelled.",
+      "No independent test set or SAM2 accuracy improvement is claimed.",
+      "MRR is truncated at rank 10; all/auto use exactly the same retained gallery."
+    ]
+  },
+  "reviewed_reverse_sam_pilot": {
+    "schema_version": "1.0",
+    "scope": "reviewed_reverse_view_assistant_point_sam2_pilot",
+    "created_at_utc": "2026-10-24T14:30:41.295512+00:00",
+    "protocol_sha256": "5e7857dac1fce2c130a5672dc3c95f52112aef43ecc73b435649395559c3f579",
+    "points_sha256": "82ca3747a06cf76ee4ca6d96f497d5ce99e0f12a544da0502e912af45b4da8f5",
+    "selection_author": "assistant_visual_review",
+    "points_selected_before_reverse_results": true,
+    "points_refined_after_results": false,
+    "query_count": 7,
+    "gallery_count": 3061,
+    "gallery_protocol": "all seven reverse queries and byte/pixel aliases removed globally; centroids recomputed from retained gallery only",
+    "query_encoding": "fresh application SigLIP2 CPU, both full and SAM2 cutouts",
+    "sam2": "live local application /api/segment with sealed points",
+    "routing": "auto for both modes, same gallery",
+    "artifacts": {
+      "data/catalog_siglip2.faiss": "2bcd025a6e14a8a5d4f368274de7ebdf70e5b39fba60bcf3dedfa42fe2284eac",
+      "data/catalog_siglip2_paths.json": "6f8c7ed06ea7dc032d2a3e68e53df602690b7c410706b2cc31529a8d4e9dcdb3",
+      "data/reviewed_product_groups.json": "4dabd9042af385110a581cd15959a4103dd50884cb22984eefffd28e6b5607d5",
+      "data/catalog_metadata_train.json": "fcdf2f6c5155737a24f5cc352fce6ed615df621367195fce30dcab2d5de25a69",
+      "models/siglip2_base/config.json": "fe8b5fe6d5734360678fd71c11c21e1ea3364bd8598d34295d9206335973ffd7",
+      "models/siglip2_base/model.safetensors": "612923381c76ec5a9bed335d1c48827e3f2e506ac31b044b63b2031fadee6a0b"
+    },
+    "suites": {
+      "full": {
+        "metrics": {
+          "query_count": 7,
+          "reviewed_identity_top1": 1.0,
+          "reviewed_identity_top5": 1.0,
+          "reviewed_identity_top10": 1.0,
+          "reviewed_identity_mrr_at10": 1.0
+        }
+      },
+      "sam2": {
+        "metrics": {
+          "query_count": 7,
+          "reviewed_identity_top1": 1.0,
+          "reviewed_identity_top5": 1.0,
+          "reviewed_identity_top10": 1.0,
+          "reviewed_identity_mrr_at10": 1.0
+        }
+      }
+    },
+    "sam2_vs_full_top1": {
+      "delta_top1": 0.0,
+      "bootstrap_95_ci": [
+        0.0,
+        0.0
+      ],
+      "improved_queries": 0,
+      "worsened_queries": 0,
+      "unchanged_queries": 7,
+      "mcnemar_exact_p": 1.0
+    },
+    "sam2_failure_count": 0,
+    "production_index_or_routing_changed": false,
+    "limitations": [
+      "Seven purposive visual-identity groups; not general accuracy or merchant SKU verification.",
+      "Reverse views reuse the same reviewed product groups as the forward pilot; not an independent test set.",
+      "These are existing catalog captures held out within the pilot, not newly collected consumer photos.",
+      "Points were chosen visually by the assistant before reverse results, not by the user; masks were not human approved.",
+      "No point refinement after results or failed-case dropping; a failure stays in the SAM2 denominator.",
+      "MRR is truncated at rank 10; this does not replace the older category-only experiment."
+    ]
+  },
+  "source_hashes": {
+    "evaluation/results/category_routing_comparison.json": "7bbc6f6a7aa752e4d88bcf8f79eaf44f1031fd5c026f586b592407f72c2ae12c",
+    "evaluation/results/clip.json": "f7bc57df38d019f80c3e8f4fb28db4a6fd5c960074924194d03be60eb4a05db3",
+    "evaluation/results/dataset_identity_audit.json": "d9bb2ea038fb0b2b783726419a5a3d0db1d9d66dd98c36b209004f13f4bc7a3b",
+    "evaluation/results/dinov2.json": "bcc128401f75ae07fd9c529c86248298feab8726388b28261fa07402473166cc",
+    "evaluation/results/efficientnet_b3.json": "8442d4474d187ddfba313876f2a37f60e7e2ff7c4cfbc2ba5c4e14679e65fc90",
+    "evaluation/results/evidence_audit.json": "42601a8006f3495f737effd73f5dc86682df5b5b5a9e34e200127dcbfd82f8d1",
+    "evaluation/results/FINAL_TEST_RESULTS.json": "d0dc39a545b455cd38a2ea71b25061e1e1fe2bf6cdbe5c38290561aba2a1dfa4",
+    "evaluation/results/local_smoke.json": "f7fb26b028c48a23b5b2800a47d68bc13250bc07c2b6b5b7c83f5716bcaaeca4",
+    "evaluation/results/resnet50.json": "4800164480ad7a15fdcec518bf94a87d378ca5fa1317ae887727c9335f91e6e4",
+    "evaluation/results/reviewed_identity_pilot.json": "e5f53725bc48143654066c23c8bc4ccb67f0261dca32144a46cf274cceda122f",
+    "evaluation/results/reviewed_identity_reverse_protocol.json": "5e7857dac1fce2c130a5672dc3c95f52112aef43ecc73b435649395559c3f579",
+    "evaluation/results/reviewed_reverse_sam_pilot.json": "faac6997d39b56bc46e9abf2b4a5083208dd13df573ff442151bb5e71a05d122",
+    "evaluation/results/reviewed_reverse_sam_pilot.sealed_points.json": "82ca3747a06cf76ee4ca6d96f497d5ce99e0f12a544da0502e912af45b4da8f5",
+    "evaluation/results/safe_crop_catalog_ab.json": "e35ff93c99a5a0a7971c895050145898bf3b48f81606b82e195d4a71f75a07e7",
+    "evaluation/results/sam2_vs_full.json": "c9b94afef3752b62be5742fc2dc2d8357106e5b022678545b75cb0790709fe86",
+    "evaluation/results/siglip2.json": "f0ed1c56e933e96abfc00cb6c3a30ef1281fba2c1fee95ce4e5c60c3aa6a1b8f",
+    "evaluation/results/uncertain_category_replay.json": "8e857ac4c59b3a62fe3eff02b88c72ec74fb3984486ba1ac29d3cb9c66ae16c1"
+  }
+}

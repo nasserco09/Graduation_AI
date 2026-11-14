@@ -1,0 +1,107 @@
+\chapter{Conclusion and Future Work}
+\label{ch:conclusion}
+
+\section{Conclusion}
+The project produced a local visual fashion search application in which a user
+can search a full photograph or communicate the intended garment through
+interactive selection. SAM2.1 supplies point-guided cutouts, SigLIP2 supplies
+fixed image representations, FAISS ranks normalised vectors, and FastAPI
+connects those services to an inspectable browser workflow. An original
+3,068-image research gallery and an independent managed-product catalogue
+serve complementary experimental and practical roles.
+
+The central finding is conditional rather than universal. The retained synthetic
+test records a category Top-1 increase from 46\% to 75\% when the target garment
+is selected, under its historical 100-query protocol. A different,
+application-aligned clean-query comparison records a category Top-1 increase
+from 92.20\% to 96.24\% on 372 test queries with automatic category filtering.
+These results support the usefulness of target communication and category
+control within their stated tasks. They do not establish exact-SKU accuracy or
+general consumer-photo performance.
+
+The seven-group identity pilot demonstrates retrieval of the reviewed alternate
+views under explicit query exclusion, but its full-image and SAM2 reverse
+conditions tie. Catalogue cropping lacks sufficient consistent benefit to
+replace the original index. Keeping those conclusions distinct is part of the
+project's contribution: a working application is accompanied by an account of
+what its evidence does and does not support.
+
+\section{Achievements Against the Objectives}
+The research objectives were addressed by comparing five pretrained encoders,
+retaining separate selection and routing experiments, evaluating a candidate
+gallery transformation, and reporting a reviewed identity pilot with explicit
+limits. The deployed encoder was selected from the local comparison, while an
+unsupported gallery change was not promoted.
+
+The application objectives were addressed through full-image, SAM2, and manual
+selection; accepted-query preview; selectable catalogue and category controls;
+product CRUD with multiple photographs and availability; local administrator
+protection; and backup, restore, and recovery. Final-report unit, JavaScript,
+HTTP, administration, and evidence checks passed within their recorded scope.
+The editable report connects these functions to requirements, architecture,
+data structures, and results.
+
+\section{Difficulties and Lessons Learned}
+Several difficulties shaped the final design. A segmentation model may capture
+only part of a garment, making multiple positive and negative points and manual
+fallbacks necessary. Fine-grained visual resemblance is not fully represented
+by a category label. Catalogue images can repeat products without providing
+verified commercial identities. Comparing cached experiments with different
+preprocessing can create apparently contradictory percentages unless their
+protocols are separated.
+
+Data administration introduced its own requirements: photograph updates must
+remain consistent with vectors; stale editors must not replace newer content;
+and restore must preserve a recoverable previous state. Runtime distribution
+also requires checkpoints, images, an index, and dependencies in addition to
+source code. A failed large-file transfer motivated locally verified split
+packaging, while publication remains a separate delivery operation.
+
+\section{Prioritised Future Work}
+\subsection{Verified Identities and Realistic Evaluation}
+The first research priority is a catalogue with trustworthy product identities
+and independently captured query views. Merchant-supplied SKU relationships or
+a benchmark with defined cross-view identity annotations should be split by
+the intended product/capture protocol before experimentation. Real multi-garment
+customer-like images should accompany clean product photographs. Independent
+judgments of shape, colour, and pattern resemblance can complement exact-identity
+labels when alternative products are acceptable.
+
+\subsection{Evidence-Based Ranking Improvements}
+After establishing that evaluation set, compare the existing baseline against
+candidate fine-grained reranking or domain adaptation. Any fusion of colour,
+texture, global embeddings, or crop representations should be selected on
+development data and tested once on held-out queries. The original index and
+scoring path should remain available as a baseline. Similarity thresholds for
+``no confident match'' require calibration against known present and absent
+products rather than an arbitrary percentage.
+
+\subsection{Selection Quality and User Experience}
+A dedicated mask study should use independently annotated garment masks and
+measure overlap and failure cases separately from retrieval. An evaluated
+user study can measure task completion, refinement effort, and time to a useful
+result. Further work may reduce repeated segmentation cost, improve small-item
+selection, and evaluate the interface on multiple devices. These changes should
+preserve the final-query preview and explicit acceptance that make errors visible.
+
+\subsection{Store Deployment and Maintainability}
+For a single store, the current managed catalogue provides a starting point.
+Broader deployment would require server hardening, HTTPS, measured concurrency,
+durable storage operations, and a consistent revision policy across all write
+routes. A city-wide service additionally needs explicit store ownership,
+seller roles, product-location/contact metadata, and controls for each store's
+data. Payment and ordering would be separate requirements rather than assumed
+extensions of image search.
+
+The added catalogue currently constructs its exact index for each search.
+If measured catalogue growth makes this costly, a versioned persistent index
+or a suitable approximate search structure can be evaluated. Such a change
+should preserve product-level aggregation and the separation of research and
+managed data.
+
+\section{Recommendation}
+Use the current application as the documented local search baseline, complete
+its runtime delivery when the connection permits, and prioritise trustworthy
+evaluation data before adding more ranking complexity. Retain the original
+gallery index until a controlled comparison supports a replacement. Subsequent
+changes can then be assessed against a clear software and research reference.

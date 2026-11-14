@@ -1,0 +1,62 @@
+{
+  "pdf_sha256": "82c0dcae7fed5f66de377e9925b12bb24764daa10fdecce55c7de218fa7c29b5",
+  "pages": 1,
+  "width_mm": 2499.9998575846353,
+  "height_mm": 1399.9999891493053,
+  "scale": "1:1",
+  "fonts_embedded": [
+    {
+      "name": "AAAAAA+Arial-BoldMT",
+      "embedded_bytes": 48644
+    },
+    {
+      "name": "AAAAAA+ArialMT",
+      "embedded_bytes": 65796
+    }
+  ],
+  "text_outside_page": [],
+  "replacement_characters": 0,
+  "unsupported_reference_claims_present": false,
+  "qr_target": "https://github.com/nasserco09/Graduation_AI",
+  "clickable_pdf_links": [
+    "https://github.com/nasserco09/Graduation_AI"
+  ],
+  "live_vector_text": true,
+  "vector_geometry_and_qr": true,
+  "proof_pixels": [
+    5000,
+    2800
+  ],
+  "visual_review_complete": true,
+  "qr_decode_verified": true,
+  "visual_review_scope": "Complete final poster, header, left column, workflow, interface, results, QR and footer",
+  "qr_validation": {
+    "passed": true,
+    "decoded_from": "QR rendered from final PDF, including quiet zone",
+    "target": "https://github.com/nasserco09/Graduation_AI",
+    "sizes": [
+      {
+        "scale": 0.25,
+        "decoded_url": "https://github.com/nasserco09/Graduation_AI",
+        "passed": true
+      },
+      {
+        "scale": 0.4,
+        "decoded_url": "https://github.com/nasserco09/Graduation_AI",
+        "passed": true
+      },
+      {
+        "scale": 0.7,
+        "decoded_url": "https://github.com/nasserco09/Graduation_AI",
+        "passed": true
+      },
+      {
+        "scale": 1.0,
+        "decoded_url": "https://github.com/nasserco09/Graduation_AI",
+        "passed": true
+      }
+    ]
+  },
+  "verified_at_utc": "2026-11-14T09:43:29.062365+00:00",
+  "github_anonymous_access_verified": true
+}

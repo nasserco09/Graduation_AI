@@ -1,9 +1,16 @@
-\usepackage[T1]{fontenc}
 \usepackage{iftex}
-\ifPDFTeX
-  \usepackage[utf8]{inputenc}
-\fi
 \usepackage{mathpazo}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else
+  \usepackage{fontspec}
+  \setmainfont{texgyrepagella-regular.otf}[
+    BoldFont=texgyrepagella-bold.otf,
+    ItalicFont=texgyrepagella-italic.otf,
+    BoldItalicFont=texgyrepagella-bolditalic.otf]
+  \setmonofont{lmmono10-regular.otf}
+\fi
 \usepackage[left=1.5in,right=1in,top=1in,bottom=1in,headheight=16pt]{geometry}
 \usepackage{graphicx}
 \usepackage{eso-pic}
@@ -13,14 +20,25 @@
 \usepackage{enumitem}
 \usepackage{booktabs}
 \usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,shapes.geometric,calc}
+\usepackage{listings}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,skip=8pt}
+\usepackage{xurl}
 \newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \usepackage{placeins}
+\usepackage{float}
 \usepackage{xcolor}
 \definecolor{UniversityBlue}{HTML}{00588F}
 \usepackage[hidelinks,bookmarksnumbered,pdfencoding=auto]{hyperref}
 \hypersetup{
   pdftitle={Visual Fashion Product Search Using Interactive Segmentation},
-  pdfsubject={Graduation project chapter one review},
+  pdfsubject={Graduation project submission report},
+  pdfauthor={Nasser Yousef; Noor Yousef; Naeem Basalma},
   pdfcreator={LaTeX},
   pdfdisplaydoctitle=true
 }
@@ -31,7 +49,7 @@
 \displaywidowpenalty=10000
 \brokenpenalty=10000
 \setlength{\parindent}{1.3em}
-\setlength{\parskip}{0.2em}
+\setlength{\parskip}{0.1em}
 \setlength{\emergencystretch}{2em}
 \pagestyle{fancy}
 \fancyhf{}
@@ -63,3 +81,12 @@
   \end{minipage}\par
   \addvspace{1.9em}
 }
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,
+  keepspaces=true,frame=single,rulecolor=\color{black!20},
+  backgroundcolor=\color{black!2},showstringspaces=false,aboveskip=1em,belowskip=1em}
+\newenvironment{ReportTable}{\begingroup\small\setstretch{1.08}\renewcommand{\arraystretch}{1.16}}{\endgroup}
+\tikzset{reportbox/.style={draw=UniversityBlue!70,fill=UniversityBlue!5,rounded corners=2pt,
+  align=center,font=\small,minimum height=10mm,inner sep=5pt},
+  reportarrow/.style={-{Latex[length=2mm]},thick,draw=UniversityBlue!80},
+  storebox/.style={reportbox,fill=black!3,draw=black!50},
+  reportnote/.style={font=\footnotesize,align=center,text=black!75}}

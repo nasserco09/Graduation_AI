@@ -1,0 +1,35 @@
+\FrontChapter{Abstract}
+\begin{spacing}{1.15}
+Photographs containing several garments can obscure which item a user intends
+to find. This project develops a local visual fashion search application that
+combines interactive target selection with image retrieval. SAM2.1 generates
+cutouts from positive and negative point prompts, while manual selection provides
+alternatives. SigLIP2 encodes the accepted query into a normalised 768-dimensional
+vector, and FAISS performs exact inner-product ranking over 3,068 clothing images.
+A FastAPI backend serves the browser interface. A separate managed catalogue
+supports multiple product photographs, optional prices, availability, and backup
+and recovery, protected by one local administrator account.
+
+The study distinguishes category relevance, visual resemblance, and product
+identity. A retained historical experiment on 100 synthetic multi-garment test
+queries recorded category Top-1 of 46\% for complete images and 75\% after SAM2
+selection, a gain of 29 percentage points. This earlier pipeline is not presented
+as a fresh measurement of the final application. A separate application-aligned
+comparison recorded 92.20\% versus 96.24\% category Top-1 on 372 clean test images
+without and with automatic category filtering. Catalogue cropping did not justify
+replacing the original index. A selected seven-group identity pilot retrieved
+the reviewed targets first, but full-image and SAM2 queries tied in the reverse
+comparison; the sample does not establish general identity accuracy.
+
+The implemented system demonstrates an inspectable local search workflow with
+maintained product data and verified recovery operations. Its principal limits
+are catalogue coverage, category-based labels, selection quality, and the lack
+of an independent consumer-photo identity benchmark. Future work should
+prioritise verified identities, realistic multi-garment queries, and controlled
+fine-grained ranking comparisons.
+
+\vspace{0.6em}
+\noindent\textbf{Keywords:} visual search; fashion retrieval; interactive
+segmentation; SigLIP2; SAM2.1; FAISS; FastAPI.
+\end{spacing}
+\clearpage

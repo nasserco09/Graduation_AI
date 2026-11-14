@@ -1,0 +1,331 @@
+\chapter{Implementation, Testing and Evaluation}
+\label{ch:evaluation}
+
+\section{Introduction}
+This chapter connects the implemented application to functional verification and
+the retained retrieval experiments. The implementation reference is
+\texttt{\ApplicationRelease}. Application verification for this report was performed on
+\ReportVerificationDate. The original research index and the team's personal
+product and administrator databases were preserved. Historical retrieval
+experiments remain identified by their own query sets and processing pipelines.
+
+\section{Implementation}
+\subsection{Local Application Structure}
+The entry point \path{app.py} exposes the FastAPI application assembled in
+\path{backend/main.py}. Separate modules implement image preparation,
+request validation, metadata, retrieval, segmentation, local administration,
+product management, product grouping, monitoring, and backups. The browser uses
+local HTML, CSS, JavaScript, fonts, and icons. Models are loaded from the two
+prepared checkpoint directories rather than downloaded for each query.
+
+The backend environment uses Python 3.12.10, PyTorch 2.14.0+cu130, Transformers
+5.16.1, faiss-cpu 1.15.0, FastAPI 0.141.1, Uvicorn 0.52.4, NumPy 2.5.3, Pillow
+12.3.0, and argon2-cffi 25.1.0 in the verified installation. These are recorded
+environment versions, not an assertion that every future library release will
+be interchangeable with the checkpoints.
+
+\subsection{Query Handling and Result Presentation}
+The server validates uploaded image content and request fields before inference.
+The frontend displays the accepted image and submits it as a file. For
+original-gallery searches, the server returns the SHA-256 of the bytes received,
+allowing the browser to compare them with the submitted query. This verifies
+the request image contract; it does not certify that the chosen mask is the
+correct garment.
+
+Figures~\ref{fig:query-example} and~\ref{fig:result-screens} illustrate the actual
+workflow on a previously used composite fixture. The full image contains both
+a jacket and a dress. The example full-image search routed to outerwear, while
+the selected dress search routed to dresses. This is an illustration of target
+selection and working controls, not an additional independent retrieval study.
+The screenshots retain the application's Arabic interface and actual test
+results. Displayed percentages are similarity or catalogue-relative routing
+scores, not identity probabilities.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[c]{0.69\linewidth}\centering
+ \includegraphics[width=\linewidth]{images/composite_query.jpg}\par
+ \small Composite query: jacket and dress
+\end{minipage}\hfill
+\begin{minipage}[c]{0.27\linewidth}\centering
+ \includegraphics[height=4.5cm]{images/selected_garment.png}\par
+ \small Accepted SAM2 dress cutout
+\end{minipage}
+\caption{Actual query fixture and browser-produced cutout used for interface verification}
+\label{fig:query-example}
+\end{figure}
+
+\begin{figure}[p]\centering
+\includegraphics[width=\linewidth]{images/ui_full_search.png}\par\vspace{5mm}
+\includegraphics[width=\linewidth]{images/ui_selected_search.png}
+\caption{Observed result cards for the complete composite (top) and selected dress
+(bottom). This qualitative example demonstrates the interface, not general accuracy.}
+\label{fig:result-screens}
+\end{figure}
+
+\subsection{Managed Catalogue and Account Workflow}
+The product editor handles details and photographs together, including a cover
+choice and availability. Added products can be searched from the main interface
+with full-image, SAM2, or manual selection. A visitor does not need an account
+for these searches, while the management page and its write operations require
+the local administrator. Figures~\ref{fig:admin-screens} show the management
+and editor pages using an isolated test catalogue, not the team's personal data.
+
+The interface uses the revision-aware content-save route. The older metadata-only
+update endpoint also remains in the backend and does not carry the same expected
+revision parameter; the revision guarantee described here applies to the
+interface's combined content-save and revision-checked delete operations.
+Removing or aligning that legacy compatibility route is an API-hardening task
+before broader deployment.
+
+\begin{figure}[p]\centering
+\includegraphics[width=\linewidth]{images/ui_admin.png}\par\vspace{5mm}
+\includegraphics[width=\linewidth]{images/ui_product_editor.png}
+\caption{Actual management and product-editor screens with isolated documentation fixtures}
+\label{fig:admin-screens}
+\end{figure}
+
+\section{Functional Verification}
+\subsection{Automated Suites and Integration Checks}
+Table~\ref{tab:functional-verification} records the final-report verification.
+The Python count includes the existing application/evaluation tests and eight
+runtime-package boundary tests added after the earlier 189-test rc.9 record.
+The categories are separate suites; they are not summed into a model-accuracy
+denominator. Unit tests use controlled fixtures and mocks where appropriate,
+whereas the HTTP search checks exercise actual model inference.
+
+\begin{table}[H]\centering
+\caption{Verification executed for the report on \ReportVerificationDate}
+\label{tab:functional-verification}
+\begin{ReportTable}
+\begin{tabularx}{\linewidth}{@{}p{0.27\linewidth}r Y@{}}
+\toprule\textbf{Check set}&\textbf{Passed}&\textbf{Scope}\\\midrule
+Python unit suite & \PythonTestCount & Backend and evaluation contracts; includes package boundaries \\ \addlinespace
+JavaScript suite & \JavaScriptTestCount & Frontend selection, request state, administration, and backup logic \\ \addlinespace
+Live HTTP smoke & \HTTPTestCount & Real full-image/SAM2 retrieval, assets, metadata, and invalid requests \\ \addlinespace
+Isolated admin HTTP & \AdministrationTestCount & Login, CRUD, stale writes, added search, backup, restore, recovery, and logout \\ \addlinespace
+Saved-evidence audit & \EvidenceCheckCount & Numeric consistency, query CSV summaries, partition counts, and byte overlap \\
+\bottomrule
+\end{tabularx}
+\end{ReportTable}
+\end{table}
+
+The live checks used an independent application copy whose active Python and
+frontend files matched the current working copy byte-for-byte. It ran on CPU on
+a separate loopback port with its own product, account, and telemetry databases.
+The original persistent index was not rebuilt. Successful search responses
+included result images, the submitted-image digest, routing data, and no monitoring
+failure warning in the exercised requests.
+
+The 15 administration checks included an authorised product addition, retrieval
+from the added catalogue, combined editing, stale-save and stale-delete rejection,
+backup export, deletion of the newly created test product, preview and confirmed
+restore, recovery-copy availability, and logout. The application's existing
+backup unit tests cover additional malformed archives, invalid vectors, duplicate
+members, incompatible signatures, and failure paths. These tests support the
+implemented safeguards without establishing immunity to every possible fault.
+
+\subsection{Browser Observations}
+The in-app browser exercised fixture upload, full-image search, a visually placed
+SAM2 point, mask/cutout display, explicit selection acceptance, and selected-query
+search. The returned original-gallery query digests matched the submitted bytes.
+The test administrator signed in to the isolated catalogue, opened the product
+editor, cancelled it without saving, and signed out successfully.
+
+These browser observations verify the illustrated sequence. They are not a formal
+user-acceptance survey. Manual rectangle/polygon/freehand API modes were exercised
+using prepared crops in the HTTP suite; the final-report browser session did not
+repeat every drawing gesture, camera permission, paste operation, phone model,
+or browser. Earlier recorded browser checks covered those manual drawing
+gestures on their stated releases. No population-level usability score is claimed.
+
+\subsection{Traceability to Requirements}
+\begin{table}[H]\centering
+\caption{Requirement-to-evidence traceability}
+\label{tab:traceability}
+\begin{ReportTable}
+\begin{tabularx}{\linewidth}{@{}p{0.23\linewidth}Y@{}}
+\toprule\textbf{Requirements}&\textbf{Principal implementation and verification evidence}\\\midrule
+FR-01, FR-14 & Request validation, metadata/index checks, health endpoint, Python and HTTP suites \\ \addlinespace
+FR-02--FR-05 & Search/segment handlers, canvas and query preview, JavaScript tests, HTTP and illustrated browser workflow \\ \addlinespace
+FR-06, FR-07 & Catalogue-source/category controls, routing tests, added search and source-switch frontend tests \\ \addlinespace
+FR-08 & Administrator middleware, authentication tests, guest rejection, sign-in/sign-out checks \\ \addlinespace
+FR-09--FR-11 & Product API and management UI, CRUD/revision/availability tests, isolated admin HTTP checks \\ \addlinespace
+FR-12 & Backup validation/restore tests, recovery checks, isolated export-preview-restore sequence \\ \addlinespace
+FR-13 & Search-observability tests, returned query metadata, feedback validation and summary tests \\
+\bottomrule
+\end{tabularx}
+\end{ReportTable}
+\end{table}
+
+\section{Retrieval Results}
+\subsection{Historical Encoder Selection}
+Table~\ref{tab:encoder-results} presents the retained comparison on 341 validation
+queries against the same 3,068-image gallery. SigLIP2 has the highest recorded
+category P@1 and mAP@10 among these configurations and was selected for the
+application. These are historical cache-backed results; the encoder benchmark
+was not rerun during document preparation, and encoding-time fields of zero
+are not treated as real-time performance measurements.
+
+\begin{table}[H]\centering
+\caption{Retained five-encoder comparison: category relevance, 341 validation queries}
+\label{tab:encoder-results}
+\begin{ReportTable}\input{tables/encoders}\end{ReportTable}
+\end{table}
+
+SigLIP2's recorded P@1 is 91.50\%, compared with 87.39\% for DINOv2, 86.51\% for
+CLIP, 84.16\% for EfficientNet-B3, and 82.11\% for ResNet50. This supports the
+local selection but does not establish superiority for unseen stores, finer
+identity labels, or every checkpoint and preprocessing variant. The application-
+aligned routing experiment below uses a different preparation pipeline and must
+not be presented as another row of this same benchmark.
+
+\subsection{Historical Clean and Composite Test}
+The final retained test record uses 372 clean test queries and 100 synthetic
+two-garment composites as separate query sets. Table~\ref{tab:historical-test}
+contains the saved results. Clean test P@1 is 90.86\%. On the composite set,
+full-image P@1 is 46\% and selected-query P@1 is 75\%, a gain of 29 percentage
+points. Figure~\ref{fig:sam-historical} visualises only the paired 100-query
+composite comparison.
+
+\begin{table}[H]\centering
+\caption{Historical test results with category-based relevance}
+\label{tab:historical-test}
+\begin{ReportTable}\input{tables/historical_test}\end{ReportTable}
+\end{table}
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.96\linewidth]{images/historical_sam2.pdf}
+\caption{Recorded category Top-1 on 100 synthetic test composites, not exact-product accuracy}
+\label{fig:sam-historical}
+\end{figure}
+
+SAM2 corrected 39 previously incorrect first results, worsened 10, and left 51
+unchanged. Thus selection helped on balance but was not beneficial on every
+query. The historical validation-composite experiment recorded 48\% to 80\%
+on a different set of 100 images. Its 32-point gain and the test's 29-point gain
+are not competing versions of the same score and are not averaged together.
+
+These records support a qualified conclusion: under the synthetic category
+protocol, selecting the intended garment improved category retrieval compared
+with representing both panels together. They do not prove that the selected
+item's commercial identity was retrieved, nor do they measure the final
+application's current preprocessing on a fresh independently collected dataset.
+
+\subsection{Application-Aligned Category Routing}
+Table~\ref{tab:routing-results} and Figure~\ref{fig:routing-results} report the
+separate comparison using application-prepared query embeddings and the existing
+original-gallery vectors. Unrestricted and automatic search are paired on each
+clean query. On test, automatic routing increases category Top-1 from 92.20\%
+to 96.24\%; the gain is 4.03 percentage points after rounding the unrounded
+values.
+
+\begin{table}[H]\centering
+\caption{Application-aligned clean-query category filtering comparison}
+\label{tab:routing-results}
+\begin{ReportTable}\input{tables/routing}\end{ReportTable}
+\end{table}
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.96\linewidth]{images/category_routing.pdf}
+\caption{Category filtering on clean validation and test queries under one application-aligned protocol}
+\label{fig:routing-results}\end{figure}
+
+The test improvement involves 21 corrected and six worsened queries. Its saved
+paired 95\% bootstrap interval is $[1.34,6.72]$ percentage points, with exact
+McNemar $p=0.005925$. Validation improves by 2.64 points, with interval
+$[0.00,5.28]$ and $p=0.078354$. The validation result alone is not decisive at
+the conventional 0.05 threshold. These figures support the retained category
+filter for this clean-query task, with an explicit correction control for cases
+where the category is wrong.
+
+A later exploratory replay screened six fallback policies on the already observed
+341 validation queries. Its best observed change corrected only one additional
+query overall, from 323 to 324, with an interval including zero. The original
+gallery's production routing was therefore left unchanged. This replay is
+development analysis, not a new independent test or a justification for claiming
+that the original-gallery confidence is calibrated.
+
+\subsection{Catalogue Cropping and the Retained Baseline}
+Table~\ref{tab:crop-results} compares the original, candidate-crop, and
+90\%/10\% hybrid galleries within the cropping experiment. Original-index P@1
+on clean test is 92.20\%, while the crop candidate reaches 92.74\%. The gain of
+0.54 points has a paired interval of $[-2.15,3.23]$ points and $p=0.845019$.
+There is no reliable gain on this measure.
+
+\begin{table}[H]\centering
+\caption{Separate cropping experiment: category Top-1 within each query set}
+\label{tab:crop-results}
+\begin{ReportTable}\input{tables/cropping}\end{ReportTable}
+\end{table}
+
+For complete composites, cropping changes P@1 from 48\% to 43\%. For selected
+queries, it changes 76\% to 78\%, with an interval of $[-3,8]$ points that
+includes zero. The hybrid does not provide a consistent advantage across these
+sets. The decision is therefore to keep the original production index. Choosing
+not to deploy an inconclusive transformation is a result of the evaluation,
+not an uncompleted implementation step.
+
+\subsection{Reviewed Identity Pilot}
+Both conditions in the forward seven-group pilot find the accepted target group
+first in 7/7 queries. In the separately specified reverse comparison, full-image
+and SAM2 queries also tie at 7/7 first results and MRR@10 of 1.00, with no SAM2
+request failures. Each direction uses a 3,061-image gallery that excludes all
+seven queries for that direction and their exact byte/pixel duplicates.
+
+These successes show that the implemented pipeline can retrieve the reviewed
+alternate views under the recorded protocol. They do not estimate general
+identity accuracy: the groups were selected and visually reviewed from already
+seen data, the seven groups recur in the reverse direction, and their commercial
+SKU identity is unverified. With full-image Top-1 already at the ceiling, this
+pilot supplies no measured SAM2 improvement. It is reported as 7/7 selected
+cases, not as ``100\% system accuracy.''
+
+\section{Discussion and Threats to Validity}
+\subsection{Catalogue Coverage and Fine-Grained Relevance}
+Retrieval ranks what the catalogue contains. When the requested item is absent,
+the best result can be an appropriate alternative without being the same product.
+The available category labels reward type agreement and may not penalise colour,
+pattern, or construction differences that matter to a visitor. A credible next
+ranking study needs held-out resemblance judgments and verified identities
+where exact matching is the intended task.
+
+\subsection{Selection and Dataset Bias}
+Synthetic composites make the target explicit and keep the two garments in
+separate panels. Natural outfits may involve overlap, occlusion, mixed lighting,
+small garments, and people. Likewise, a successful example mask or predicted
+quality score is not a segmentation benchmark. The identity pilot has a small,
+purposively selected sample. Neither the synthetic experiment nor the pilot
+establishes performance on a new store or independent customer-photo population.
+
+\subsection{Preprocessing and Historical Provenance}
+The historical scripts and final application do not share every preprocessing
+step. Their existence-based caches are not signed run records. The report keeps
+these scores and the application-aligned comparisons separate. Fresh file hashes
+and numeric consistency checks confirm the available evidence, not the missing
+original execution state. No result is described as newly rerun inference merely
+because its JSON was re-read during final-document verification.
+
+\subsection{Operational and Security Limits}
+The local application has functional safeguards, but the verification is not a
+penetration test, high-concurrency load test, or multi-device certification.
+The final-report live tests used CPU on the same physical computer; earlier
+rc.9 records include CUDA operation on that machine. No universal response-time
+target is inferred from these checks. Original-gallery index operations are
+locked within one process, while large public workloads would require a separate
+concurrency and capacity design.
+
+The repository contains source and documentation, while large runtime resources
+are packaged separately. At the recorded upload stop, the split runtime release
+was still unpublished, with only its first two parts confirmed as complete.
+No completed GitHub runtime publication is claimed here. The packaged ZIP was
+reconstructed from all 28 local parts and its SHA-256 matched the original.
+This verifies local packaging, independently of the interrupted network upload.
+
+\section{Summary}
+Functional checks support the implemented local workflow, including selection,
+search, administration, conflict handling, and recovery. Retrieval evidence
+supports the qualified synthetic-selection result and the category-filtering
+comparison, while rejecting an unsupported switch to a cropped gallery.
+The identity pilot remains explicitly limited. The next chapter draws conclusions
+and proposes developments consistent with those findings.

@@ -1,0 +1,16 @@
+\begin{tikzpicture}[node distance=7mm]
+\node[reportbox,text width=12.4cm] (browser) {Browser: image input, selection canvas, query preview, results, product management};
+\node[reportbox,text width=12.4cm,below=of browser] (api) {FastAPI: request validation and route handlers\\Local administrator session, origin and CSRF checks};
+\node[reportbox,text width=5.5cm,minimum height=20mm,below left=8mm and -5.7cm of api] (sam) {SAM2.1 segmentation\\Points to mask and overlay\\White-background cutout};
+\node[reportbox,text width=5.5cm,minimum height=20mm,below right=8mm and -5.7cm of api] (encode) {SigLIP2 image encoding\\Shared preprocessing\\Normalised vector ($d=768$)};
+\node[storebox,text width=5.5cm,minimum height=23mm,below=10mm of sam] (gallery) {Original research gallery\\3,068 images and metadata\\Persistent FAISS IndexFlatIP};
+\node[storebox,text width=5.5cm,minimum height=23mm,below=10mm of encode] (managed) {Added-product catalogue\\SQLite products, photos, vectors\\Per-request FAISS ranking\\One result per product};
+\node[storebox,text width=12.4cm,below=10mm of $(gallery.south)!0.5!(managed.south)$] (local) {Independent local stores\\Administrator sessions; search telemetry; backup archives};
+\draw[reportarrow] (browser)--(api);
+\draw[reportarrow] (api.south -| sam.north)--(sam.north);
+\draw[reportarrow] (api.south -| encode.north)--(encode.north);
+\draw[reportarrow] (sam.east)--(encode.west);
+\draw[reportarrow] (encode.south)--(managed.north);
+\draw[reportarrow] (encode.south west)--(gallery.north east);
+\draw[reportarrow,dashed] (api.east)--++(0.45,0) |- (local.east);
+\end{tikzpicture}

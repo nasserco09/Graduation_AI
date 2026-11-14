@@ -73,7 +73,7 @@ Multipart form fields:
 - `points`: a JSON array of `[x, y]` coordinates, with 1–50 items.
 - `labels`: a same-length JSON array containing only `0` or `1`.
 
-The response contains the mask overlay, transparent product cutout, selected
+The response contains the transparent mask overlay, white-background product cutout, selected
 bounding box, segmentation score, and positive/negative point counts.
 
 ## Categories endpoint

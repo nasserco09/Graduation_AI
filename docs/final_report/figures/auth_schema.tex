@@ -1,0 +1,19 @@
+\begin{tikzpicture}[node distance=10mm]
+\node[storebox,text width=5.7cm,align=left] (account) {
+ \textbf{admin\_account}\\\rule{5.5cm}{0.3pt}\\
+ \texttt{id} : integer PK; CHECK(id=1)\\
+ \texttt{username} : text, not null\\
+ \texttt{password\_hash} : text, not null};
+\node[storebox,text width=5.7cm,align=left,right=of account] (sessions) {
+ \textbf{admin\_sessions}\\\rule{5.5cm}{0.3pt}\\
+ \texttt{token\_hash} : text, PK\\
+ \texttt{csrf\_token} : text, not null\\
+ \texttt{expires\_at} : real, not null};
+\node[storebox,text width=11.7cm,align=left,below=of $(account.south)!0.5!(sessions.south)$] (failures) {
+ \textbf{admin\_login\_failures}\\
+ \texttt{created\_at} : real, not null; no declared primary key};
+\node[reportnote,text width=11.9cm,below=6mm of failures] {
+ All three tables are in the independent account database. Sessions serve the
+ singleton account; the physical schema has no account foreign-key column.
+ No product-owner or multi-store relation is implied.};
+\end{tikzpicture}
