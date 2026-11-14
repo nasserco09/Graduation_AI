@@ -19,15 +19,18 @@ The [250 x 140 cm university poster](docs/poster/README_AR.md) includes a
 print-ready PDF, editable SVG and verified public GitHub QR. The final
 presentation, brochure, and video are separate deliverables.
 The application release tag remains `v1.2.0-rc.9`. On 14 November 2026 the team
-authorized public repository access and resumed the verified split-runtime upload.
+authorized public repository access and completed the verified split-runtime upload.
 The repository's default branch is `feature/frontend-v2`, which contains the
 verified application and current submission materials; `main` is historical.
 
 The locally verified Windows x86_64 runtime package targets Python 3.12.
-Its planned download location is [runtime-rc9-v1](https://github.com/nasserco09/Graduation_AI/releases/tag/runtime-rc9-v1);
-the resumed upload is in progress, so the runtime release is not yet complete.
-The local package includes the two active models, all 3,068 gallery images, the original FAISS
-index, application code and local frontend assets. Extract into a new folder,
+Download all 28 parts plus the manifest and assembly tools from
+[runtime-rc9-v1](https://github.com/nasserco09/Graduation_AI/releases/tag/runtime-rc9-v1).
+Run `Assemble_Runtime.cmd` to rebuild and SHA-256 verify the original ZIP.
+All 28 parts and five support files were published and their remote digests
+verified on 14 November 2026; see [publication verification](runtime/VERIFICATION_PUBLICATION_20261114.json).
+The package includes the two active models, all 3,068 gallery images, the original FAISS
+index, application code and local frontend assets. Extract the assembled ZIP into a new folder,
 run `Setup_Runtime.cmd`, then `Start_Demo.cmd`. Initial dependency installation
 requires internet or compatible local wheels; Python and wheels are not bundled.
 Personal accounts, added products and telemetry are excluded. The repository is

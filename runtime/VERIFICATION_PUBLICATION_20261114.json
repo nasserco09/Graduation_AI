@@ -1,0 +1,201 @@
+{
+  "verified_at_utc": "2026-11-14T09:53:55.318960+00:00",
+  "repository": "https://github.com/nasserco09/Graduation_AI",
+  "visibility": "public",
+  "default_branch": "feature/frontend-v2",
+  "release_url": "https://github.com/nasserco09/Graduation_AI/releases/tag/runtime-rc9-v1",
+  "release_id": 430156256,
+  "tag": "runtime-rc9-v1",
+  "draft": false,
+  "prerelease": true,
+  "anonymous_repository_api_status": 200,
+  "anonymous_release_api_status": 200,
+  "parts_verified": 28,
+  "support_files_verified": 5,
+  "total_archive_bytes": 1815578390,
+  "reassembled_archive_sha256": "dd713d933cb3395e754ce607ef33bfd0fabdc7105c92cc4d846b4c4075975f0c",
+  "remote_api_digests_match_all_local_assets": true,
+  "anonymous_download_samples": [
+    {
+      "name": "parts_manifest.json",
+      "anonymous_http_status": 200,
+      "bytes": 5354,
+      "sha256_verified": true
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part028",
+      "anonymous_http_status": 200,
+      "bytes": 3639062,
+      "sha256_verified": true
+    }
+  ],
+  "full_release_redownload_performed": false,
+  "note": "All 33 GitHub asset size/digest records matched local files. Manifest and final part were downloaded anonymously. Local full ZIP assembly was verified previously; this check does not claim a new full 1.82 GB redownload or model-accuracy evaluation.",
+  "assets": [
+    {
+      "name": "Assemble_Runtime.cmd",
+      "bytes": 214,
+      "digest": "sha256:014e27a4d6cd3beeffdb7928f3e1b6b037b74a6af74a15ac52a85a090426ffa2"
+    },
+    {
+      "name": "assemble_runtime.py",
+      "bytes": 2254,
+      "digest": "sha256:91f95d8fffe7ec093815617175971514137dce119baba5e39f323b49f3b48810"
+    },
+    {
+      "name": "DOWNLOAD_README_AR.md",
+      "bytes": 1204,
+      "digest": "sha256:3222f2fe35cbf95ee01d1e2fb68e6646ab04ca0bd31cbc684d191014e51f947b"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part001",
+      "bytes": 67108864,
+      "digest": "sha256:6da9bd26a122414baa9c42f8f5f3f26f0b08061eedad59bf2a3a6f9b14a362d7"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part002",
+      "bytes": 67108864,
+      "digest": "sha256:35526d675d36fcfd5c3715bca8ec69ff5c88772da11cd89277d39d353ce1f4ae"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part003",
+      "bytes": 67108864,
+      "digest": "sha256:11221b34a235569478b1aa3bed7830a3099df3dd443f84f04627eefab8248099"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part004",
+      "bytes": 67108864,
+      "digest": "sha256:db2d668013b67c7b7d558f6d7cbd47e5b24c07db0a25ab88d0fa3ab2ac2d5ba3"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part005",
+      "bytes": 67108864,
+      "digest": "sha256:baaec101068df8792527cecc266b28e098c46ba131a2bee6e4e6a33a38ce28a6"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part006",
+      "bytes": 67108864,
+      "digest": "sha256:60ae23d104f61010ef7155bb3b21840bbada53850d343afac44d387c4d24dc40"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part007",
+      "bytes": 67108864,
+      "digest": "sha256:4a70c4eb6634c2d68b705a2178e736ba1f509ad3476d7e4691ce350d131a8eb9"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part008",
+      "bytes": 67108864,
+      "digest": "sha256:88f948200e50536778c720ae29d73c098faa89e317a01c2eaab907c21246e53a"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part009",
+      "bytes": 67108864,
+      "digest": "sha256:18986def9f9a972680b55a5ab152e2386b19ef5aaf776450b52a6ed017f89dba"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part010",
+      "bytes": 67108864,
+      "digest": "sha256:bc07dc8e83f93b2a01001353ed2d00903c4a2280b3944a4b5a0b7d878028b0fe"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part011",
+      "bytes": 67108864,
+      "digest": "sha256:795f1e78d7247af1b421396a1e266ffd2aadd577d99247b757e64e1648f322b2"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part012",
+      "bytes": 67108864,
+      "digest": "sha256:06f75d15e3554089b09af1fa0cb44e9ac2e5ffe2b0f53f156f10cffc43017c9c"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part013",
+      "bytes": 67108864,
+      "digest": "sha256:e26373cbb5e6cdf9accad4fb38d0f653ab793c254a5ec8f9c387bf77a7959be7"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part014",
+      "bytes": 67108864,
+      "digest": "sha256:3f9b4c1c5ea063084612291c14307524fac2ba06c89177a0321c725be05a6e60"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part015",
+      "bytes": 67108864,
+      "digest": "sha256:84731b6c0b266e3cc2ccb282a327b35981d4187b5aca14bef0cc9615693d68d6"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part016",
+      "bytes": 67108864,
+      "digest": "sha256:f42fb02b06bbb75622cb6108b8b18e4cb4db232ac3929a22aa200a9a0832872c"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part017",
+      "bytes": 67108864,
+      "digest": "sha256:4e9cb8578543e70bf8ba962f2c1d845ec2ec16158fc1d5b0332b39c2ec3722c8"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part018",
+      "bytes": 67108864,
+      "digest": "sha256:19b7e7f24c62554fc58c00454c978b3268bfb6ecb90df85eb20d9835b7bec6be"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part019",
+      "bytes": 67108864,
+      "digest": "sha256:5638238fa6a8524f8472fcdecdae7a7bd2e10a4e24bb459a560b6a11911a536b"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part020",
+      "bytes": 67108864,
+      "digest": "sha256:036b69de49ce88f6973d65f7f9ee78d3c38e3de8d8a0c86f0753cfb76d271782"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part021",
+      "bytes": 67108864,
+      "digest": "sha256:a1221803028b55aaf02adbc3152c01469d6dcdfb7a6f2ace7bc10bf04748b1a4"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part022",
+      "bytes": 67108864,
+      "digest": "sha256:273a8e3558ef05ce5bc0e135c4bb21d588a10a09e6a00cc03741bc1b5be0a47f"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part023",
+      "bytes": 67108864,
+      "digest": "sha256:f3e4e0fa8dca04254f026c371196a9930dd4a516816220f5d8d53e3f50e6e80d"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part024",
+      "bytes": 67108864,
+      "digest": "sha256:72e1b81dfae972136df0b8d43106015135dd5badd35b3b8e421fa6a181b67fea"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part025",
+      "bytes": 67108864,
+      "digest": "sha256:2a73ab3a745b9362d14cbae64b963bae2a8ecb982101e2119c5c054c7f7e28d8"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part026",
+      "bytes": 67108864,
+      "digest": "sha256:1dc9b1aa3d6e21e0c835790be084802a30a6b45363f13a605f68a07979376c16"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part027",
+      "bytes": 67108864,
+      "digest": "sha256:14a6f1413c31b35ea6c007c21eebea169b12a34b6c179a5d7a5bf1f08443cfc1"
+    },
+    {
+      "name": "Graduation_AI_Runtime_rc9_v1.zip.part028",
+      "bytes": 3639062,
+      "digest": "sha256:e8fb155560ce8a982a6cbba080a02b4c2e44a8a303512df897b99a4e997cf63a"
+    },
+    {
+      "name": "parts_manifest.json",
+      "bytes": 5354,
+      "digest": "sha256:76801737173587b486a7b61339f8c85824c8c2c73b86555d434df601efe200c6"
+    },
+    {
+      "name": "runtime_manifest.json",
+      "bytes": 786762,
+      "digest": "sha256:6863712b107f22bb8bd29038e74b594e720c87442b008006bb6697f3f8ccf590"
+    }
+  ]
+}

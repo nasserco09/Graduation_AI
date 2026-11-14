@@ -9,5 +9,7 @@
   "history_scan_commits": 39,
   "history_scan_blobs": 456,
   "high_confidence_credential_findings": 0,
-  "runtime_upload": "in progress; only published after every part digest matches"
+  "runtime_upload": "complete; published and all 28 parts / 5 support assets hash-verified",
+  "runtime_release_url": "https://github.com/nasserco09/Graduation_AI/releases/tag/runtime-rc9-v1",
+  "runtime_verified_at_utc": "2026-11-14T09:53:55.318960+00:00"
 }

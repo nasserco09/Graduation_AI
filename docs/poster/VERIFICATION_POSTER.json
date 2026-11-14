@@ -58,5 +58,21 @@
     ]
   },
   "verified_at_utc": "2026-11-14T09:43:29.062365+00:00",
-  "github_anonymous_access_verified": true
+  "github_anonymous_access_verified": true,
+  "standalone_source_validation": {
+    "passed": true,
+    "verified_at_utc": "2026-11-14T09:48:37.005848+00:00",
+    "standalone_script_build_passed": true,
+    "rendered_pdf_pixels_identical": true,
+    "extracted_text_identical": true,
+    "editable_svg_byte_identical": true,
+    "models_or_dataset_required": false
+  },
+  "anonymous_remote_pdf": {
+    "checked_at_utc": "2026-11-14T09:48:15.775923+00:00",
+    "anonymous_download_status": 200,
+    "bytes": 1858201,
+    "remote_pdf_sha256": "82c0dcae7fed5f66de377e9925b12bb24764daa10fdecce55c7de218fa7c29b5",
+    "matches_local_verified_pdf": true
+  }
 }
