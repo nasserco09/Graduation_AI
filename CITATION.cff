@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you refer to this graduation project, cite the team and version used. Citation does not itself grant reuse permission; see LICENSE."
+type: software
+title: "LibaasLens: Visual Fashion Product Search Using Interactive Segmentation"
+authors:
+  - family-names: Yousef
+    given-names: Nasser
+  - family-names: Yousef
+    given-names: Noor
+  - family-names: Basalma
+    given-names: Naeem
+version: submission-2026-v1
+date-released: "2026-11-14"
+repository-code: "https://github.com/nasserco09/LibaasLens"
+url: "https://github.com/nasserco09/LibaasLens"
+abstract: "Submission snapshot of a local visual fashion retrieval application integrating SigLIP2, SAM2.1, exact FAISS ranking, FastAPI and SQLite, with application baseline v1.2.0-rc.9. Category relevance is reported separately from exploratory identity evaluation."
+keywords:
+  - visual search
+  - fashion retrieval
+  - interactive segmentation
+  - graduation project
