@@ -36,15 +36,15 @@
 
 ## الملفات المعتمدة
 
-[إصدار مواد التسليم الجامعي](https://github.com/nasserco09/LibaasLens/releases/tag/submission-2026-v1) يجمع الملفات المعتمدة وإشعارات النسبة والحقوق. موارد تشغيل التطبيق في إصدار مستقل مذكور أعلاه.
+[إصدار مواد التسليم الجامعي](https://github.com/nasserco09/LibaasLens/releases/tag/submission-2026-v2) يجمع الملفات الحالية وإشعارات النسبة والحقوق. موارد تشغيل التطبيق في إصدار مستقل مذكور أعلاه.
 
 - [الوثيقة النهائية PDF](docs/final_report/preview/AI_Visual_Product_Search_Submission_2026.pdf) و[مصادر LaTeX](docs/final_report/README_AR.md).
 - [العرض القابل للتعديل](docs/final_presentation/exports/Visual_Fashion_Search_Defense_2026_v3.pptx) و[نسخة PDF](docs/final_presentation/exports/Visual_Fashion_Search_Defense_2026_v3.pdf).
 - [بوستر الطباعة 250 × 140 سم](docs/poster/preview/Visual_Fashion_Search_Poster_250x140cm.pdf) و[مصادر التعديل](docs/poster/README_AR.md).
-- [الفيديو الإنجليزي](docs/final_video/exports/Visual_Fashion_Search_Project_Video_EN_v1.mp4) و[مصادره القابلة للتعديل](docs/final_video/README_AR.md).
+- [فيديو استخدام البرنامج الصامت، 49 ثانية](docs/final_video/exports/LibaasLens_Application_Walkthrough_Silent_v2.mp4) و[مصادره القابلة للتعديل](docs/final_video/README_AR.md).
 - [حالة التسليم](docs/UNIVERSITY_SUBMISSION_2026_AR.md) و[ترتيب الحزمة](docs/submission/README_AR.md).
 
-اعتمد الفريق العرض والفيديو وأكد تشغيل الموقع في **14 نوفمبر 2026**. التوقيعات والختم الفعلي تؤخذ من أصحابها. ملفات المناقشة الأولية محفوظة تاريخيًا، وليست بديل الملفات الحالية.
+اعتمد الفريق العرض وأكد تشغيل الموقع في **14 نوفمبر 2026**. وبطلب لاحق من الفريق أُعد فيديو v2 صامت وقصير يشرح استخدام البرنامج فقط، بنصوص إنجليزية وشعار الجامعة. الفيديو السابق محفوظ في لقطة v1. التوقيعات والختم الفعلي تؤخذ من أصحابها. ملفات المناقشة الأولية محفوظة تاريخيًا، وليست بديل الملفات الحالية.
 
 ## الحقوق والنسبة
 

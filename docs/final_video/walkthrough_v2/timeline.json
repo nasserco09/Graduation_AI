@@ -1,0 +1,60 @@
+{
+  "source": "raw/demo_walkthrough_v2.webm",
+  "width": 1440,
+  "height": 900,
+  "events": [
+    {
+      "seconds": 2.023,
+      "text": "1. Upload a clothing photo"
+    },
+    {
+      "seconds": 5.897,
+      "text": "2. Choose Full image, then click Search"
+    },
+    {
+      "seconds": 8.999,
+      "text": "Browse the visually similar products"
+    },
+    {
+      "seconds": 12.012,
+      "text": "3. Choose SAM2 to focus on one garment"
+    },
+    {
+      "seconds": 14.577,
+      "text": "Click the garment. Add more points if needed."
+    },
+    {
+      "seconds": 17.787,
+      "text": "4. Review the cutout, then accept the selection"
+    },
+    {
+      "seconds": 21.168,
+      "text": "5. Search using the selected garment"
+    },
+    {
+      "seconds": 27.082,
+      "text": "6. The administrator can add and edit products"
+    },
+    {
+      "seconds": 30.586,
+      "text": "Enter product details and photos, then save"
+    },
+    {
+      "seconds": 36.304,
+      "text": "Edit the price or availability, then save changes"
+    },
+    {
+      "seconds": 40.835,
+      "text": "7. Choose Added products to search your own catalogue"
+    },
+    {
+      "seconds": 46.554,
+      "text": "Upload a photo, select your item, and explore similar products."
+    }
+  ],
+  "page_errors": [],
+  "scope": "Real isolated application. University logo and English guidance overlay only. No slides or audio. Editing pace is not a latency benchmark.",
+  "duration_seconds": 49.04,
+  "version": "v2",
+  "audio_streams": 0
+}

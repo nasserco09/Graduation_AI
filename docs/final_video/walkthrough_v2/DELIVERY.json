@@ -1,0 +1,25 @@
+{
+  "version": "v2",
+  "prepared_date": "2026-11-14",
+  "file": "LibaasLens_Application_Walkthrough_Silent_v2.mp4",
+  "sha256": "c13d6a9f8f8dd3cd136a81142cce9918f0e1686f2efc09660a37202d30c6130d",
+  "bytes": 4827132,
+  "duration_seconds": 49.033,
+  "width": 1920,
+  "height": 1080,
+  "fps": 30.0,
+  "codec": "H.264",
+  "audio_streams": 0,
+  "language": "English on-screen guidance; Arabic application UI",
+  "presentation_slides": 0,
+  "screen_capture": "Fresh real capture from isolated application on port 8020, with live SigLIP2 and SAM2.1",
+  "page_errors": [],
+  "full_video_decode": "passed",
+  "playback_timing": "Recorded interaction holds; not a model-latency benchmark",
+  "application_code_changed": false,
+  "team_review": {
+    "status": "revision_requested_and_produced",
+    "date": "2026-11-14",
+    "source": "User requested a shorter silent application-only usage video. No claim of reviewing the produced v2."
+  }
+}

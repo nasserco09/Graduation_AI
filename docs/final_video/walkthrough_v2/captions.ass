@@ -1,0 +1,25 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1440
+PlayResY: 900
+WrapStyle: 0
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Guide,Arial,24,&H00FFFFFF,&H00FFFFFF,&H005E3810,&H005E3810,-1,0,0,0,100,100,0,0,1,0,0,2,30,30,22,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.02,Guide,,0,0,0,,Search for fashion using a photo
+Dialogue: 0,0:00:02.02,0:00:05.89,Guide,,0,0,0,,1. Upload a clothing photo
+Dialogue: 0,0:00:05.89,0:00:08.99,Guide,,0,0,0,,2. Choose Full image, then click Search
+Dialogue: 0,0:00:08.99,0:00:12.01,Guide,,0,0,0,,Browse the visually similar products
+Dialogue: 0,0:00:12.01,0:00:14.57,Guide,,0,0,0,,3. Choose SAM2 to focus on one garment
+Dialogue: 0,0:00:14.57,0:00:17.78,Guide,,0,0,0,,Click the garment. Add more points if needed.
+Dialogue: 0,0:00:17.78,0:00:21.16,Guide,,0,0,0,,4. Review the cutout, then accept the selection
+Dialogue: 0,0:00:21.16,0:00:27.08,Guide,,0,0,0,,5. Search using the selected garment
+Dialogue: 0,0:00:27.08,0:00:30.58,Guide,,0,0,0,,6. The administrator can add and edit products
+Dialogue: 0,0:00:30.58,0:00:36.30,Guide,,0,0,0,,Enter product details and photos, then save
+Dialogue: 0,0:00:36.30,0:00:40.83,Guide,,0,0,0,,Edit the price or availability, then save changes
+Dialogue: 0,0:00:40.83,0:00:46.55,Guide,,0,0,0,,7. Choose Added products to search your own catalogue
+Dialogue: 0,0:00:46.55,0:00:49.04,Guide,,0,0,0,,Upload a photo, select your item, and explore similar products.

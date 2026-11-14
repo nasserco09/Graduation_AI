@@ -64,17 +64,17 @@ The runtime includes the two active models, gallery images, original index and a
 
 ## Submission materials
 
-[Download the university submission release](https://github.com/nasserco09/LibaasLens/releases/tag/submission-2026-v1) for the approved materials and attribution files. The application runtime resources are a separate download linked above.
+[Download the university submission release](https://github.com/nasserco09/LibaasLens/releases/tag/submission-2026-v2) for the current materials and attribution files. The application runtime resources are a separate download linked above.
 
 | Material | Current files |
 | --- | --- |
 | Report | [Submission PDF](docs/final_report/preview/AI_Visual_Product_Search_Submission_2026.pdf) · [Editable LaTeX](docs/final_report/README_AR.md) |
 | Presentation | [Editable PowerPoint](docs/final_presentation/exports/Visual_Fashion_Search_Defense_2026_v3.pptx) · [Reading PDF](docs/final_presentation/exports/Visual_Fashion_Search_Defense_2026_v3.pdf) |
 | Poster | [Print PDF, 250 × 140 cm](docs/poster/preview/Visual_Fashion_Search_Poster_250x140cm.pdf) · [Editable artwork](docs/poster/README_AR.md) |
-| Project video | [English narration and captions, 1080p](docs/final_video/exports/Visual_Fashion_Search_Project_Video_EN_v1.mp4) · [Editable production sources](docs/final_video/README_AR.md) |
+| Project video | [Silent application walkthrough, 49 seconds, 1080p](docs/final_video/exports/LibaasLens_Application_Walkthrough_Silent_v2.mp4) · [Editable production sources](docs/final_video/README_AR.md) |
 | Handover | [Delivery structure and verification](docs/submission/README_AR.md) · [University status](docs/UNIVERSITY_SUBMISSION_2026_AR.md) |
 
-The team approved the presentation and video and confirmed the local application works on **14 November 2026**. Genuine approval signatures and stamps remain the university signatories' responsibility. Approved academic titles, media and published archive filenames are retained; **LibaasLens** is the project's short name.
+The team approved the presentation and confirmed the local application works on **14 November 2026**. At the team's subsequent request, video v2 replaces the narrated presentation-style video with a short, silent recording of application usage, English guidance and the university logo. The previous video remains available in the v1 snapshot. Genuine approval signatures and stamps remain the university signatories' responsibility. **LibaasLens** is the project's short name.
 
 ## Project map
 

@@ -1,0 +1,28 @@
+{
+  "version": "v1",
+  "prepared_date": "2026-11-14",
+  "file": "Visual_Fashion_Search_Project_Video_EN_v1.mp4",
+  "sha256": "ba7c29b01eab70e7b85c59b985b2dd215b25a6fa166935056df3264d42b3c721",
+  "bytes": 13662642,
+  "duration_seconds": 202.08,
+  "width": 1920,
+  "height": 1080,
+  "codec": "H.264 / AAC",
+  "language": "English",
+  "subtitle_cues": 38,
+  "voice": "Microsoft David Desktop / Windows SAPI",
+  "paid_generation_cost": 0,
+  "magnific_status": "Account setup required; no generation submitted",
+  "full_audio_video_decode": "passed",
+  "audio_max_volume_dbfs": -0.9,
+  "visual_review": "Nine scene samples plus intermediate mask and retrieval/admin result frames",
+  "direct_listening_verified": false,
+  "screen_capture": "Real isolated local application with live SigLIP2 and SAM2.1 on CUDA",
+  "playback_timing": "Browser segments slowed to narration, disclosed on screen. Not a latency benchmark.",
+  "application_code_changed": false,
+  "team_review": {
+    "date": "2026-11-14",
+    "status": "approved",
+    "source": "User reviewed the presentation and video and confirmed the application works"
+  }
+}
