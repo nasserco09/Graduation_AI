@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "prepared_date": "2026-11-14",
+  "version": "v3",
+  "slides": 17,
+  "visible_slides": 15,
+  "hidden_evidence_slides": [
+    16,
+    17
+  ],
+  "native_chart_slides": [
+    9,
+    10,
+    16
+  ],
+  "native_table_slides": [
+    17
+  ],
+  "embedded_excel_workbooks": 3,
+  "speaker_notes_language": "Arabic with source references",
+  "transitions": "Standard fade; click advance; no automatic timing",
+  "files": {
+    "Visual_Fashion_Search_Defense_2026_v3.pptx": {
+      "bytes": 4995383,
+      "sha256": "ced9debf6f84b906680e71a08ea0c29f4bfbe00057c51c4875d046c73c352320"
+    },
+    "Visual_Fashion_Search_Defense_2026_v3.pdf": {
+      "bytes": 13214805,
+      "sha256": "9b34a30c41798275dc7d6409de57139c947f76cd87612d03558fc09ce7e224bb"
+    }
+  },
+  "checks": {
+    "package_integrity": "pass",
+    "declared_geometry_and_fonts": "pass",
+    "artifact_tool_reimport": "pass",
+    "individual_visual_review": "All 17 final slides at 1440x810",
+    "pdf_pages": 17,
+    "pdf_embedded_images_match_final_renders": true,
+    "pdf_render_mean_absolute_pixel_differences": [
+      3.4273,
+      1.9801,
+      2.6553,
+      2.5851,
+      2.9157,
+      2.9361,
+      2.4634,
+      2.4772,
+      2.2798,
+      2.12,
+      3.229,
+      2.2918,
+      2.2462,
+      2.7005,
+      4.8848,
+      2.0834,
+      2.5338
+    ],
+    "pdf_render_comparison_note": "Diagnostic values include PDF-renderer image resampling. Embedded image pixels match the final slide PNGs exactly.",
+    "qr_decoded_from_final_closing_slide": "https://github.com/nasserco09/Graduation_AI",
+    "qr_target_anonymous_http_status": 200
+  },
+  "native_powerpoint_playback_verified": false,
+  "pdf_review": "Raster preview of all slides; editable content and transitions are in the PPTX.",
+  "reference": "User-supplied GraduationPPT.pdf; flattened pages, with damaged image streams on pages 6 and 9.",
+  "content_sources": [
+    "docs/final_report/",
+    "evaluation/results/",
+    "backend/",
+    "retained application-verification screenshots"
+  ],
+  "application_changed": false
+}

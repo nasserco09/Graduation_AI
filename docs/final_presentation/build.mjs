@@ -1,0 +1,15 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath,pathToFileURL} from 'node:url';
+import {buildDeck} from './build_deck.mjs';
+const modules=process.env.RUNTIME_NODE_MODULES||process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES;
+if(!modules)throw new Error('Set RUNTIME_NODE_MODULES to the bundled Codex Node.js packages directory.');
+const {Presentation,PresentationFile}=await import(pathToFileURL(path.join(modules,'@oai/artifact-tool/dist/artifact_tool.mjs')).href);
+const here=path.dirname(fileURLToPath(import.meta.url));
+const out=path.join(here,'build');
+await fs.mkdir(out,{recursive:true});
+const evidence=JSON.parse(await fs.readFile(path.join(here,'evidence.json'),'utf8'));
+const presentation=Presentation.create({slideSize:{width:1440,height:810}});
+console.log(await buildDeck(presentation,evidence));
+await(await PresentationFile.exportPptx(presentation)).save(path.join(out,'presentation.pptx'));
+console.log('Draft exported. Apply transitions and validate before delivery.');

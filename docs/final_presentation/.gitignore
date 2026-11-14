@@ -1,0 +1,5 @@
+/build/
+# High-resolution local generation masters; the deck uses the JPEG copies.
+/assets/background.png
+/assets/cover.png
+/assets/closing.png
