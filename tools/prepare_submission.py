@@ -21,7 +21,7 @@ def payload(root):
     return [{'path':p.relative_to(root).as_posix(),'bytes':p.stat().st_size,'sha256':sha256(p)} for p in sorted(root.rglob('*')) if p.is_file() and p.name not in {'DELIVERY_MANIFEST.json','SHA256SUMS.txt'}]
 
 def metadata(files,commit,profile,omitted=None):
-    return {'schema_version':1,'prepared_date':'2026-11-14','project':'LibaasLens | عدسة لباس','academic_title':'Visual Fashion Product Search Using Interactive Segmentation','team':['Nasser Yousef','Noor Yousef','Naeem Basalma'],'supervisor':'Dr. Ayman Alsabri','repository':REPO,'source_commit':commit,'source_tag':'submission-2026-v2','application_reference':'v1.2.0-rc.9','profile':profile,'omitted':omitted or [],'files':files,'integrity_scope':'SHA-256 detects file changes; this manifest is not a digital signature or legal registration.','formal_signatures':'Not generated; obtain genuine university approvals.'}
+    return {'schema_version':1,'prepared_date':'2026-11-16','project':'LibaasLens | عدسة لباس','academic_title':'Visual Fashion Product Search Using Interactive Segmentation','team':['Nasser Yousef','Noor Yousef','Naeem Basalma'],'supervisor':'Dr. Ayman Alsabri','repository':REPO,'source_commit':commit,'source_tag':'submission-2026-v3','application_reference':'v1.2.0-rc.9','profile':profile,'omitted':omitted or [],'files':files,'integrity_scope':'SHA-256 detects file changes; this manifest is not a digital signature or legal registration.','formal_signatures':'Not generated; obtain genuine university approvals.'}
 
 def write_manifest(root,record):
     (root/'DELIVERY_MANIFEST.json').write_text(json.dumps(record,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
@@ -65,15 +65,15 @@ def main():
         for file in (ROOT/sub).rglob('*'):
             if file.is_file() and (file.name.endswith('-OFL.txt') or file.name=='LICENSE.txt' or sub=='runtime/licenses'):
                 copy_checked(file,out/'08_Rights'/sub/file.relative_to(ROOT/sub))
-    source=out/'05_Project_Source/LibaasLens_Source_submission-2026-v2.zip';source.parent.mkdir(exist_ok=True)
+    source=out/'05_Project_Source/LibaasLens_Source_submission-2026-v3.zip';source.parent.mkdir(exist_ok=True)
     if source.exists():raise FileExistsError(source)
     subprocess.run(['git','archive','--format=zip','--prefix=LibaasLens/','--output='+str(source),'HEAD'],cwd=ROOT,check=True)
-    (source.parent/'SOURCE_COMMIT.txt').write_text(commit+'\n'+REPO+'/tree/'+commit+'\nTag: submission-2026-v2\n',encoding='utf-8')
+    (source.parent/'SOURCE_COMMIT.txt').write_text(commit+'\n'+REPO+'/tree/'+commit+'\nTag: submission-2026-v3\n',encoding='utf-8')
     with zipfile.ZipFile(source) as z:
         if z.testzip():raise ValueError('Source archive failed CRC')
         assert 'LibaasLens/LICENSE' in z.namelist()
     copy_checked(ROOT/'tools/verify_delivery.py',out/'verify_delivery.py')
-    intro=f'''# ابدأ هنا\n\nLibaasLens | عدسة لباس\n\nالفريق: Nasser Yousef / Noor Yousef / Naeem Basalma. المشرف: Dr. Ayman Alsabri.\n\nافتح START_HERE_AR.html لفهرس الملفات. وثيقة التسليم في 01_Report، والعرض المعتمد في 02_Presentation، والبوستر في 03_Poster، والفيديو في 04_Video. مصادر التعديل بجانب كل مادة. دليل الفريق في 07_Team_Study.\n\nنسخة الكود مأخوذة من commit {commit} وتاق submission-2026-v2. حزمة التشغيل الكاملة في 06_Runtime، وبصمتها الأصلية {RUNTIME_SHA}. فكها إلى مجلد جديد واتبع RUNTIME_README_AR.md؛ لا تنقل ملفاتها فوق مشروعك أو قاعدة بياناتك.\n\nالاسم المختصر جديد؛ العناوين الأكاديمية والملفات المعتمدة لم تُعاد صياغتها. العرض والموقع معتمدان من الفريق؛ الفيديو الحالي v2 صامت وقصير، أُعد بطلب الفريق بدل الفيديو السابق. التوقيعات والختم الحقيقي تؤخذ من أصحابها. البروشور خارج نطاق هذا التجميع بطلب الفريق.\n\nالحقوق والنسبة في 08_Rights؛ حقوق الموارد الخارجية مستقلة. البصمات وسجل Git وسيلة تتبع وسلامة ملفات وليست تسجيلًا قانونيًا أو ضمانًا لمنع النسخ.\n\nللتحقق شغّل python -B verify_delivery.py من هذا المجلد أو مرّر مساره. يحتاج Python فقط ولا يشغل النماذج.\n\nإن وجدت LIGHT_PACKAGE_NOTICE_AR.txt فهذه النسخة الخفيفة، ولا تحتوي أرشيف التشغيل الكبير؛ راجع رابط التنزيل المذكور فيها.\n'''
+    intro=f'''# ابدأ هنا\n\nLibaasLens | عدسة لباس\n\nالفريق: Nasser Yousef / Noor Yousef / Naeem Basalma. المشرف: Dr. Ayman Alsabri.\n\nافتح START_HERE_AR.html لفهرس الملفات. وثيقة التسليم في 01_Report، والعرض المعتمد في 02_Presentation، والبوستر في 03_Poster، والفيديو في 04_Video. مصادر التعديل بجانب كل مادة. دليل الفريق في 07_Team_Study.\n\nنسخة الكود مأخوذة من commit {commit} وتاق submission-2026-v3. حزمة التشغيل الكاملة في 06_Runtime، وبصمتها الأصلية {RUNTIME_SHA}. فكها إلى مجلد جديد واتبع RUNTIME_README_AR.md؛ لا تنقل ملفاتها فوق مشروعك أو قاعدة بياناتك.\n\nالاسم المختصر جديد؛ العناوين الأكاديمية والملفات المعتمدة لم تُعاد صياغتها. العرض والموقع معتمدان من الفريق؛ الفيديو الحالي v2 صامت وقصير، أُعد بطلب الفريق بدل الفيديو السابق. التوقيعات والختم الحقيقي تؤخذ من أصحابها. البروشور خارج نطاق هذا التجميع بطلب الفريق.\n\nالحقوق والنسبة في 08_Rights؛ حقوق الموارد الخارجية مستقلة. البصمات وسجل Git وسيلة تتبع وسلامة ملفات وليست تسجيلًا قانونيًا أو ضمانًا لمنع النسخ.\n\nللتحقق شغّل python -B verify_delivery.py من هذا المجلد أو مرّر مساره. يحتاج Python فقط ولا يشغل النماذج.\n\nإن وجدت LIGHT_PACKAGE_NOTICE_AR.txt فهذه النسخة الخفيفة، ولا تحتوي أرشيف التشغيل الكبير؛ راجع رابط التنزيل المذكور فيها.\n'''
     (out/'START_HERE_AR.md').write_text(intro,encoding='utf-8')
     listed=[(folder,list((out/folder).glob('*'))) for folder in [*groups.keys(),'05_Project_Source','06_Runtime','08_Rights']]
     blocks=[]

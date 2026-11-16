@@ -9,8 +9,9 @@ in Chapter~\ref{ch:evaluation}, supply evidence about their use on the available
 clothing gallery. Results reported by a model's authors are not substituted for
 measurements of this application.
 
-\section{Fashion Retrieval and the Meaning of Relevance}
-\subsection{Category, Resemblance, and Identity}
+\section{Review of Literature}
+\subsection{Fashion Retrieval and the Meaning of Relevance}
+\subsubsection{Category, Resemblance, and Identity}
 Fashion search can answer several different questions. Category retrieval asks
 whether a result is, for example, a dress rather than a shirt. Resemblance asks
 whether its shape, colour, material appearance, or pattern is useful to the
@@ -27,7 +28,7 @@ segmentation, and clothing retrieval in a common benchmark
 labels appropriate to its intended claim. An image category alone cannot provide
 the ground truth for exact product matching.
 
-\subsection{Implications for the Present Dataset}
+\subsubsection{Implications for the Present Dataset}
 The project uses the ten-class clothing subset published by Grigorev
 \cite{GrigorevClothingDataset}. It is practical for local experimentation and
 category-level comparisons. However, its supplied image categories do not
@@ -44,8 +45,8 @@ but a category-only metric may count both results as equally relevant. A
 future resemblance study requires independently judged candidate relevance,
 not an assumption that every same-category candidate is equally useful.
 
-\section{Pretrained Visual Representations}
-\subsection{Convolutional Baselines}
+\subsection{Pretrained Visual Representations}
+\subsubsection{Convolutional Baselines}
 Residual networks introduce shortcut connections that support the optimisation
 of deep visual models~\cite{He2015ResNet}. ResNet50 provides a familiar
 convolutional baseline from which features can be extracted without training
@@ -60,7 +61,7 @@ as fixed feature extractors under a common retrieval task. Their local results
 are evidence about those configurations and that dataset, rather than a general
 ranking of all convolutional and transformer architectures.
 
-\subsection{Vision-Language and Self-Supervised Encoders}
+\subsubsection{Vision-Language and Self-Supervised Encoders}
 CLIP learns transferable visual representations through paired image and text
 supervision~\cite{Radford2021CLIP}. Its image encoder can be used for image-to-image
 retrieval even when no text query is entered. DINOv2 instead develops general
@@ -82,8 +83,8 @@ not solely by the model paper. It also keeps the deployed pipeline focused on
 one retrieval encoder. The four other encoders remain experimental baselines
 and are not required to run the presentation application.
 
-\section{Interactive Segmentation}
-\subsection{From a Full Photograph to a Target Garment}
+\subsection{Interactive Segmentation}
+\subsubsection{From a Full Photograph to a Target Garment}
 A global representation can mix information from several garments and the
 background. User-guided segmentation addresses the target-selection ambiguity
 before retrieval. SAM2 is a promptable segmentation model for images and video
@@ -99,7 +100,7 @@ overlay and accepts the cutout before searching. This makes the user part of
 the selection process and gives a practical recovery path when one click is
 insufficient.
 
-\subsection{Selection Quality and Retrieval Quality}
+\subsubsection{Selection Quality and Retrieval Quality}
 The model returns a candidate-mask quality score, while retrieval returns a
 vector similarity score. Neither is an observed measurement of pixel-level
 segmentation accuracy or exact-product identity. Measuring mask accuracy would
@@ -112,8 +113,8 @@ model's mask is unsuitable. The manual region and the accepted SAM2 cutout both
 enter the same retrieval path. This design separates the question of which pixels
 the user selects from the question of how the selected image is ranked.
 
-\section{Vector Similarity Search}
-\subsection{Normalised Embeddings and Cosine Similarity}
+\subsection{Vector Similarity Search}
+\subsubsection{Normalised Embeddings and Cosine Similarity}
 Let $f(I)\in\mathbb{R}^{d}$ be an image representation and let
 $\mathbf{z}=f(I)/\lVert f(I)\rVert_2$ be its normalised vector. For a query
 $\mathbf{z}_q$ and a catalogue vector $\mathbf{z}_i$, the scoring rule is
@@ -129,7 +130,7 @@ provides both exact and approximate vector-search structures
 the present workflow. Neural inference may use CUDA, but the installed FAISS
 index runs on the CPU.
 
-\subsection{Category Filtering and Grouped Results}
+\subsubsection{Category Filtering and Grouped Results}
 Ranking can be constrained by a predicted or user-selected clothing category.
 The original gallery uses normalised category centroids derived from its own
 embeddings. Filtering can remove a strongly ranked item from the wrong category,
@@ -143,7 +144,7 @@ returns each product once. A separate, explicitly enabled reviewed-group option
 can merge previously reviewed identities in the original gallery. Neither
 mechanism infers that arbitrary similar images show the same commercial product.
 
-\section{Evaluation Concepts}
+\subsection{Evaluation Concepts}
 Precision at a rank cutoff, average precision, and reciprocal rank describe
 different properties of a ranked list~\cite{Manning2008IR}. Precision asks how
 many early results are relevant. Reciprocal rank rewards an early first relevant
@@ -159,7 +160,7 @@ the file matches the current model and code. For this reason, the report
 distinguishes retained historical scores from application-aligned comparisons
 with recorded artifact hashes.
 
-\section{Application and Data-Management Foundations}
+\subsection{Application and Data-Management Foundations}
 FastAPI provides a Python API framework with typed request handling and generated
 API documentation~\cite{FastAPIDocumentation}. It is used to connect uploaded
 images and point prompts to local inference services. A browser frontend keeps
@@ -173,7 +174,7 @@ These components support the implemented operating scope. They are not evidence
 that the application has undergone a production security audit or can already
 support independent seller organisations on a public service.
 
-\section{Comparison and Project Rationale}
+\subsection{Comparison and Project Rationale}
 \begin{table}[H]
 \centering\caption{Research foundations and their role in this project}
 \label{tab:related-work}

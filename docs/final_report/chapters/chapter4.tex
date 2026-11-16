@@ -8,40 +8,6 @@ maintains the added-product catalogue and controls recovery operations. This
 chapter establishes the feasibility, user needs, requirements, and acceptance
 conditions that correspond to the implemented application.
 
-\section{Problem and Stakeholder Analysis}
-\subsection{Visitor Needs}
-A visitor needs to express an appearance-based request without knowing the
-catalogue's terminology. The query may show several garments, so the visitor
-must be able to select the intended item, inspect the accepted region, and change
-it when necessary. The interface must also make searching the whole image a
-direct option. Results should reveal their visual ordering while allowing the
-visitor to change the category or catalogue source.
-
-The visitor needs understandable failure states: no image, an unsupported file,
-an unaccepted selection, an empty added catalogue, or an unavailable category
-should not produce a misleading result. Search scores must be described as
-similarity rather than a guarantee of identity. Feedback controls permit a user
-to indicate that a match or predicted category is unsuitable.
-
-\subsection{Administrator Needs}
-The administrator needs to create, find, edit, and remove local products without
-editing Python or JSON files manually. Multiple photographs should belong to
-one product, and a cover photograph should represent it in the management view.
-Optional prices, currencies, and availability describe the searchable stock;
-they do not constitute a checkout or inventory-transaction system.
-
-Changes must not silently overwrite a newer edit. The administrator also needs
-exportable backups, a restore preview, and a recovery copy of the state replaced
-by a restore. Account setup, password changes, logout, and local recovery are
-necessary because product administration is separate from visitor access.
-
-\subsection{Project and Academic Stakeholders}
-The project team needs a repeatable local demonstration, source-controlled
-implementation, and a record of what each experiment measures. The academic
-reviewer needs a clear link between objectives, design, implementation, and
-evidence. No stakeholder requires multi-store accounts, payment, or public
-hosting to complete the present visual-search workflow.
-
 \section{Feasibility Study}
 \subsection{Technical Feasibility}
 The two adopted checkpoints, a compatible Python environment, the dataset, and
@@ -79,7 +45,42 @@ data review, development effort, and maintenance. The project did not conduct
 a formal total-cost or return-on-investment study, so no invented monetary
 estimate or commercial saving is claimed.
 
-\section{Functional Requirements}
+\section{User Requirements}
+\subsection{Visitor Needs}
+A visitor needs to express an appearance-based request without knowing the
+catalogue's terminology. The query may show several garments, so the visitor
+must be able to select the intended item, inspect the accepted region, and change
+it when necessary. The interface must also make searching the whole image a
+direct option. Results should reveal their visual ordering while allowing the
+visitor to change the category or catalogue source.
+
+The visitor needs understandable failure states: no image, an unsupported file,
+an unaccepted selection, an empty added catalogue, or an unavailable category
+should not produce a misleading result. Search scores must be described as
+similarity rather than a guarantee of identity. Feedback controls permit a user
+to indicate that a match or predicted category is unsuitable.
+
+\subsection{Administrator Needs}
+The administrator needs to create, find, edit, and remove local products without
+editing Python or JSON files manually. Multiple photographs should belong to
+one product, and a cover photograph should represent it in the management view.
+Optional prices, currencies, and availability describe the searchable stock;
+they do not constitute a checkout or inventory-transaction system.
+
+Changes must not silently overwrite a newer edit. The administrator also needs
+exportable backups, a restore preview, and a recovery copy of the state replaced
+by a restore. Account setup, password changes, logout, and local recovery are
+necessary because product administration is separate from visitor access.
+
+\subsection{Project and Academic Stakeholders}
+The project team needs a repeatable local demonstration, source-controlled
+implementation, and a record of what each experiment measures. The academic
+reviewer needs a clear link between objectives, design, implementation, and
+evidence. No stakeholder requires multi-store accounts, payment, or public
+hosting to complete the present visual-search workflow.
+
+\section{System Requirements}
+\subsection{Functional Requirements}
 Table~\ref{tab:functional-requirements} states observable behaviour. The identifiers
 are used for design and verification traceability later in the report.
 
@@ -110,8 +111,55 @@ The requirement for product deletion applies to an administrator's deliberate
 operation. The application uses a product revision to reject a stale request.
 It is not a claim that the system archives every product edit automatically;
 recovery depends on exported backups or the recovery copies made before restore.
+\subsubsection{Business Rules and Input Constraints}
+The implemented image validator accepts JPEG, PNG, WebP, and BMP after checking
+the decoded format, with an 8 MiB file limit and a 25-million-pixel limit. The
+server verifies and reopens images before decoding them fully. A segmentation
+request supplies matching point and label arrays, at most 50 points, with labels
+0 or 1. The API's result count is restricted to 1--50.
 
-\section{Nonfunctional Requirements}
+Product names contain 1--120 characters. A product keeps 1--5 photographs, with
+unique retained-image identifiers and an explicit order; the first photograph
+is the cover. The supported currencies are YER, SAR, and USD. Prices are optional,
+non-negative decimal text with at most two fractional digits, normalised to two
+digits for storage. Availability controls whether the product participates in
+search. Ranking uses image similarity, not price or the number of photographs.
+
+The single administrator username follows the implemented ASCII naming rule,
+and passwords contain 8--128 characters. Sessions expire after eight hours.
+Failed sign-in attempts are throttled by the local service. These are the
+current application rules, not a claim that an eight-character password is a
+sufficient policy for an eventual publicly exposed service.
+
+\subsubsection{Use Cases and Acceptance Conditions}
+\paragraph{UC-01: Search for a Selected Garment}
+The precondition is a running service with an available catalogue. The visitor
+uploads an image, selects a search source, optionally refines a garment mask or
+manual region, accepts the final query, and submits it. The system validates,
+encodes, ranks, and displays results. Success means the requested workflow
+completes and its query is inspectable; whether the first result is relevant
+is evaluated separately. Exceptions include an invalid image, an empty catalogue,
+an unsuccessful mask, or an incomplete selection. The visitor can correct the
+input or use full-image/manual search.
+
+\paragraph{UC-02: Maintain a Product}
+The precondition is an authenticated local administrator. The administrator
+creates or opens a product, edits details and photographs, chooses the cover,
+and saves. The server validates the full change and commits it together. If the
+product revision changed since loading, the server rejects the stale save and
+the operator refreshes. A successful save preserves a valid 1--5-photo product
+whose search representation corresponds to its stored photographs.
+
+\paragraph{UC-03: Restore a Catalogue}
+The administrator selects a backup and reviews the validated counts. Selection
+alone makes no catalogue change. On explicit confirmation, the server verifies
+the preview token, owner session, and unchanged current catalogue; writes a
+recovery archive; and restores the replacement inside a database transaction.
+A failed archive check or recovery write leaves current products intact. Success
+means the restored products can be listed and searched and the previous state
+can be retrieved through its recovery archive.
+
+\subsection{Nonfunctional Requirements}
 The quality requirements in Table~\ref{tab:nonfunctional} state both the implemented
 mechanism and the boundary of the available evidence. They distinguish exercised
 local behaviour from claims that would require a separate deployment or user study.
@@ -134,55 +182,7 @@ Performance & Precomputed original-gallery vectors and optional CUDA inference; 
 \end{ReportTable}
 \end{table}
 
-\section{Business Rules and Input Constraints}
-The implemented image validator accepts JPEG, PNG, WebP, and BMP after checking
-the decoded format, with an 8 MiB file limit and a 25-million-pixel limit. The
-server verifies and reopens images before decoding them fully. A segmentation
-request supplies matching point and label arrays, at most 50 points, with labels
-0 or 1. The API's result count is restricted to 1--50.
-
-Product names contain 1--120 characters. A product keeps 1--5 photographs, with
-unique retained-image identifiers and an explicit order; the first photograph
-is the cover. The supported currencies are YER, SAR, and USD. Prices are optional,
-non-negative decimal text with at most two fractional digits, normalised to two
-digits for storage. Availability controls whether the product participates in
-search. Ranking uses image similarity, not price or the number of photographs.
-
-The single administrator username follows the implemented ASCII naming rule,
-and passwords contain 8--128 characters. Sessions expire after eight hours.
-Failed sign-in attempts are throttled by the local service. These are the
-current application rules, not a claim that an eight-character password is a
-sufficient policy for an eventual publicly exposed service.
-
-\section{Use Cases and Acceptance Conditions}
-\subsection{UC-01: Search for a Selected Garment}
-The precondition is a running service with an available catalogue. The visitor
-uploads an image, selects a search source, optionally refines a garment mask or
-manual region, accepts the final query, and submits it. The system validates,
-encodes, ranks, and displays results. Success means the requested workflow
-completes and its query is inspectable; whether the first result is relevant
-is evaluated separately. Exceptions include an invalid image, an empty catalogue,
-an unsuccessful mask, or an incomplete selection. The visitor can correct the
-input or use full-image/manual search.
-
-\subsection{UC-02: Maintain a Product}
-The precondition is an authenticated local administrator. The administrator
-creates or opens a product, edits details and photographs, chooses the cover,
-and saves. The server validates the full change and commits it together. If the
-product revision changed since loading, the server rejects the stale save and
-the operator refreshes. A successful save preserves a valid 1--5-photo product
-whose search representation corresponds to its stored photographs.
-
-\subsection{UC-03: Restore a Catalogue}
-The administrator selects a backup and reviews the validated counts. Selection
-alone makes no catalogue change. On explicit confirmation, the server verifies
-the preview token, owner session, and unchanged current catalogue; writes a
-recovery archive; and restores the replacement inside a database transaction.
-A failed archive check or recovery write leaves current products intact. Success
-means the restored products can be listed and searched and the previous state
-can be retrieved through its recovery archive.
-
-\section{Tool Evaluation and Design Decisions}
+\section{Evaluation of Tools}
 The selected stack keeps modelling and application responsibilities distinct.
 PyTorch and Transformers load the fixed checkpoints. FAISS performs exact vector
 comparison. FastAPI connects the services to browser requests. SQLite stores
@@ -196,6 +196,27 @@ experimental artifact because its gains were inconclusive. Approximate vector
 indexes, a cloud database, seller-specific accounts, and public deployment would
 address a different scale and require additional evaluation. They are future
 options rather than hidden dependencies of the implemented system.
+
+
+Table~\ref{tab:tool-alternatives} relates these choices to alternatives relevant
+to this project's scope. The encoder alternatives have a retained measured
+comparison in Chapter~\ref{ch:evaluation}. The remaining rows are engineering
+trade-offs for the local deployment, not comparative speed or cost benchmarks.
+
+\begin{ReportTable}
+\begin{longtable}{@{}L{0.19\linewidth}L{0.25\linewidth}L{0.25\linewidth}L{0.22\linewidth}@{}}
+\caption{Evaluation of tools and project-scoped alternatives}\label{tab:tool-alternatives}\\
+\toprule\textbf{Choice}&\textbf{Benefit in this project}&\textbf{Alternative or limitation}&\textbf{Decision}\\\midrule\endfirsthead
+\toprule\textbf{Choice}&\textbf{Benefit in this project}&\textbf{Alternative or limitation}&\textbf{Decision, continued}\\\midrule\endhead
+SigLIP2 & Highest retained category P@1 among the five compared encoders & ResNet50, EfficientNet-B3, CLIP, and DINOv2 remain baselines; no universal ranking is claimed & Deploy one fixed encoder; retain the comparison evidence \\\addlinespace
+SAM2.1 and manual tools & Let the visitor identify one garment before encoding & Full-image search needs no selection; a SAM2 proposal can require correction & Offer both paths and require an inspectable accepted query \\\addlinespace
+Exact FAISS IndexFlatIP & Exact cosine-equivalent ordering of 3,068 normalised vectors & Approximate indexing may be useful at larger scale but introduces other trade-offs & Retain exact CPU search for the present gallery \\\addlinespace
+FastAPI with Python inference & Exposes validation, search, segmentation, and administration through one API & Direct scripts suit experiments but do not supply the intended browser workflow & Use the implemented API; no web-framework benchmark is claimed \\\addlinespace
+SQLite & Persists local products, photos, accounts, and telemetry transactionally & A shared database service would add deployment and multi-user requirements not evaluated here & Use separate local stores for the single-computer scope \\\addlinespace
+Original gallery index & Preserves the recorded baseline and image mapping & Cropped-gallery trials produce mixed changes across query sets & Keep the original index until sufficient consistent benefit is demonstrated \\
+\bottomrule
+\end{longtable}
+\end{ReportTable}
 
 \section{Summary}
 The requirements establish visitor search, inspectable garment selection,

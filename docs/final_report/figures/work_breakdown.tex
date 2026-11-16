@@ -1,0 +1,22 @@
+\begin{tikzpicture}[node distance=12mm]
+\node[reportbox,text width=11.8cm,font=\bfseries] (root)
+ {Visual Fashion Product Search: work breakdown};
+\node[reportbox,text width=3.55cm,below=14mm of root.south west,anchor=north west,align=left] (research) {
+ \textbf{Research and data}\\[2mm]
+ M1: dataset preparation and encoder comparison\\[1mm]
+ M2: full-image and selected-garment experiments\\[1mm]
+ M3: preprocessing, routing, and catalogue review};
+\node[reportbox,text width=3.55cm,right=6mm of research.north east,anchor=north west,align=left] (software) {
+ \textbf{Application development}\\[2mm]
+ M2: selection and retrieval workflow\\[1mm]
+ M3: query preview and category controls\\[1mm]
+ M4: products, administrator, and recovery};
+\node[reportbox,text width=3.55cm,right=6mm of software.north east,anchor=north west,align=left] (delivery) {
+ \textbf{Verification and delivery}\\[2mm]
+ M5: functional tests and evidence audit\\[1mm]
+ M6: editable report and diagrams\\[1mm]
+ M7: presentation, poster, brochure, and video};
+\draw[reportarrow] (root.south)--++(0,-5mm)-|(research.north);
+\draw[reportarrow] (root.south)--(software.north);
+\draw[reportarrow] (root.south)--++(0,-5mm)-|(delivery.north);
+\end{tikzpicture}

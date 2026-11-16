@@ -36,9 +36,9 @@
 
 ## الملفات المعتمدة
 
-[إصدار مواد التسليم الجامعي](https://github.com/nasserco09/LibaasLens/releases/tag/submission-2026-v2) يجمع الملفات الحالية وإشعارات النسبة والحقوق. موارد تشغيل التطبيق في إصدار مستقل مذكور أعلاه.
+[إصدار مواد التسليم الجامعي](https://github.com/nasserco09/LibaasLens/releases/tag/submission-2026-v3) يجمع الملفات الحالية وإشعارات النسبة والحقوق. موارد تشغيل التطبيق في إصدار مستقل مذكور أعلاه.
 
-- [الوثيقة النهائية PDF](docs/final_report/preview/AI_Visual_Product_Search_Submission_2026.pdf) و[مصادر LaTeX](docs/final_report/README_AR.md).
+- الوثيقة المصححة وفق هيكل BIT بتاريخ 16 نوفمبر 2026، 93 صفحة: [PDF التسليم](docs/final_report/preview/AI_Visual_Product_Search_Submission_2026.pdf) و[مصادر LaTeX](docs/final_report/README_AR.md).
 - [العرض القابل للتعديل](docs/final_presentation/exports/Visual_Fashion_Search_Defense_2026_v3.pptx) و[نسخة PDF](docs/final_presentation/exports/Visual_Fashion_Search_Defense_2026_v3.pdf).
 - [بوستر الطباعة 250 × 140 سم](docs/poster/preview/Visual_Fashion_Search_Poster_250x140cm.pdf) و[مصادر التعديل](docs/poster/README_AR.md).
 - [فيديو استخدام البرنامج الصامت، 49 ثانية](docs/final_video/exports/LibaasLens_Application_Walkthrough_Silent_v2.mp4) و[مصادره القابلة للتعديل](docs/final_video/README_AR.md).

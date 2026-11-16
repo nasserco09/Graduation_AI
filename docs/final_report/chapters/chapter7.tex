@@ -1,5 +1,8 @@
-\chapter{Conclusion and Future Work}
+\chapter{Conclusion and Recommendations}
 \label{ch:conclusion}
+
+\section{Introduction}
+This chapter relates the implemented system and recorded evidence to the project objectives. It summarises achievements and difficulties, identifies justified future work, and gives a recommendation for the current local deployment.
 
 \section{Conclusion}
 The project produced a local visual fashion search application in which a user
@@ -25,8 +28,7 @@ conditions tie. Catalogue cropping lacks sufficient consistent benefit to
 replace the original index. Keeping those conclusions distinct is part of the
 project's contribution: a working application is accompanied by an account of
 what its evidence does and does not support.
-
-\section{Achievements Against the Objectives}
+\subsection{Achievements}
 The research objectives were addressed by comparing five pretrained encoders,
 retaining separate selection and routing experiments, evaluating a candidate
 gallery transformation, and reporting a reviewed identity pilot with explicit
@@ -41,7 +43,7 @@ HTTP, administration, and evidence checks passed within their recorded scope.
 The editable report connects these functions to requirements, architecture,
 data structures, and results.
 
-\section{Difficulties and Lessons Learned}
+\subsection{Difficulties}
 Several difficulties shaped the final design. A segmentation model may capture
 only part of a garment, making multiple positive and negative points and manual
 fallbacks necessary. Fine-grained visual resemblance is not fully represented
@@ -57,8 +59,8 @@ also requires checkpoints, images, an index, and dependencies in addition to
 source code. A failed large-file transfer motivated locally verified split
 packaging, while publication remains a separate delivery operation.
 
-\section{Prioritised Future Work}
-\subsection{Verified Identities and Realistic Evaluation}
+\subsection{Future Works}
+\subsubsection{Verified Identities and Realistic Evaluation}
 The first research priority is a catalogue with trustworthy product identities
 and independently captured query views. Merchant-supplied SKU relationships or
 a benchmark with defined cross-view identity annotations should be split by
@@ -67,7 +69,7 @@ customer-like images should accompany clean product photographs. Independent
 judgments of shape, colour, and pattern resemblance can complement exact-identity
 labels when alternative products are acceptable.
 
-\subsection{Evidence-Based Ranking Improvements}
+\subsubsection{Evidence-Based Ranking Improvements}
 After establishing that evaluation set, compare the existing baseline against
 candidate fine-grained reranking or domain adaptation. Any fusion of colour,
 texture, global embeddings, or crop representations should be selected on
@@ -76,7 +78,7 @@ scoring path should remain available as a baseline. Similarity thresholds for
 ``no confident match'' require calibration against known present and absent
 products rather than an arbitrary percentage.
 
-\subsection{Selection Quality and User Experience}
+\subsubsection{Selection Quality and User Experience}
 A dedicated mask study should use independently annotated garment masks and
 measure overlap and failure cases separately from retrieval. An evaluated
 user study can measure task completion, refinement effort, and time to a useful
@@ -84,7 +86,7 @@ result. Further work may reduce repeated segmentation cost, improve small-item
 selection, and evaluate the interface on multiple devices. These changes should
 preserve the final-query preview and explicit acceptance that make errors visible.
 
-\subsection{Store Deployment and Maintainability}
+\subsubsection{Store Deployment and Maintainability}
 For a single store, the current managed catalogue provides a starting point.
 Broader deployment would require server hardening, HTTPS, measured concurrency,
 durable storage operations, and a consistent revision policy across all write

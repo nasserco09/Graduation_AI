@@ -1,29 +1,31 @@
-# LibaasLens university submission materials 2026
+# LibaasLens university submission: BIT report correction
 
-**LibaasLens | عدسة لباس**
+**LibaasLens | عدسة لباس** — submission-2026-v3, 16 November 2026.
 
 Academic title: **Visual Fashion Product Search Using Interactive Segmentation**.
+Project team: **Nasser Yousef, Noor Yousef and Naeem Basalma**; supervisor **Dr. Ayman Alsabri**, International University of Technology Twintech.
 
-Project team: **Nasser Yousef, Noor Yousef and Naeem Basalma**. Academic supervisor: **Dr. Ayman Alsabri**, International University of Technology Twintech.
+This revision corrects the report's structure against the supplied BIT sample. The team confirmed **Business Information Technology (BIT)**. The report now has **93 pages, seven chapters, two appendices, 19 figures, 20 tables, and 18 linked references**.
 
-This revision replaces the narrated presentation-style video with a **49-second silent application walkthrough**, as requested by the team. It shows real full-image search, SAM2 garment selection, selected-garment search, adding/editing a product, and searching added products. English on-screen guidance and the university logo are included; there are no presentation slides or audio streams. The report, PowerPoint and poster are unchanged. The preceding video remains preserved in submission-2026-v1. Genuine university signatures and stamps are not generated or implied by this release.
+The detailed contents include the methodology, user/system requirements and four testing categories in the sample's hierarchy. Work-breakdown and development-cycle diagrams were added, actual interface captures were placed in the design chapter, representative tests were grounded in retained logs, and the GitHub runtime publication status was corrected. The sample's unrelated pharmacy material and editorial errors were not copied. Software verification dates and retrieval results remain distinguished from this document revision.
 
-## Materials
+The edited PDF was checked for unresolved references, missing assets, text overflow and font embedding, and its pages were visually reviewed. The actual editable-source ZIP was independently extracted and compiled; all 93 rebuilt pages matched the canonical PDF's rendered pixels and text. The original application verification was not rerun or presented as new model inference during this documentation correction.
 
-- Report: `AI_Visual_Product_Search_Submission_2026.pdf`.
-- Presentation: `Visual_Fashion_Search_Defense_2026_v3.pptx` and its reading PDF.
-- Poster: `Visual_Fashion_Search_Poster_250x140cm.pdf`, 250 × 140 cm at full print size.
-- Video: `LibaasLens_Application_Walkthrough_Silent_v2.mp4`, English on-screen guidance, 1920×1080, approximately 49 seconds, H.264 with no audio stream.
-- `AUTHORS.md`, `LICENSE` and `CITATION.cff` record attribution and reuse terms.
+## Included materials
 
-Editable LaTeX, poster artwork and video production sources are retained in the tagged repository's `docs/final_report`, `docs/poster` and `docs/final_video` folders. Existing approved document titles and filenames are unchanged. The brochure is outside this release and the current work scope at the team's request.
+- Corrected report: `AI_Visual_Product_Search_Submission_2026.pdf`.
+- Editable LaTeX package: `AI_Visual_Product_Search_LaTeX_Submission_2026.zip`.
+- Approved presentation: `Visual_Fashion_Search_Defense_2026_v3.pptx` and reading PDF.
+- Poster: `Visual_Fashion_Search_Poster_250x140cm.pdf`, full print size 250 × 140 cm.
+- Silent application walkthrough: `LibaasLens_Application_Walkthrough_Silent_v2.mp4`, 49 seconds, 1080p, English guidance and university logo, with no audio stream or presentation slides.
+- Team attribution, citation metadata and reuse terms.
+
+The printed brochure supplied by the team is included unchanged in the local university handover at the team's request; it is not uploaded as a release asset. Genuine signatures and stamps remain for the university signatories. Prior snapshots remain available in the earlier tags.
 
 ## Code and runtime
 
-The source archives below are generated from tag **submission-2026-v2**. The application baseline remains **v1.2.0-rc.9**; this is a video and submission-materials revision, not a new retrieval algorithm or a new model-accuracy claim. Video decoding and absence of audio were checked; application interaction in the isolated recording completed without browser errors. The recording's deliberate pauses are not a latency benchmark.
+The source snapshot is **submission-2026-v3**. The application baseline remains **v1.2.0-rc.9**; this correction changes documents and delivery metadata, not application behaviour or retrieval accuracy.
 
-Git source archives do not contain model weights or the gallery. For the two active models, 3,068 images and original index, use the separate [verified runtime release](https://github.com/nasserco09/LibaasLens/releases/tag/runtime-rc9-v1) and its 28 parts plus assembly files.
+The original verified runtime archive is unchanged. The two active model checkpoints, 3,068 gallery images and FAISS index are available in the separate [runtime release](https://github.com/nasserco09/LibaasLens/releases/tag/runtime-rc9-v1). Git source archives alone do not contain those heavy resources.
 
-## Rights
-
-Copyright © 2026 **Nasser Yousef, Noor Yousef and Naeem Basalma**, for original team-owned material. Rights are reserved with limited permission for university assessment as described in `LICENSE`. This is not a general open-source or commercial-use grant. Third-party resources retain their respective rights; see [third-party notices](https://github.com/nasserco09/LibaasLens/blob/submission-2026-v2/THIRD_PARTY_NOTICES.md). Attribution, hashes and Git history provide traceability, not a trademark registration or legal guarantee of ownership.
+Copyright © 2026 **Nasser Yousef, Noor Yousef and Naeem Basalma**, for original team-owned material. Rights are reserved with limited academic-assessment permission under `LICENSE`. Third-party resources retain their own terms; see [third-party notices](https://github.com/nasserco09/LibaasLens/blob/submission-2026-v3/THIRD_PARTY_NOTICES.md).

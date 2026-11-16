@@ -8,39 +8,7 @@ and a local administrator. The diagrams in this chapter describe the implemented
 application. They do not introduce a multi-store marketplace, cloud inference,
 or an identity model that is absent from the code.
 
-\section{Architectural Design}
-\subsection{Client, API, and Model Services}
-Figure~\ref{fig:architecture} shows the browser, FastAPI service, neural services,
-and data stores. The browser handles file selection, canvas interaction, preview,
-and result presentation. Server-side Python validates uploads, performs neural
-inference, ranks vectors, and mediates database changes. FastAPI serves both
-the API and local frontend assets under one origin.
-
-\begin{figure}[H]\centering
-\input{figures/architecture}
-\caption{Implemented local architecture and separate catalogue resources}
-\label{fig:architecture}\end{figure}
-
-The application loads the checkpoints locally at startup. The health endpoint
-reports readiness, devices, active catalogue source, and indexed image count.
-The launcher waits for a compatible healthy service before opening the browser
-and reuses an already-ready instance instead of starting another server on the
-same port. The service binds to the loopback interface for the current deployment.
-
-\subsection{Separation of the Two Catalogues}
-The original gallery uses image files, a versioned metadata mapping, and a
-persistent FAISS index. The added-product catalogue uses SQLite records containing
-product attributes, encoded photographs, and vectors. Updating a managed product
-does not rewrite the research dataset, its identity review, or the persistent
-gallery index. This separation protects the evidence base while permitting
-practical product entry.
-
-The managed search builds an in-memory exact FAISS index from available product
-images for each request. Its filtering and product aggregation therefore differ
-from the original-gallery path. The common elements are the fixed image encoder,
-normalisation, query preparation, and user selection tools.
-
-\section{Behavioural Design}
+\section{System Design}
 \subsection{Use Case Diagram}
 Figure~\ref{fig:usecases} groups visitor and administrator interactions. The
 administrator may also use visitor search; the diagram distinguishes privileged
@@ -52,7 +20,7 @@ management page.
 \caption{Visitor and local-administrator use cases}
 \label{fig:usecases}\end{figure}
 
-\subsection{Search Activity}
+\subsection{Activity Diagram}
 Figure~\ref{fig:search-activity} follows the accepted image from upload to result
 review. Full-image mode bypasses segmentation. SAM2 and manual modes prepare
 an alternative image; they do not switch to a different retrieval model. A
@@ -63,7 +31,7 @@ changing the meaning of an earlier result.
 \caption{Search activity with full-image and selected-query branches}
 \label{fig:search-activity}\end{figure}
 
-\subsection{Segmentation and Search Sequence}
+\subsection{Sequence Diagram}
 The interaction in Figure~\ref{fig:sequence} has two explicit stages. A segment
 request sends the original image and the accumulated point labels, and receives
 the overlay and cutout. The user then accepts a query and submits a separate
@@ -75,7 +43,7 @@ the image invalidates earlier pending responses in the frontend.
 \caption{Request sequence for SAM2 selection followed by original-gallery search}
 \label{fig:sequence}\end{figure}
 
-\section{Component Design}
+\subsection{Class Diagram}
 Figure~\ref{fig:components} identifies the principal Python classes. The
 \texttt{SearchEngine} owns image encoding and the original index.
 \texttt{Segmenter} owns point-prompted mask inference. \texttt{DemoCatalog}
@@ -94,7 +62,127 @@ the transaction that changes the stored product. Retained photographs keep
 their existing vectors. This avoids unnecessary repeated inference during a
 metadata-only edit.
 
-\section{Data and Database Design}
+\subsection{Architectural Design}
+\subsubsection{Client, API, and Model Services}
+Figure~\ref{fig:architecture} shows the browser, FastAPI service, neural services,
+and data stores. The browser handles file selection, canvas interaction, preview,
+and result presentation. Server-side Python validates uploads, performs neural
+inference, ranks vectors, and mediates database changes. FastAPI serves both
+the API and local frontend assets under one origin.
+
+\begin{figure}[H]\centering
+\input{figures/architecture}
+\caption{Implemented local architecture and separate catalogue resources}
+\label{fig:architecture}\end{figure}
+
+The application loads the checkpoints locally at startup. The health endpoint
+reports readiness, devices, active catalogue source, and indexed image count.
+The launcher waits for a compatible healthy service before opening the browser
+and reuses an already-ready instance instead of starting another server on the
+same port. The service binds to the loopback interface for the current deployment.
+
+\subsubsection{Separation of the Two Catalogues}
+The original gallery uses image files, a versioned metadata mapping, and a
+persistent FAISS index. The added-product catalogue uses SQLite records containing
+product attributes, encoded photographs, and vectors. Updating a managed product
+does not rewrite the research dataset, its identity review, or the persistent
+gallery index. This separation protects the evidence base while permitting
+practical product entry.
+
+The managed search builds an in-memory exact FAISS index from available product
+images for each request. Its filtering and product aggregation therefore differ
+from the original-gallery path. The common elements are the fixed image encoder,
+normalisation, query preparation, and user selection tools.
+\subsubsection{Retrieval and Selection Algorithms}
+\paragraph{Original-Gallery Retrieval}
+The image encoder produces $\mathbf{z}_q$ as in Equation~\ref{eq:cosine}. For a
+category $c$, the original-gallery router uses the normalised mean vector
+\begin{equation}
+ \boldsymbol{\mu}_c=
+ \frac{\sum_{i:y_i=c}\mathbf{z}_i}
+ {\left\lVert\sum_{i:y_i=c}\mathbf{z}_i\right\rVert_2},\qquad
+ \widehat c=\arg\max_c \mathbf{z}_q^{\mathsf T}\boldsymbol{\mu}_c.
+\end{equation}
+Automatic mode applies $\widehat c$; explicit mode applies the requested category;
+unrestricted mode applies none. FAISS ranks the full index, then the original
+search engine filters candidates until the requested count is collected. When
+reviewed product grouping is enabled, the handler obtains the relevant ranked
+list and retains one result for each reviewed group. Unknown images retain their
+own identifiers.
+
+\paragraph{Managed-Product Retrieval}
+For a managed product $p$ with photograph set $V_p$, the effective score is
+\begin{equation}
+ S(q,p)=\max_{i\in V_p}s(q,i).
+ \label{eq:product-max}
+\end{equation}
+The implementation ranks available photographs and keeps the first occurrence
+of each product, which implements this maximum rule. Repeated photographs do not
+accumulate votes and a product occupies one result card.
+
+Automatic routing for this catalogue is conservative. It considers available
+product photographs only. If any product lacks a category, fewer than two
+categories exist, the best per-category photograph similarity is below 0.55,
+or the margin between the best two category scores is below 0.08, it searches
+all available products and returns a fallback reason. Otherwise it filters
+to the winning category. These gates are implemented heuristics, not calibrated
+probabilities or independently optimised thresholds.
+
+\paragraph{SAM2 Mask Handling}
+The segmenter supplies all current points and binary labels to the local SAM2
+processor. The model returns multiple candidate masks; the implementation
+selects the highest predicted-quality candidate and restores it to the original
+image size. Empty masks produce an error. The selected foreground is copied from
+the original image into a white canvas bounded by the mask, and an RGBA green
+overlay is returned separately for display.
+
+The frontend preserves a usable prior selection if a later refinement fails,
+but prevents a stale response from replacing a newer image or reset state.
+The user's acceptance controls which cutout becomes the search query. The
+quality score helps describe the mask proposal; the application has no annotated
+mask reference against which to call it measured IoU accuracy.
+
+\subsubsection{Integrity, Security, and Recovery Design}
+\paragraph{Administration Boundary}
+A middleware guard normalises request paths and requires a valid session for
+product management, backup, monitoring summaries, account changes, and reindexing.
+Unsafe protected requests require a session-bound CSRF token and an acceptable
+origin. Cookies are HttpOnly and SameSite Strict, and use the Secure flag when
+served over HTTPS. The local HTTP deployment therefore does not claim encrypted
+transport merely because these cookie settings exist.
+
+Passwords are hashed through \texttt{argon2-cffi}; opaque random session tokens
+are revocable and are represented in the database by SHA-256 hashes. Changing
+the password invalidates existing sessions. First-account setup is limited to a
+loopback client. The design is for a local singleton administrator and is not
+a multi-tenant authorisation model.
+
+\paragraph{Product Transactions and Revisions}
+Saving product details and photograph changes is one transaction. The server
+checks that the expected revision matches, validates every retained/new image
+reference, and increments the revision on success. A competing edit produces
+HTTP 409 instead of silently replacing newer data. The photo preparation stage
+occurs before the final commit, and the revision is checked again when the write
+transaction begins.
+
+\paragraph{Backup and Restore}
+A backup is a structured ZIP of JSON, JPEG photos, and float32 vectors, with
+schema information, encoder compatibility data, and content hashes. The server
+validates members, lengths, relationships, image order, image decoding, vector
+dimension, finite values, and limits. It does not accept an uploaded SQLite
+database or extract arbitrary ZIP paths to the filesystem. The maximum uploaded
+archive is 200 MiB.
+
+Preview creates a session-bound token valid for ten minutes and records the
+current catalogue fingerprint. Confirmation is rejected if the catalogue has
+changed. Before replacement, a recovery archive of the current catalogue is
+written to disk. Restore then executes inside one SQLite transaction. A failure
+to validate, write recovery data, or commit leaves the existing collection
+intact. Product revisions advance so that editors opened before restore cannot
+silently overwrite the restored state. Only the added-product catalogue is
+restored; account, research-gallery, and telemetry data remain separate.
+
+\section{Database Design}
 \subsection{Research-Gallery Metadata and Index Mapping}
 Each searchable original image has an active metadata record containing its
 relative path, file-derived product identifier, display title, category key,
@@ -150,108 +238,94 @@ a current scope boundary.
 \caption{Search-event and feedback ERD: at most one feedback record per event}
 \label{fig:monitoring-er}\end{figure}
 
-\section{Retrieval and Selection Algorithms}
-\subsection{Original-Gallery Retrieval}
-The image encoder produces $\mathbf{z}_q$ as in Equation~\ref{eq:cosine}. For a
-category $c$, the original-gallery router uses the normalised mean vector
-\begin{equation}
- \boldsymbol{\mu}_c=
- \frac{\sum_{i:y_i=c}\mathbf{z}_i}
- {\left\lVert\sum_{i:y_i=c}\mathbf{z}_i\right\rVert_2},\qquad
- \widehat c=\arg\max_c \mathbf{z}_q^{\mathsf T}\boldsymbol{\mu}_c.
-\end{equation}
-Automatic mode applies $\widehat c$; explicit mode applies the requested category;
-unrestricted mode applies none. FAISS ranks the full index, then the original
-search engine filters candidates until the requested count is collected. When
-reviewed product grouping is enabled, the handler obtains the relevant ranked
-list and retains one result for each reviewed group. Unknown images retain their
-own identifiers.
+\section{Interface Design}
+The interface designs below use actual captures from the isolated local
+application. They describe screen responsibilities and their relationship to
+the workflow; the functional test evidence is reported separately in
+Chapter~\ref{ch:evaluation}. The cover illustration is conceptual artwork and
+is not presented as an application screenshot.
 
-\subsection{Managed-Product Retrieval}
-For a managed product $p$ with photograph set $V_p$, the effective score is
-\begin{equation}
- S(q,p)=\max_{i\in V_p}s(q,i).
- \label{eq:product-max}
-\end{equation}
-The implementation ranks available photographs and keeps the first occurrence
-of each product, which implements this maximum rule. Repeated photographs do not
-accumulate votes and a product occupies one result card.
+\subsection{Image Upload and Full-Image Search}
+The main screen accepts a photograph through file selection, paste, or the
+camera option. The visitor chooses the catalogue source, category mode, result
+count, and full-image or selected-query mode. Original-gallery result cards
+provide relevance feedback; managed-product cards show stored product details.
+The upper capture in Figure~\ref{fig:result-screens} shows the result view for
+a composite containing a jacket and a dress. The lower capture shows results
+after the dress is selected. This example illustrates two usable screen states,
+not a new independent accuracy experiment.
 
-Automatic routing for this catalogue is conservative. It considers available
-product photographs only. If any product lacks a category, fewer than two
-categories exist, the best per-category photograph similarity is below 0.55,
-or the margin between the best two category scores is below 0.08, it searches
-all available products and returns a fallback reason. Otherwise it filters
-to the winning category. These gates are implemented heuristics, not calibrated
-probabilities or independently optimised thresholds.
+\begin{figure}[p]\centering
+\includegraphics[width=\linewidth]{images/ui_full_search.png}\par\vspace{5mm}
+\includegraphics[width=\linewidth]{images/ui_selected_search.png}
+\caption{Main-interface results for a full composite (top) and selected dress (bottom)}
+\label{fig:result-screens}\end{figure}
+\FloatBarrier
 
-\subsection{SAM2 Mask Handling}
-The segmenter supplies all current points and binary labels to the local SAM2
-processor. The model returns multiple candidate masks; the implementation
-selects the highest predicted-quality candidate and restores it to the original
-image size. Empty masks produce an error. The selected foreground is copied from
-the original image into a white canvas bounded by the mask, and an RGBA green
-overlay is returned separately for display.
+\subsection{Garment Selection and Query Preview}
+SAM2 mode displays point controls, the mask overlay, the proposed cutout, and
+an explicit acceptance action. Left clicks add positive points and right clicks
+add exclusions. Rectangle, polygon, and freehand tools offer manual alternatives.
+Figure~\ref{fig:selection-screen} shows the inspection state; the selected query
+can be compared with the complete input in Figure~\ref{fig:query-example}.
+The visitor must review and accept the intended garment before AI-mode search.
 
-The frontend preserves a usable prior selection if a later refinement fails,
-but prevents a stale response from replacing a newer image or reset state.
-The user's acceptance controls which cutout becomes the search query. The
-quality score helps describe the mask proposal; the application has no annotated
-mask reference against which to call it measured IoU accuracy.
+\begin{figure}[H]\centering
+\includegraphics[width=\linewidth]{images/ui_sam_selection.png}
+\caption{Actual SAM2 selection screen with overlay, cutout, and acceptance controls}
+\label{fig:selection-screen}\end{figure}
+\begin{figure}[H]
+\centering
+\begin{minipage}[c]{0.69\linewidth}\centering
+ \includegraphics[width=\linewidth]{images/composite_query.jpg}\par
+ \small Composite query: jacket and dress
+\end{minipage}\hfill
+\begin{minipage}[c]{0.27\linewidth}\centering
+ \includegraphics[height=4.5cm]{images/selected_garment.png}\par
+ \small Accepted SAM2 dress cutout
+\end{minipage}
+\caption{Actual query fixture and browser-produced cutout used for interface verification}
+\label{fig:query-example}
+\end{figure}
 
-\section{Integrity, Security, and Recovery Design}
-\subsection{Administration Boundary}
-A middleware guard normalises request paths and requires a valid session for
-product management, backup, monitoring summaries, account changes, and reindexing.
-Unsafe protected requests require a session-bound CSRF token and an acceptable
-origin. Cookies are HttpOnly and SameSite Strict, and use the Secure flag when
-served over HTTPS. The local HTTP deployment therefore does not claim encrypted
-transport merely because these cookie settings exist.
+\subsection{Administrator Sign-in and Account Setup}
+Visitors search without registering. The protected administration entry offers
+first-account setup only when no local administrator exists; otherwise it asks
+the administrator to sign in. Account settings support password changes and
+sign-out. Figure~\ref{fig:admin-login-screen} shows the actual sign-in page with
+empty credential fields. No demonstration password is published in the report.
 
-Passwords are hashed through \texttt{argon2-cffi}; opaque random session tokens
-are revocable and are represented in the database by SHA-256 hashes. Changing
-the password invalidates existing sessions. First-account setup is limited to a
-loopback client. The design is for a local singleton administrator and is not
-a multi-tenant authorisation model.
+\begin{figure}[H]\centering
+\includegraphics[width=0.70\linewidth]{images/ui_admin_login.png}
+\caption{Actual administrator sign-in screen on an isolated local instance}
+\label{fig:admin-login-screen}\end{figure}
 
-\subsection{Product Transactions and Revisions}
-Saving product details and photograph changes is one transaction. The server
-checks that the expected revision matches, validates every retained/new image
-reference, and increments the revision on success. A competing edit produces
-HTTP 409 instead of silently replacing newer data. The photo preparation stage
-occurs before the final commit, and the revision is checked again when the write
-transaction begins.
+\subsection{Product Management and Editing}
+The management screen lists products and supports name/category/availability
+filters. Its editor combines product details, one to five photos, photo order,
+cover selection, optional price/currency, and availability. Saving is one
+revision-aware operation; deletion has its own confirmation. The captures in
+Figure~\ref{fig:admin-screens} use documentation fixtures rather than the
+team's personal product database.
+
+\begin{figure}[p]\centering
+\includegraphics[width=\linewidth]{images/ui_admin.png}\par\vspace{5mm}
+\includegraphics[width=\linewidth]{images/ui_product_editor.png}
+\caption{Actual product-management and editor screens using isolated fixtures}
+\label{fig:admin-screens}\end{figure}
+\FloatBarrier
 
 \subsection{Backup and Restore}
-A backup is a structured ZIP of JSON, JPEG photos, and float32 vectors, with
-schema information, encoder compatibility data, and content hashes. The server
-validates members, lengths, relationships, image order, image decoding, vector
-dimension, finite values, and limits. It does not accept an uploaded SQLite
-database or extract arbitrary ZIP paths to the filesystem. The maximum uploaded
-archive is 200 MiB.
+The administrator can export the managed catalogue and choose an archive for
+restore. A preview identifies the replacement before explicit confirmation,
+and a recovery copy preserves the state being replaced. The screen in
+Figure~\ref{fig:backup-screen} shows these entry controls. Their transaction and
+validation behaviour is defined in the architecture and tested in Chapter~\ref{ch:evaluation}.
 
-Preview creates a session-bound token valid for ten minutes and records the
-current catalogue fingerprint. Confirmation is rejected if the catalogue has
-changed. Before replacement, a recovery archive of the current catalogue is
-written to disk. Restore then executes inside one SQLite transaction. A failure
-to validate, write recovery data, or commit leaves the existing collection
-intact. Product revisions advance so that editors opened before restore cannot
-silently overwrite the restored state. Only the added-product catalogue is
-restored; account, research-gallery, and telemetry data remain separate.
-
-\section{Interface Design}
-The main page brings together upload, source selection, search/selection mode,
-category controls, result count, query preview, and ranked cards. The selection
-tools are available for both catalogue sources. Original-gallery result cards
-can provide relevance feedback, while managed-product cards carry the product's
-stored metadata and available photographs.
-
-The management page supports product entry, filtering, editing, image order and
-cover choice, availability, and backup operations. Destructive restore has an
-explicit preview and confirmation. Account settings are separate from product
-details. Actual interface captures are presented with implementation evidence
-in Chapter~\ref{ch:evaluation}; the cover artwork is a conceptual illustration,
-not a screenshot or experiment result.
+\begin{figure}[H]\centering
+\includegraphics[width=\linewidth]{images/ui_backup_restore.png}
+\caption{Actual managed-catalogue backup and restore controls}
+\label{fig:backup-screen}\end{figure}
 
 \section{Summary}
 The design maps the required workflow onto separate selection, encoding,

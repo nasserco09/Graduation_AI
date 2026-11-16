@@ -9,8 +9,8 @@ authors:
     given-names: Noor
   - family-names: Basalma
     given-names: Naeem
-version: submission-2026-v2
-date-released: "2026-11-14"
+version: submission-2026-v3
+date-released: "2026-11-16"
 repository-code: "https://github.com/nasserco09/LibaasLens"
 url: "https://github.com/nasserco09/LibaasLens"
 abstract: "Submission snapshot of a local visual fashion retrieval application integrating SigLIP2, SAM2.1, exact FAISS ranking, FastAPI and SQLite, with application baseline v1.2.0-rc.9. Category relevance is reported separately from exploratory identity evaluation."

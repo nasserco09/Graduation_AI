@@ -1,14 +1,14 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "document_status": "submission",
-  "completed_at_utc": "2026-11-12T21:18:15.209108+00:00",
-  "completed_local_date": "2026-11-13",
+  "document_revision": "BIT-structure-20261116",
+  "completed_local_date": "2026-11-16",
   "application_verification_date": "2026-11-12",
   "application_release": "v1.2.0-rc.9",
   "source_reference": {
-    "branch": "feature/frontend-v2",
-    "commit_before_document_edits": "ab530ea8959742aa816fb1c89c682c88d2464b3a",
-    "commit_or_push_performed": false
+    "application_and_material_base_tag": "submission-2026-v2",
+    "commit_before_document_correction": "6fc897e041b9c8384ada01c96286c074dc09bdd9",
+    "document_revision_date": "2026-11-16"
   },
   "document": {
     "title": "Visual Fashion Product Search Using Interactive Segmentation",
@@ -18,39 +18,61 @@
       "Naeem Basalma"
     ],
     "supervisor": "Dr. Ayman Alsabri",
+    "degree": "Bachelor of Science",
+    "programme": "Business Information Technology (BIT)",
+    "programme_confirmed_by_user": "2026-11-16",
     "pdf": "preview/AI_Visual_Product_Search_Submission_2026.pdf",
-    "pdf_sha256": "396e236374686754f8fd4d284bbe4a41b4008ae5e120ea40eda5bcfc38ae8a9b",
-    "bytes": 2472077,
-    "pages": 81,
+    "pdf_sha256": "6d2692ab5cb06dbc382572676e9f7450ecf77652628515d0b997d86c30d7fa36",
+    "bytes": 2638287,
+    "pages": 93,
     "chapters": 7,
     "appendices": 2,
-    "numbered_figures": 14,
-    "numbered_tables": 16,
+    "numbered_figures": 19,
+    "numbered_tables": 20,
     "bibliography_sources": 18,
     "interactive_citation_destinations": 18,
     "editable_native_diagrams": [
+      "work breakdown structure",
+      "iterative software development",
       "shared preprocessing",
-      "local architecture",
       "use cases",
       "search activity",
-      "segmentation and search sequence",
+      "segmentation/search sequence",
       "service classes",
-      "product and photo ERD",
-      "physical administrator/session schema",
-      "search-event and feedback ERD"
+      "local architecture",
+      "product/photo ERD",
+      "account/session schema",
+      "search-event/feedback ERD"
     ],
-    "signatures_and_stamp": "Intentionally blank for genuine university approval."
+    "signatures_and_stamp": "Blank for genuine approval by the signatories."
+  },
+  "template_alignment": {
+    "template": "Project Document - BIT.zip supplied by the team",
+    "reference_toc_and_source_checked": true,
+    "all_seven_section_hierarchies_checked": true,
+    "subsections_visible_in_contents": true,
+    "frontmatter_order_checked": true,
+    "wbs_and_development_cycle_added": true,
+    "interface_screens_in_design_chapter": true,
+    "representative_unit_and_integration_cases_from_retained_logs": true,
+    "user_acceptance_scope": "Informal feedback and acceptance by the team representative; not a formal usability survey or university approval.",
+    "sample_errors_not_copied": [
+      "Introduction as titles for chapters 5â€“7",
+      "Unrelated wireless-sensor-network abstract",
+      "Pharmacy-specific functions and data-collection claims"
+    ],
+    "mapping": "notes/UNIVERSITY_ALIGNMENT_AR.md"
   },
   "pdf_validation": {
     "engine": "Tectonic 0.17.0 (XeTeX and BibTeX)",
     "cached_compilation_passed": true,
-    "all_81_pages_visually_reviewed": true,
-    "visual_review_method": "Rendered contact sheets of all pages plus enlarged critical diagrams, tables, front matter, references and the revised chart.",
-    "internal_links": 180,
+    "all_pages_visually_reviewed": true,
+    "visual_review_method": "Contact sheets for all pages; enlarged WBS, development cycle, contents, screenshots, unit/integration cases and changed final pages.",
+    "internal_links": 229,
     "unresolved_internal_links": [],
-    "outline_entries": 80,
+    "outline_entries": 106,
     "invalid_outline_entries": [],
-    "labels": 49,
+    "labels": 58,
     "duplicate_labels": [],
     "unresolved_source_refs": [],
     "missing_build_assets": [],
@@ -59,99 +81,7 @@
     "text_outside_page": [],
     "bad_latex_log_lines": [],
     "unembedded_fonts": [],
-    "all_reference_urls_http_200": true,
-    "reference_urls": [
-      {
-        "url": "https://www.cv-foundation.org/openaccess/content_cvpr_2016/html/Liu_DeepFashion_Powering_Robust_CVPR_2016_paper.html",
-        "status": 200,
-        "final_url": "https://www.cv-foundation.org/openaccess/content_cvpr_2016/html/Liu_DeepFashion_Powering_Robust_CVPR_2016_paper.html"
-      },
-      {
-        "url": "https://arxiv.org/abs/2502.14786",
-        "status": 200,
-        "final_url": "https://arxiv.org/abs/2502.14786"
-      },
-      {
-        "url": "https://arxiv.org/abs/2408.00714",
-        "status": 200,
-        "final_url": "https://arxiv.org/abs/2408.00714"
-      },
-      {
-        "url": "https://github.com/facebookresearch/sam2",
-        "status": 200,
-        "final_url": "https://github.com/facebookresearch/sam2"
-      },
-      {
-        "url": "https://arxiv.org/abs/1702.08734",
-        "status": 200,
-        "final_url": "https://arxiv.org/abs/1702.08734"
-      },
-      {
-        "url": "https://github.com/facebookresearch/faiss/wiki/Faiss-indexes",
-        "status": 200,
-        "final_url": "https://github.com/facebookresearch/faiss/wiki/Faiss-indexes"
-      },
-      {
-        "url": "https://github.com/alexeygrigorev/clothing-dataset-small",
-        "status": 200,
-        "final_url": "https://github.com/alexeygrigorev/clothing-dataset-small"
-      },
-      {
-        "url": "https://arxiv.org/abs/1901.07973",
-        "status": 200,
-        "final_url": "https://arxiv.org/abs/1901.07973"
-      },
-      {
-        "url": "https://arxiv.org/abs/1512.03385",
-        "status": 200,
-        "final_url": "https://arxiv.org/abs/1512.03385"
-      },
-      {
-        "url": "https://proceedings.mlr.press/v97/tan19a.html",
-        "status": 200,
-        "final_url": "https://proceedings.mlr.press/v97/tan19a.html"
-      },
-      {
-        "url": "https://proceedings.mlr.press/v139/radford21a.html",
-        "status": 200,
-        "final_url": "https://proceedings.mlr.press/v139/radford21a.html"
-      },
-      {
-        "url": "https://arxiv.org/abs/2304.07193",
-        "status": 200,
-        "final_url": "https://arxiv.org/abs/2304.07193"
-      },
-      {
-        "url": "https://huggingface.co/google/siglip2-base-patch16-224",
-        "status": 200,
-        "final_url": "https://huggingface.co/google/siglip2-base-patch16-224"
-      },
-      {
-        "url": "https://huggingface.co/facebook/sam2.1-hiera-base-plus",
-        "status": 200,
-        "final_url": "https://huggingface.co/facebook/sam2.1-hiera-base-plus"
-      },
-      {
-        "url": "https://fastapi.tiangolo.com/",
-        "status": 200,
-        "final_url": "https://fastapi.tiangolo.com/"
-      },
-      {
-        "url": "https://www.sqlite.org/transactional.html",
-        "status": 200,
-        "final_url": "https://www.sqlite.org/transactional.html"
-      },
-      {
-        "url": "https://argon2-cffi.readthedocs.io/en/stable/parameters.html",
-        "status": 200,
-        "final_url": "https://argon2-cffi.readthedocs.io/en/stable/parameters.html"
-      },
-      {
-        "url": "https://doi.org/10.1017/CBO9780511809071",
-        "status": 200,
-        "final_url": "https://www.cambridge.org/highereducation/books/introduction-to-information-retrieval/669D108D20F556C5C30957D63B5AB65C"
-      }
-    ],
+    "reference_urls_last_checked": "2026-11-12; retained source URLs, not rechecked or described as fresh network validation",
     "other_latex_engines_or_overleaf_tested": false
   },
   "software_verification": {
@@ -221,6 +151,7 @@
     "owner_databases_and_environment_unchanged": true,
     "test_counts_are_not_retrieval_accuracy": true
   },
+  "software_verification_scope_note": "The original 2026-11-12 application checks are retained, not rerun by this document-only correction. New 2026-11-16 screenshot capture used the real isolated application and changed no application code or owner data.",
   "research_interpretation": {
     "gallery_images": 3068,
     "validation_images": 341,
@@ -238,37 +169,40 @@
     "root_folder": "AI_Visual_Product_Search_LaTeX_Submission_2026",
     "all_build_dependencies_included": true,
     "requires_models_or_dataset_to_compile": false,
-    "rebuilding_generated_evidence_requires_repository_results_and_dataset": true,
     "payload_sha256_excluding_verification_record": {
-      "README_AR.md": "41348e78e3a8f4a68c48d4b4b85a36a7d5da5596e489ad913d853b301035dab0",
+      "README_AR.md": "843fa29f5508c52367370a20afd67dff969f9dc629e5f59644680472fd027014",
       "appendices/evidence.tex": "ec71ea5a1648291db85d02a116b942775e847f13a164d30ee2e33c228c712ef2",
-      "appendices/operations.tex": "bb39f612fd3a460d17519b70bf24ef9d334fc97134cf49b4dcf9ebc4bccda17d",
+      "appendices/operations.tex": "cf56a689208314719ee374ad1d70590b540e8e8d4fd25186f398dbd210287e8a",
       "build_report.ps1": "a6a30cd874ea6a5983d25cf8e2036072491b4c3358b8beed450cb3d011bf1eb2",
       "build_review.ps1": "de7b01ce56e61105ec5ceff89d0bee7759e66912670ee0f55fb6b3a7c23de73f",
-      "chapters/chapter1.tex": "0a71fbfa41cd37e44d21c6e10bf13f38c13fe4881fc85f67c6df27292addd94c",
-      "chapters/chapter2.tex": "20d9c98acc0adfb6e0ebcc14b8887f88bfa7274588e0485036dbc5381e3f558a",
-      "chapters/chapter3.tex": "91024227334d42493289449c16a01d54ae764c3057228096f990e04adace0fc7",
-      "chapters/chapter4.tex": "bb82732571043ec179ad8dbe6dcd2157f5680e39862399f5db6b3f01b35fee68",
-      "chapters/chapter5.tex": "1767945624c1c45e1521aab67a68dbd745ec1662606d220265d6ef7dbb46226a",
-      "chapters/chapter6.tex": "f9d18b24d76fe6b574dd6398b80e82cb9d837f39fb2f11123c4293da71023b3c",
-      "chapters/chapter7.tex": "c9a252fa88eecfd78ad1b75d719be7fa95ad6db679365856a8007c6380dd0c33",
-      "config/facts.tex": "b6436aa01251b6f9c6a79252a6b87bfdce8dbe273738277e57f118d3192b7037",
-      "config/layout.tex": "df732866e6331d25ad2fadc8f5ff85f71ae8a6b6464e86f60124d79df1a03067",
-      "config/project.tex": "d55756688db1350f3e2b389fb6145c29a2589236e656cf2852626046380a58bd",
+      "chapters/chapter1.tex": "e6c8381345381fb1cccc7ef8682a51c5bf1e86b59428517ea96b8b06bfb97ed8",
+      "chapters/chapter2.tex": "d29555dec4e693f90920f11d07c66f13884c0e2bbba63f23d0c4a6714b70c14c",
+      "chapters/chapter3.tex": "0c1612f0a18eec4d5c0c49ac22634dbaf3676ede7f362fa1611658680edc0c71",
+      "chapters/chapter4.tex": "d7305db8fb3f270efb88c6832ce04d4a41fd54a885175b235eebc70f7192f438",
+      "chapters/chapter5.tex": "9dc2b937dbca66214ebdbab232b328b4cd7a1fc4314d034d3a0c627660a8e025",
+      "chapters/chapter6.tex": "721a6c7578425a23cc08225182d36380c577241952f3092ce6126fbc43bdbb18",
+      "chapters/chapter7.tex": "6477c30b2c5e0aa0110667c19acdcbbd427ea320167481887cc9b150aff09d50",
+      "config/facts.tex": "02b7e35f3b5f62cfbb0be04b6bfd5158be0738b4e1a3314b21cbd45cc04e94a5",
+      "config/layout.tex": "c9564f60432a742a20eaba5e83baa9a2a691322d6b654b86115c3d05c448aa4f",
+      "config/project.tex": "f6beb0f0efcbea99dd154e16b0ec1d517a1066fae8a6213ead9f91a593dd51ce",
       "figures/architecture.tex": "9874103e040a8093130ce991ce90bc6ae4991d271a1f6feb75cbabc6576b2ab2",
       "figures/auth_schema.tex": "58a9aaf6613db893ac04d23a25f311e0ba9c57b443783098d44d0427feb89383",
       "figures/components.tex": "cdc7166d9fa8fa1d978511ac3c58c522c5db63e99043450e808eff2dfadf1d8c",
+      "figures/development_cycle.tex": "eda08f2dd941f2bc7ecff1def11b581c376aff10359051cc8649a8a722a3f7e9",
       "figures/monitoring_er.tex": "c59475b4bab0c8ddd05ae8ddbb89cfd7295d90239d3a12a4087243f103a2a2a9",
       "figures/product_er.tex": "ae62fd2c24015b01a640caab22d42489cbcd9954f24cab108cf4e68098012533",
       "figures/search_activity.tex": "1aad1538e18917c1c1fdc110295dce2b01b253bb3deacdce10ded294084a00de",
       "figures/search_sequence.tex": "9ed49a57d45b71cf947058d8017f5dd340dcb537be382e591ea9f949fb307328",
       "figures/use_cases.tex": "27240c8ce26e4742b42d4ecd9e4e26a01808c431c573c87ae38a7596999354a8",
+      "figures/work_breakdown.tex": "1e2cce8a48063474d723e2d4820fc80847a29db8278a27e2b354694fdeeceb41",
       "frontmatter/abbreviations.tex": "4753d823c6be5bea7728bf1121d88d9f38443ddc7bd3ab8c249fa259ce22fe2b",
       "frontmatter/abstract.tex": "0c5ad7dc404c916a5852f40d1004622b03fd31342b5a87313d1408fada787051",
       "frontmatter/acknowledgements.tex": "089fefa30267ad9e0e0b2848219feb5a7e5d0f419d983baa4c0051d6ec12893d",
-      "frontmatter/approval.tex": "f83f5c893f1e6a4043aa793550d7e25591b44ff41c9d03ebbf9013adffaf35ac",
-      "frontmatter/cover.tex": "7db3adc3e0ef771814aa46ba70bc81a07d80e65a5fbb811850a8d6c18db21a90",
-      "frontmatter/declaration.tex": "d77721d20d12efbad688b6f9479037887fbf581449637c4ae37fc9ead25c75e7",
+      "frontmatter/approval.tex": "14aab3920ca0136df1d81d05bef262cf56e7a52bd32fe95160ddf10171bd6944",
+      "frontmatter/copyright.tex": "42e830e7da01d3d5515e4b0975cd79f40935090b86ff1723d7bd07c95ffc3249",
+      "frontmatter/cover.tex": "09d33ce7baf085fd5781cfb2cae6e2595861fb5a6b4c79bce393260cfbbe6015",
+      "frontmatter/declaration.tex": "3bba881ca1a4e4551e9e025a8115aa96141b5e4f47376e55c6c8972c0919fea2",
+      "frontmatter/dedication.tex": "745cce6b228d8844bcbc46b1fab267e47a8c5c6b3517a18ecb1a1323325f604a",
       "generate_evidence.py": "ef063e3b8741313204679494bacca539c2784452e3f3e500407121eb55f2f54f",
       "images/category_routing.pdf": "f103bf08fed048c1f6ccb142426567fcc59c3e3c56f6180ac93e47f74f9f3832",
       "images/composite_query.jpg": "fef8dcf25b347fa37848a9dc847918e304b30c55203f4b187da361178f49d123",
@@ -276,14 +210,18 @@
       "images/search_interface_v3.png": "4417edc03435ab9eda6353312a6d368f6b435687454aa6230d7d50e3b0de6cfc",
       "images/selected_garment.png": "39f2f743a3e93423453f5905ed2dca17e5b39b9729040e65659fa5ac72e0c7c0",
       "images/ui_admin.png": "7fef16f23736bd52e3628275188f052ed93454817b2b552dedaef56f8fd992b7",
+      "images/ui_admin_login.png": "6d2065373f3cc5e56fcb1edb9b8f6f4a621bbb49a7a0f317c77c9dd9a9d95693",
+      "images/ui_backup_restore.png": "a10fabfa8489b52a788cdb241543dc39c262193fa1f7908f3b6c0a8104741c48",
       "images/ui_full_search.png": "41c720f1fc2dc1d3ddc49204a6ff59b8b57788bfc217e57b64892783c880238c",
       "images/ui_product_editor.png": "0620d0eee54e51e917d027e92544e17612b71bfc908238195372aa78bac036e5",
+      "images/ui_sam_selection.png": "779eb958cd8c1b0b7693a383fec22bb3ab23bcadf32166f46f84842b03df1fb9",
       "images/ui_selected_search.png": "84fe3a6b472b3a7c360e3e972761f15f359c273d28e3b0cbf64ba92c5d1e9fe0",
       "images/university_logo.png": "4144c33c21a7f1822de8056d17ee5b4140a085b61b0322140a0427a753495b95",
-      "main.tex": "8dab333ecf1ad7473690f4ae121248f803b408d9efc003ffaaf3fba93caa7e61",
-      "notes/SUBMISSION_SOURCES_AR.md": "b22419dd0801799207d84258c01f5399dc30045c14b3a7945235a663b18adf28",
+      "main.tex": "ac68a7f83fe3e79cccf4d22986d9aac87f3daa3ddff01e297fe7d7e0f102de9f",
+      "notes/SUBMISSION_SOURCES_AR.md": "0fd8bf8a7a0ea923527e289b217c894e140f87bd7fe24c84b63ebd9bb72826db",
+      "notes/UNIVERSITY_ALIGNMENT_AR.md": "ce5201744aab3bcbdc946d34d282cf62ec49be8e3b7c89808477cfb2f5cc9924",
       "notes/evidence_snapshot.json": "8e12b35dc3efef9da90e64c7ab9b6f00c2094ce9711d105b4b0c6a398cc42b37",
-      "preview/AI_Visual_Product_Search_Submission_2026.pdf": "396e236374686754f8fd4d284bbe4a41b4008ae5e120ea40eda5bcfc38ae8a9b",
+      "preview/AI_Visual_Product_Search_Submission_2026.pdf": "6d2692ab5cb06dbc382572676e9f7450ecf77652628515d0b997d86c30d7fa36",
       "references/references.bib": "ad7d91e71e2ca4c6f7e1e00d9978935ac7901cd822edd053ef922d974d856832",
       "tables/cropping.tex": "4030c019413986dd3c65c762a9b06cfe956411a56493d371d81feb95b0caa50d",
       "tables/dataset.tex": "53389e7e0f4fe4e8fd6362a95cfa1071fea6d44b453abe03fa369b8acff6711f",
@@ -293,29 +231,31 @@
     },
     "standalone_validation": {
       "passed": true,
-      "checked_at_utc": "2026-11-12T21:17:39.402758+00:00",
+      "checked_at_utc": "2026-11-16T06:24:20.017411+00:00",
       "engine": "Tectonic 0.17.0, cached packages",
       "method": "Extracted actual ZIP and executed its build_report.ps1 with Tectonic on PATH.",
       "independent_output_directory": true,
       "uses_application_models_or_dataset_to_build": false,
-      "compiled_payload_files_match_packaged_sha256": 50,
-      "pages": 81,
-      "pixel_identical_pages": 81,
+      "compiled_payload_files_match_packaged_sha256": 58,
+      "pages": 93,
+      "pixel_identical_pages": 93,
       "different_text_pages": [],
       "different_rendered_pages": [],
       "interactive_citation_destinations": 18,
       "bad_latex_log_lines": [],
-      "canonical_pdf_sha256": "396e236374686754f8fd4d284bbe4a41b4008ae5e120ea40eda5bcfc38ae8a9b",
-      "rebuilt_pdf_sha256": "225c5c93c02c50c786bed968f5ba181cceba0c097e1e0c60c148faf11a5581ae",
+      "canonical_pdf_sha256": "6d2692ab5cb06dbc382572676e9f7450ecf77652628515d0b997d86c30d7fa36",
+      "rebuilt_pdf_sha256": "2a423a477434dbdb286cefab46a9bcf14b40846014fede243bf050b8d2a238d7",
       "metadata_note": "PDF timestamps/IDs may differ; all page pixels and extracted text are equal."
     }
   },
   "publication": {
-    "github_runtime_upload": "stopped_by_user_incomplete",
-    "upload_resumed": false
+    "runtime_release": "https://github.com/nasserco09/LibaasLens/releases/tag/runtime-rc9-v1",
+    "runtime_publication_completed_and_verified": "2026-11-14",
+    "runtime_record": "runtime/VERIFICATION_PUBLICATION_20261114.json",
+    "default_branch": "main",
+    "corrected_document_publication": "See repository release/tag for this document revision."
   },
   "remaining_external_steps": [
-    "Genuine university signatures and stamp.",
-    "Poster, brochure, final slides, and video are separate deliverables."
+    "Genuine supervisor/university signatures and stamp."
   ]
 }

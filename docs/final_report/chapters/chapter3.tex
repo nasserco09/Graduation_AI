@@ -16,8 +16,9 @@ browser observations examine visible interaction; reviewed alternate views
 provide limited identity evidence. The study records these evidence types
 separately rather than combining them into a single accuracy figure.
 
-\section{Data Collection and Dataset Specification}
-\subsection{Source and Partition Roles}
+\section{Methodology}
+\subsection{Data Collection}
+\subsubsection{Source and Partition Roles}
 The image collection is the public ten-class \texttt{clothing-dataset-small}
 subset~\cite{GrigorevClothingDataset}. Its local inventory contains 3,781 images:
 3,068 in the named training split, 341 in validation, and 372 in test.
@@ -37,7 +38,7 @@ Validation supports comparison and development choices; test supplies the
 retained final category comparisons. Validation and test images are not inserted
 into the application's original research gallery.
 
-\subsection{Identity and Duplicate Auditing}
+\subsubsection{Identity and Duplicate Auditing}
 The supplied dataset does not include verified merchant SKU identities. The
 application derives an image identifier from each filename and maps it to a
 category and display title. Two different filenames may still depict the same
@@ -52,7 +53,7 @@ recompressed, cropped, or alternate-view photographs of the same garment.
 Visual near-duplicate judgments are therefore kept distinct from exact hash
 matches and from independently verified commercial identities.
 
-\subsection{Independent Added-Product Data}
+\subsubsection{Independent Added-Product Data}
 Products entered through the management page form a second catalogue. Each has
 an explicit product UUID and one to five associated photographs. Their vectors
 are produced by the same deployed encoder but stored with product data in a
@@ -60,8 +61,9 @@ separate SQLite database. This catalogue supports application use and CRUD
 testing; it is not added to the research gallery or silently included in the
 historical evaluation results.
 
-\section{Image Preparation and Representation}
-\subsection{Shared Application Preprocessing}
+\subsection{Data Analysis}
+\subsubsection{Image Preparation and Representation}
+\paragraph{Shared Application Preprocessing}
 The deployed preprocessing contract, \texttt{visual-search-rgb-square-v1}, applies
 the following operations to gallery and query images:
 \begin{enumerate}[leftmargin=1.8em,itemsep=0.3em]
@@ -92,7 +94,7 @@ white-background PNG cutout, not a transparent product image.
 \label{fig:preprocessing}
 \end{figure}
 
-\subsection{Index and Artifact Consistency}
+\paragraph{Index and Artifact Consistency}
 The persistent FAISS index is accompanied by a path-mapping JSON file containing
 the encoder name, dimension, preprocessing version, metadata schema, image count,
 relative paths, and a catalogue checksum. Loading validates these fields against
@@ -105,8 +107,8 @@ where supported by the relevant experiment. Such records strengthen evidence
 about which artifacts were used. They do not retroactively supply provenance
 that was absent from an older cached experiment.
 
-\section{Experimental Protocols}
-\subsection{Historical Encoder Comparison}
+\subsubsection{Experimental Protocols}
+\paragraph{Historical Encoder Comparison}
 The retained benchmark compares ResNet50, EfficientNet-B3, CLIP, DINOv2, and
 SigLIP2. Each uses the same 3,068-image train gallery and 341 validation queries.
 Features are normalised and ranked by exact inner product. A retrieved image is
@@ -119,7 +121,7 @@ comparison, but their zero recorded encoding times cannot be interpreted as
 real inference latency, and the values are not presented as a fresh benchmark
 of the final application.
 
-\subsection{Historical Full-Image and SAM2 Comparison}
+\paragraph{Historical Full-Image and SAM2 Comparison}
 Two retained synthetic protocols use the same construction procedure but
 different query partitions. The validation experiment draws ten targets per
 category from validation; the final recorded experiment draws ten per category
@@ -139,7 +141,7 @@ The historical records do not contain all model, code, and original input hashes
 from the time of execution. Their stored scores are audited for consistency,
 while the report explicitly retains this provenance limitation.
 
-\subsection{Application-Aligned Category Routing}
+\paragraph{Application-Aligned Category Routing}
 The category-routing comparison uses the existing original gallery vectors and
 newly encodes the clean validation and test queries through
 the application's shared query encoder. For each query, unrestricted retrieval and
@@ -152,7 +154,7 @@ cosine score. A temperature-scaled softmax with $\tau=0.07$ produces the
 catalogue-relative display confidence. This value describes the represented
 categories and is not a calibrated probability that the first result is correct.
 
-\subsection{Catalogue-Cropping Experiment}
+\paragraph{Catalogue-Cropping Experiment}
 The cropping study creates a separate candidate gallery using a conservative
 SAM2-guided bounding crop. Final candidate pixels come from the original image;
 the mask is used to locate the crop rather than to whiten every background
@@ -167,7 +169,7 @@ All configurations within this experiment share its query preparation. These
 application-aligned values cannot be pooled with the historical 46\%--75\%
 experiment as if they came from one run.
 
-\subsection{Reviewed Alternate-View Identity Pilot}
+\paragraph{Reviewed Alternate-View Identity Pilot}
 Twelve visually reviewed groups were available from earlier catalogue review.
 Five pairs were conservatively excluded before inference because independence
 of the views was uncertain. Seven groups remained. A fixed rule selected one
@@ -188,7 +190,7 @@ seller-verified SKU labels. The reverse direction reuses the same seven groups
 and is not counted as seven additional independent products. The protocol
 prevents direct self-match but cannot establish dataset-wide identity accuracy.
 
-\section{Evaluation Measures}
+\subsubsection{Evaluation Measures}
 Let $Q$ be the query set, $R_q$ the number of gallery images judged relevant to
 query $q$, and $r_q(j)\in\{0,1\}$ the relevance of the result at rank $j$.
 Relevance is category equality in the main experiments and reviewed-group
@@ -219,7 +221,15 @@ uncertainty under the recorded query set; they do not repair class-label or
 selection bias. Statistical results are interpreted alongside the effect size
 and experimental design.
 
-\section{Software Development and Verification Method}
+\subsubsection{Ethical and Reproducibility Considerations}
+Dataset and model use retains upstream notices. Research fixtures are
+identified separately from user uploads. Monitoring stores query hashes and
+search metadata, not raw search photographs; optional user notes still require
+normal local data care. Results retain their denominator, relevance definition,
+gallery, and preprocessing. Re-reading a historical result is not described as
+new inference, and an exact-product claim requires appropriate identity evidence.
+
+\subsection{Software Development Model}
 A baseline, an isolated candidate change, comparison, and justified promotion
 structure development. The original index is retained when evidence does not
 support a replacement. Unit tests cover validation, metadata, routing, revisions,
@@ -232,13 +242,22 @@ copy with matching active code and separate account/product databases. Records
 state their date, command, scope, and limitations. A functional test is not a
 retrieval query and contributes no evidence of general model accuracy.
 
-\section{Ethical and Reproducibility Considerations}
-Dataset and model use retains upstream notices. Research fixtures are
-identified separately from user uploads. Monitoring stores query hashes and
-search metadata, not raw search photographs; optional user notes still require
-normal local data care. Results retain their denominator, relevance definition,
-gallery, and preprocessing. Re-reading a historical result is not described as
-new inference, and an exact-product claim requires appropriate identity evidence.
+
+Figure~\ref{fig:development-cycle} presents the development model used for the
+project. A working baseline is followed by a bounded candidate change and a
+comparison. A candidate is retained only when its evidence and operating
+behaviour support adoption; an inconclusive change, such as catalogue cropping,
+can be rejected while the baseline remains usable. Requirements, implementation,
+testing, and documentation are revisited as findings emerge.
+
+\begin{figure}[H]\centering\input{figures/development_cycle}
+\caption{Iterative, evidence-guided software development model}
+\label{fig:development-cycle}\end{figure}
+
+This is a description of the recorded development process. It does not claim
+fixed sprint durations, a formal Scrum implementation, stakeholder interviews,
+or a user survey. Functional checks and research comparisons provide different
+feedback: a passing endpoint test cannot replace an appropriate retrieval study.
 
 \section{Summary}
 The method separates category experiments, reviewed identity pilots, and software

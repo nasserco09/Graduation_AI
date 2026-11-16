@@ -10,22 +10,24 @@
 \frontmatter
 \hypersetup{pageanchor=true}
 \setcounter{page}{1}
+\input{frontmatter/copyright}
 \input{frontmatter/approval}
 \input{frontmatter/declaration}
+\input{frontmatter/dedication}
 \input{frontmatter/acknowledgements}
 \input{frontmatter/abstract}
 \cleardoublepage
-\begingroup\small\setstretch{1.1}
-\tableofcontents
-\endgroup
+\phantomsection
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
 \cleardoublepage
 \phantomsection
 \addcontentsline{toc}{chapter}{List of Tables}
 \listoftables
 \cleardoublepage
-\phantomsection
-\addcontentsline{toc}{chapter}{List of Figures}
-\listoffigures
+\begingroup\small\setstretch{1.1}
+\tableofcontents
+\endgroup
 \input{frontmatter/abbreviations}
 \mainmatter
 \input{chapters/chapter1}

@@ -1,0 +1,13 @@
+\begin{tikzpicture}[node distance=5mm]
+\node[reportbox,text width=1.95cm] (needs) {Define needs\\and baseline};
+\node[reportbox,text width=1.95cm,right=of needs] (data) {Prepare data\\and models};
+\node[reportbox,text width=1.95cm,right=of data] (build) {Implement\\one candidate};
+\node[reportbox,text width=1.95cm,right=of build] (verify) {Test and\\compare};
+\node[reportbox,text width=1.95cm,right=of verify] (release) {Retain evidence\\and release};
+\draw[reportarrow] (needs)--(data);
+\draw[reportarrow] (data)--(build);
+\draw[reportarrow] (build)--(verify);
+\draw[reportarrow] (verify)--(release);
+\draw[reportarrow] (verify.south)--++(0,-12mm)-|node[below,pos=.3,font=\scriptsize]{revise or reject the candidate}(data.south);
+\node[reportnote,text width=11.7cm,below=22mm of build] {An iterative, evidence-guided process; the diagram does not assert fixed sprint dates or a formal Scrum study.};
+\end{tikzpicture}

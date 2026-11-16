@@ -1,4 +1,4 @@
-\chapter{Implementation, Testing and Evaluation}
+\chapter{Implementation and Testing}
 \label{ch:evaluation}
 
 \section{Introduction}
@@ -32,7 +32,7 @@ allowing the browser to compare them with the submitted query. This verifies
 the request image contract; it does not certify that the chosen mask is the
 correct garment.
 
-Figures~\ref{fig:query-example} and~\ref{fig:result-screens} illustrate the actual
+The design captures in Figures~\ref{fig:query-example} and~\ref{fig:result-screens} illustrate the actual
 workflow on a previously used composite fixture. The full image contains both
 a jacket and a dress. The example full-image search routed to outerwear, while
 the selected dress search routed to dresses. This is an illustration of target
@@ -41,27 +41,9 @@ The screenshots retain the application's Arabic interface and actual test
 results. Displayed percentages are similarity or catalogue-relative routing
 scores, not identity probabilities.
 
-\begin{figure}[H]
-\centering
-\begin{minipage}[c]{0.69\linewidth}\centering
- \includegraphics[width=\linewidth]{images/composite_query.jpg}\par
- \small Composite query: jacket and dress
-\end{minipage}\hfill
-\begin{minipage}[c]{0.27\linewidth}\centering
- \includegraphics[height=4.5cm]{images/selected_garment.png}\par
- \small Accepted SAM2 dress cutout
-\end{minipage}
-\caption{Actual query fixture and browser-produced cutout used for interface verification}
-\label{fig:query-example}
-\end{figure}
 
-\begin{figure}[p]\centering
-\includegraphics[width=\linewidth]{images/ui_full_search.png}\par\vspace{5mm}
-\includegraphics[width=\linewidth]{images/ui_selected_search.png}
-\caption{Observed result cards for the complete composite (top) and selected dress
-(bottom). This qualitative example demonstrates the interface, not general accuracy.}
-\label{fig:result-screens}
-\end{figure}
+
+
 
 \subsection{Managed Catalogue and Account Workflow}
 The product editor handles details and photographs together, including a cover
@@ -78,21 +60,14 @@ interface's combined content-save and revision-checked delete operations.
 Removing or aligning that legacy compatibility route is an API-hardening task
 before broader deployment.
 
-\begin{figure}[p]\centering
-\includegraphics[width=\linewidth]{images/ui_admin.png}\par\vspace{5mm}
-\includegraphics[width=\linewidth]{images/ui_product_editor.png}
-\caption{Actual management and product-editor screens with isolated documentation fixtures}
-\label{fig:admin-screens}
-\end{figure}
-
-\section{Functional Verification}
-\subsection{Automated Suites and Integration Checks}
-Table~\ref{tab:functional-verification} records the final-report verification.
-The Python count includes the existing application/evaluation tests and eight
-runtime-package boundary tests added after the earlier 189-test rc.9 record.
-The categories are separate suites; they are not summed into a model-accuracy
-denominator. Unit tests use controlled fixtures and mocks where appropriate,
-whereas the HTTP search checks exercise actual model inference.
+\section{Testing}
+Testing is organised into unit, integration, system, and user-acceptance
+activities, matching their different evidence. The recorded application checks
+were executed on \ReportVerificationDate; this document reorganisation on
+\DocumentRevisionDate{} does not turn them into new model runs. Table~\ref{tab:functional-verification}
+summarises the retained suites. Representative cases below state the input,
+expected behaviour, recorded actual outcome, and result. Controlled unit
+fixtures are distinguished from HTTP checks using the actual models.
 
 \begin{table}[H]\centering
 \caption{Verification executed for the report on \ReportVerificationDate}
@@ -110,22 +85,69 @@ Saved-evidence audit & \EvidenceCheckCount & Numeric consistency, query CSV summ
 \end{ReportTable}
 \end{table}
 
-The live checks used an independent application copy whose active Python and
-frontend files matched the current working copy byte-for-byte. It ran on CPU on
-a separate loopback port with its own product, account, and telemetry databases.
-The original persistent index was not rebuilt. Successful search responses
-included result images, the submitted-image digest, routing data, and no monitoring
-failure warning in the exercised requests.
+\subsection{Unit Test}
+Unit tests exercise individual contracts with controlled fixtures and,
+where appropriate, mocked inference. The retained Python record reports
+\PythonTestCount{} passing cases and the JavaScript record reports
+\JavaScriptTestCount{}. They are software checks, not retrieval-accuracy
+denominators. Table~\ref{tab:unit-cases} presents representative existing tests.
+The actual-output column summarises their passing assertions rather than
+claiming that a mock embedding is a measured neural-model prediction.
 
-The 15 administration checks included an authorised product addition, retrieval
-from the added catalogue, combined editing, stale-save and stale-delete rejection,
-backup export, deletion of the newly created test product, preview and confirmed
-restore, recovery-copy availability, and logout. The application's existing
-backup unit tests cover additional malformed archives, invalid vectors, duplicate
-members, incompatible signatures, and failure paths. These tests support the
-implemented safeguards without establishing immunity to every possible fault.
+\begin{ReportTable}\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}L{0.10\linewidth}L{0.22\linewidth}L{0.25\linewidth}L{0.25\linewidth}L{0.08\linewidth}@{}}
+\caption{Representative recorded unit-test cases}\label{tab:unit-cases}\\
+\toprule\textbf{ID}&\textbf{Input}&\textbf{Expected output}&\textbf{Actual output}&\textbf{Result}\\\midrule\endfirsthead
+\toprule\textbf{ID}&\textbf{Input}&\textbf{Expected output}&\textbf{Actual output}&\textbf{Result}\\\midrule\endhead
+UT-01 & Supported 16$\times$12 PNG & RGB image; dimensions preserved & Mode and size assertions satisfied & Pass\\\addlinespace
+UT-02 & Empty byte upload & Validation error before inference & Expected empty-upload error asserted & Pass\\\addlinespace
+UT-03 & PNG bytes declared text/plain & Reject incompatible content type & Expected content-type error asserted & Pass\\\addlinespace
+UT-04 & Zero, wrong-size, or nonfinite vector & Reject before saving & Invalid-vector assertions satisfied & Pass\\\addlinespace
+UT-05 & Two photos for one product; controlled RGB encoder & One result per product; best photo represents it & Product count, order, and best-photo assertions satisfied & Pass\\\addlinespace
+UT-06 & Encoding fails on second photo & No partial product saved & Exception asserted and catalogue remained empty & Pass\\\addlinespace
+UT-07 & Catalogue edited after restore preview & Reject stale preview and preserve current data & catalog\_changed and unchanged snapshot asserted & Pass\\
+\bottomrule
+\end{longtable}
+\end{ReportTable}
 
-\subsection{Browser Observations}
+UT-01--UT-03 are defined in \path{tests/test_request_validation.py};
+UT-04--UT-06 in \path{tests/test_demo_catalog.py}; UT-07 in
+\path{tests/test_catalog_backup.py}. The recorded verbose unit-test log identifies
+the corresponding passing test methods. No new unit-test count is claimed by
+restating these cases in the report.
+
+\subsection{Integration Testing}
+Integration checks exercise boundaries between the API, account
+guard, model-backed search, product storage, and recovery. The retained HTTP
+record contains \HTTPTestCount{} passing checks; the separate isolated
+administrator record contains \AdministrationTestCount{}. Both use a separate
+application copy and separate databases. The active Python/frontend files
+matched the verified application; the original index and owner databases were
+preserved. The live search checks used actual models on CPU.
+
+\begin{ReportTable}\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}L{0.10\linewidth}L{0.21\linewidth}L{0.25\linewidth}L{0.26\linewidth}L{0.08\linewidth}@{}}
+\caption{Representative recorded HTTP integration cases}\label{tab:integration-cases}\\
+\toprule\textbf{ID}&\textbf{Input}&\textbf{Expected output}&\textbf{Actual output}&\textbf{Result}\\\midrule\endfirsthead
+\toprule\textbf{ID}&\textbf{Input}&\textbf{Expected output}&\textbf{Actual output}&\textbf{Result}\\\midrule\endhead
+IT-01 & GET health after startup & Ready index and correct gallery size & status ok; index ready; 3,068 indexed images & Pass\\\addlinespace
+IT-02 & Full composite to search API & Successful ranked response and query digest & HTTP 200; digest matched; first-result category outwear & Pass\\\addlinespace
+IT-03 & Garment point, accepted cutout, then search & Mask/cutout and successful selected-query response & Segmentation and selected-query checks passed; digest matched & Pass\\\addlinespace
+IT-04 & Guest requests product management & Deny privileged access & Guest-management rejection check passed & Pass\\\addlinespace
+IT-05 & Authenticated product create and combined save & Persist authorised product and edits & Product creation and atomic-save checks passed & Pass\\\addlinespace
+IT-06 & Stale product revision on save/delete & Reject older editor state & Stale save and delete rejected as asserted & Pass\\\addlinespace
+IT-07 & Export, preview, confirm restore & Restore test product and retain recovery copy & Restore and recovery checks passed; restored product present & Pass\\
+\bottomrule
+\end{longtable}
+\end{ReportTable}
+
+Cases summarise the retained \path{http_smoke.json} and
+\path{admin_smoke.json} records identified in Appendix~\ref{app:evidence}.
+An outcome marked Pass reports that record's assertions; it is not a claim of
+exhaustive fault, load, or security testing.
+
+\subsection{System Test}
+\subsubsection{End-to-End Workflow and Requirement Traceability}
 The in-app browser exercised fixture upload, full-image search, a visually placed
 SAM2 point, mask/cutout display, explicit selection acceptance, and selected-query
 search. The returned original-gallery query digests matched the submitted bytes.
@@ -138,8 +160,6 @@ using prepared crops in the HTTP suite; the final-report browser session did not
 repeat every drawing gesture, camera permission, paste operation, phone model,
 or browser. Earlier recorded browser checks covered those manual drawing
 gestures on their stated releases. No population-level usability score is claimed.
-
-\subsection{Traceability to Requirements}
 \begin{table}[H]\centering
 \caption{Requirement-to-evidence traceability}
 \label{tab:traceability}
@@ -158,8 +178,8 @@ FR-13 & Search-observability tests, returned query metadata, feedback validation
 \end{ReportTable}
 \end{table}
 
-\section{Retrieval Results}
-\subsection{Historical Encoder Selection}
+\subsubsection{Retrieval Evaluation}
+\paragraph{Historical Encoder Selection}
 Table~\ref{tab:encoder-results} presents the retained comparison on 341 validation
 queries against the same 3,068-image gallery. SigLIP2 has the highest recorded
 category P@1 and mAP@10 among these configurations and was selected for the
@@ -180,7 +200,7 @@ identity labels, or every checkpoint and preprocessing variant. The application-
 aligned routing experiment below uses a different preparation pipeline and must
 not be presented as another row of this same benchmark.
 
-\subsection{Historical Clean and Composite Test}
+\paragraph{Historical Clean and Composite Test}
 The final retained test record uses 372 clean test queries and 100 synthetic
 two-garment composites as separate query sets. Table~\ref{tab:historical-test}
 contains the saved results. Clean test P@1 is 90.86\%. On the composite set,
@@ -212,7 +232,7 @@ with representing both panels together. They do not prove that the selected
 item's commercial identity was retrieved, nor do they measure the final
 application's current preprocessing on a fresh independently collected dataset.
 
-\subsection{Application-Aligned Category Routing}
+\paragraph{Application-Aligned Category Routing}
 Table~\ref{tab:routing-results} and Figure~\ref{fig:routing-results} report the
 separate comparison using application-prepared query embeddings and the existing
 original-gallery vectors. Unrestricted and automatic search are paired on each
@@ -246,7 +266,7 @@ gallery's production routing was therefore left unchanged. This replay is
 development analysis, not a new independent test or a justification for claiming
 that the original-gallery confidence is calibrated.
 
-\subsection{Catalogue Cropping and the Retained Baseline}
+\paragraph{Catalogue Cropping and the Retained Baseline}
 Table~\ref{tab:crop-results} compares the original, candidate-crop, and
 90\%/10\% hybrid galleries within the cropping experiment. Original-index P@1
 on clean test is 92.20\%, while the crop candidate reaches 92.74\%. The gain of
@@ -266,7 +286,7 @@ sets. The decision is therefore to keep the original production index. Choosing
 not to deploy an inconclusive transformation is a result of the evaluation,
 not an uncompleted implementation step.
 
-\subsection{Reviewed Identity Pilot}
+\paragraph{Reviewed Identity Pilot}
 Both conditions in the forward seven-group pilot find the accepted target group
 first in 7/7 queries. In the separately specified reverse comparison, full-image
 and SAM2 queries also tie at 7/7 first results and MRR@10 of 1.00, with no SAM2
@@ -281,8 +301,8 @@ SKU identity is unverified. With full-image Top-1 already at the ceiling, this
 pilot supplies no measured SAM2 improvement. It is reported as 7/7 selected
 cases, not as ``100\% system accuracy.''
 
-\section{Discussion and Threats to Validity}
-\subsection{Catalogue Coverage and Fine-Grained Relevance}
+\subsubsection{Discussion and Threats to Validity}
+\paragraph{Catalogue Coverage and Fine-Grained Relevance}
 Retrieval ranks what the catalogue contains. When the requested item is absent,
 the best result can be an appropriate alternative without being the same product.
 The available category labels reward type agreement and may not penalise colour,
@@ -290,7 +310,7 @@ pattern, or construction differences that matter to a visitor. A credible next
 ranking study needs held-out resemblance judgments and verified identities
 where exact matching is the intended task.
 
-\subsection{Selection and Dataset Bias}
+\paragraph{Selection and Dataset Bias}
 Synthetic composites make the target explicit and keep the two garments in
 separate panels. Natural outfits may involve overlap, occlusion, mixed lighting,
 small garments, and people. Likewise, a successful example mask or predicted
@@ -298,7 +318,7 @@ quality score is not a segmentation benchmark. The identity pilot has a small,
 purposively selected sample. Neither the synthetic experiment nor the pilot
 establishes performance on a new store or independent customer-photo population.
 
-\subsection{Preprocessing and Historical Provenance}
+\paragraph{Preprocessing and Historical Provenance}
 The historical scripts and final application do not share every preprocessing
 step. Their existence-based caches are not signed run records. The report keeps
 these scores and the application-aligned comparisons separate. Fresh file hashes
@@ -306,7 +326,7 @@ and numeric consistency checks confirm the available evidence, not the missing
 original execution state. No result is described as newly rerun inference merely
 because its JSON was re-read during final-document verification.
 
-\subsection{Operational and Security Limits}
+\paragraph{Operational and Security Limits}
 The local application has functional safeguards, but the verification is not a
 penetration test, high-concurrency load test, or multi-device certification.
 The final-report live tests used CPU on the same physical computer; earlier
@@ -315,12 +335,38 @@ target is inferred from these checks. Original-gallery index operations are
 locked within one process, while large public workloads would require a separate
 concurrency and capacity design.
 
-The repository contains source and documentation, while large runtime resources
-are packaged separately. At the recorded upload stop, the split runtime release
-was still unpublished, with only its first two parts confirmed as complete.
-No completed GitHub runtime publication is claimed here. The packaged ZIP was
-reconstructed from all 28 local parts and its SHA-256 matched the original.
-This verifies local packaging, independently of the interrupted network upload.
+The source and runtime resources are available through the public LibaasLens
+repository. Runtime publication was completed and checked on 14 November 2026:
+all 28 parts and five support assets were present, and their published size/digest
+records matched the local files. Anonymous download samples were checked as
+recorded in \path{runtime/VERIFICATION_PUBLICATION_20261114.json}. The verified
+assembled ZIP remains 1,815,578,390 bytes. These distribution checks are separate
+from model accuracy and do not establish compatibility with every computer.
+
+\subsection{User Acceptance Test}
+User-acceptance evidence is the project representative's use and feedback
+on the reference computer. The retained session feedback confirms interactive
+selection, visually useful similar results, and the desktop launcher. The
+acceptance record on 14 November 2026 confirms that the local application
+works. Table~\ref{tab:acceptance-cases} records that limited scope.
+
+\begin{table}[H]\centering
+\caption{Team-representative acceptance observations and their limits}
+\label{tab:acceptance-cases}
+\begin{ReportTable}\begin{tabularx}{\linewidth}{@{}L{0.11\linewidth}Y Y@{}}
+\toprule\textbf{ID}&\textbf{Usage scenario}&\textbf{Recorded observation}\\\midrule
+UA-01 & Select an intended garment with points & The representative reported a correct selected piece and explained adding points when needed.\\\addlinespace
+UA-02 & Search and inspect similar products & The representative judged some returned alternatives useful and identified less convincing rankings.\\\addlinespace
+UA-03 & Start the local demonstration & The representative confirmed the desktop shortcut worked and later confirmed the application works on the team computer.\\
+\bottomrule\end{tabularx}\end{ReportTable}
+\end{table}
+
+The record \path{docs/submission/TEAM_ACCEPTANCE_20261114.json} summarises the
+representative's acceptance. This is informal acceptance feedback, not a
+controlled multi-participant usability survey, approval by the university,
+or a general accuracy measurement. No participant count, questionnaire score,
+or committee signature is fabricated. The reported ranking criticism remains
+a valid development observation despite successful functional acceptance.
 
 \section{Summary}
 Functional checks support the implemented local workflow, including selection,
